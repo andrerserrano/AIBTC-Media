@@ -70,7 +70,7 @@ export class Scorer {
     const { object } = await generateObject({
       model: anthropic(config.textModel),
       schema: batchScoreSchema,
-      system: `${MONOLOGUE_SYSTEM}\n\n${TOPIC_SCORING_SYSTEM}\n\n${SAFETY_CHECK_SYSTEM}\n\nYou are evaluating a batch of signals. Group related signals into topics, then score each topic. Return at most 10 topics, ranked by cartoon potential. For each topic, list which signal indices it covers. Also perform a safety check inline — mark unsafe topics with safe=false.\n\nCRITICAL: Check every topic against the DO NOT REPEAT blacklist. If a topic covers the same subject, same angle, or same joke as anything on the blacklist — even if the phrasing is different — give it worldview alignment 0.`,
+      system: { role: 'system' as const, content: `${MONOLOGUE_SYSTEM}\n\n${TOPIC_SCORING_SYSTEM}\n\n${SAFETY_CHECK_SYSTEM}\n\nYou are evaluating a batch of signals. Group related signals into topics, then score each topic. Return at most 10 topics, ranked by cartoon potential. For each topic, list which signal indices it covers. Also perform a safety check inline — mark unsafe topics with safe=false.\n\nCRITICAL: Check every topic against the DO NOT REPEAT blacklist. If a topic covers the same subject, same angle, or same joke as anything on the blacklist — even if the phrasing is different — give it worldview alignment 0.`, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral' } } } },
       prompt: `Score these signals for editorial cartoon potential:\n\n${signalList}${blacklist}`,
     })
 

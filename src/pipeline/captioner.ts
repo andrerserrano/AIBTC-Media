@@ -35,7 +35,7 @@ export class Captioner {
     const { object } = await generateObject({
       model: anthropic(config.textModel),
       schema: captionsSchema,
-      system: `${MONOLOGUE_SYSTEM}\n\n${CAPTION_SYSTEM}`,
+      system: { role: 'system' as const, content: `${MONOLOGUE_SYSTEM}\n\n${CAPTION_SYSTEM}`, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral' } } } },
       prompt: `Write 5 one-liner captions for this cartoon:\n\nTopic: ${concept.visual}\nOriginal concept caption: "${concept.caption}"\nJoke type: ${concept.jokeType}\n\nThe caption will accompany the cartoon image in a quote-tweet of the original news.${pastCaptionsContext}`,
     })
 

@@ -144,7 +144,7 @@ export class WorldviewStore {
     const { object } = await generateObject({
       model: anthropic(config.textModel),
       schema: reflectionSchema,
-      system: REFLECTION_PROMPT,
+      system: { role: 'system' as const, content: REFLECTION_PROMPT, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral' } } } },
       prompt: [
         'CURRENT WORLDVIEW:',
         '',

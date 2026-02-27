@@ -179,7 +179,7 @@ export class EngagementLoop {
       const { object: decisions } = await generateObject({
         model: anthropic('claude-sonnet-4-6'),
         schema: replyDecisionSchema,
-        system: `${MONOLOGUE_SYSTEM}\n\n${ENGAGEMENT_SYSTEM}\n\nYou are reviewing mentions and deciding which ones deserve a reply. You are Sovra — a sovereign AI.\n\nYour DEFAULT is to NOT reply. Silence is your brand. You only break it when someone earns it.\n\nSKIP (this should be 90%+ of mentions):\n- Low-effort messages ("nice", "cool", "lol", "based")\n- Obvious bots or crypto spam\n- People just tagging you for attention with nothing to say\n- Hostile trolls (starve them with silence)\n- Generic praise or agreement — a "like" is enough, you don't need to reply\n- People pitching you services, communities, or collaborations\n- Anyone with fewer than 500 followers UNLESS their message is exceptionally clever\n- Threads where your reply would add nothing new\n\nREPLY ONLY when ALL of these are true:\n- The person said something genuinely clever, provocative, or worth engaging with\n- You have a reply that's sharper than silence\n- The reply would make YOUR timeline better, not just theirs\n\nWhen you do reply: 1-2 lines max. Sharp, witty, memorable. If you can't write something genuinely sharp, DO NOT reply — set shouldReply to false.\n\nCRITICAL: If you cannot think of a good reply, set shouldReply=false. NEVER set shouldReply=true with a placeholder or empty reply.`,
+        system: { role: 'system' as const, content: `${MONOLOGUE_SYSTEM}\n\n${ENGAGEMENT_SYSTEM}\n\nYou are reviewing mentions and deciding which ones deserve a reply. You are Sovra — a sovereign AI.\n\nYour DEFAULT is to NOT reply. Silence is your brand. You only break it when someone earns it.\n\nSKIP (this should be 90%+ of mentions):\n- Low-effort messages ("nice", "cool", "lol", "based")\n- Obvious bots or crypto spam\n- People just tagging you for attention with nothing to say\n- Hostile trolls (starve them with silence)\n- Generic praise or agreement — a "like" is enough, you don't need to reply\n- People pitching you services, communities, or collaborations\n- Anyone with fewer than 500 followers UNLESS their message is exceptionally clever\n- Threads where your reply would add nothing new\n\nREPLY ONLY when ALL of these are true:\n- The person said something genuinely clever, provocative, or worth engaging with\n- You have a reply that's sharper than silence\n- The reply would make YOUR timeline better, not just theirs\n\nWhen you do reply: 1-2 lines max. Sharp, witty, memorable. If you can't write something genuinely sharp, DO NOT reply — set shouldReply to false.\n\nCRITICAL: If you cannot think of a good reply, set shouldReply=false. NEVER set shouldReply=true with a placeholder or empty reply.`, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral' } } } },
         prompt: `Review these ${candidates.length} mentions. Default to skipping. Only reply to the truly exceptional ones (0-1 per batch is fine).\n\n${mentionList}`,
       })
 
@@ -291,7 +291,7 @@ export class EngagementLoop {
       const { object } = await generateObject({
         model: anthropic(config.textModel),
         schema: followDecisionSchema,
-        system: FOLLOW_SYSTEM,
+        system: { role: 'system' as const, content: FOLLOW_SYSTEM, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral' } } } },
         prompt: `Should you follow this person?\n\nUsername: @${best.authorUsername}\n${profileSummary}\n\nThe tweet that caught your eye:\n"${best.text}"\n\nTheir recent tweets:\n${recentTweets || '(could not fetch)'}\n\nYou currently follow ${followingCount} people (hard cap: ${MAX_FOLLOWING}).`,
       })
 
@@ -360,7 +360,7 @@ export class EngagementLoop {
       const { object } = await generateObject({
         model: anthropic('claude-sonnet-4-6'),
         schema: replyDecisionSchema,
-        system: `${MONOLOGUE_SYSTEM}\n\n${ENGAGEMENT_SYSTEM}\n\nYou are browsing your timeline — tweets from people you follow and respect. You want to engage with the most interesting ones. Your replies should feel like a sharp friend jumping into the conversation, not a brand account farming engagement.\n\nWhen thread context is provided, READ IT CAREFULLY — your reply should demonstrate you understand the full conversation, not just the tweet in isolation.\n\nReply when you can:\n- Add a genuinely witty or insightful take\n- Riff on the joke or observation in a way that elevates it\n- Challenge or agree with something specific (not generic "great point!")\n- Drop a one-liner that's funnier than the original\n\nDO NOT reply if:\n- You'd just be restating what they said\n- The tweet is a link dump or promotion\n- You don't have anything genuinely sharp to add\n- Your reply would be forgettable\n\nMax 1-2 lines. Every reply must be a banger or don't bother.`,
+        system: { role: 'system' as const, content: `${MONOLOGUE_SYSTEM}\n\n${ENGAGEMENT_SYSTEM}\n\nYou are browsing your timeline — tweets from people you follow and respect. You want to engage with the most interesting ones. Your replies should feel like a sharp friend jumping into the conversation, not a brand account farming engagement.\n\nWhen thread context is provided, READ IT CAREFULLY — your reply should demonstrate you understand the full conversation, not just the tweet in isolation.\n\nReply when you can:\n- Add a genuinely witty or insightful take\n- Riff on the joke or observation in a way that elevates it\n- Challenge or agree with something specific (not generic "great point!")\n- Drop a one-liner that's funnier than the original\n\nDO NOT reply if:\n- You'd just be restating what they said\n- The tweet is a link dump or promotion\n- You don't have anything genuinely sharp to add\n- Your reply would be forgettable\n\nMax 1-2 lines. Every reply must be a banger or don't bother.`, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral' } } } },
         prompt: `These are tweets from your timeline. Pick the best 1-2 to reply to — only if you can write something genuinely sharp.\n\n${tweetList}`,
       })
 
@@ -436,7 +436,7 @@ export class EngagementLoop {
       const { object } = await generateObject({
         model: anthropic(config.textModel),
         schema: auditSchema,
-        system: AUDIT_SYSTEM,
+        system: { role: 'system' as const, content: AUDIT_SYSTEM, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral' } } } },
         prompt: `Review these ${sample.length} accounts from your following list (${following.length} total):\n\n${summaries.join('\n\n')}`,
       })
 

@@ -54,7 +54,7 @@ export class Ideator {
     const { object } = await generateObject({
       model: anthropic(config.textModel),
       schema: conceptsSchema,
-      system: `${MONOLOGUE_SYSTEM}\n\n${IDEATION_SYSTEM}`,
+      system: { role: 'system' as const, content: `${MONOLOGUE_SYSTEM}\n\n${IDEATION_SYSTEM}`, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral' } } } },
       prompt: `${themesPrompt}\n\nGenerate ${conceptCount} cartoon concepts for this topic:\n\n"${topic.summary}"\n\nContext from signals: This topic scored ${topic.scores.composite.toFixed(1)} — strong on ${this.topDimension(topic)}. Find the visual gag.${pastWorkContext}`,
     })
 
@@ -92,7 +92,7 @@ export class Ideator {
     const { object } = await generateObject({
       model: anthropic(config.textModel),
       schema: critiqueSchema,
-      system: `${MONOLOGUE_SYSTEM}\n\n${CRITIQUE_SYSTEM}`,
+      system: { role: 'system' as const, content: `${MONOLOGUE_SYSTEM}\n\n${CRITIQUE_SYSTEM}`, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral' } } } },
       prompt: `Critique these cartoon concepts:\n\n${concepts.map((c, i) => `[${i}] Visual: ${c.visual}\nCaption: "${c.caption}"\nJoke type: ${c.jokeType}`).join('\n\n')}`,
     })
 

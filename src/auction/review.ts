@@ -115,7 +115,7 @@ export class AuctionReviewer {
       const { object } = await generateObject({
         model: anthropic(config.textModel),
         schema: reviewSchema,
-        system: `${PERSONA}\n\n${REVIEW_SYSTEM}`,
+        system: { role: 'system' as const, content: `${PERSONA}\n\n${REVIEW_SYSTEM}`, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral' } } } },
         prompt: `Review this paid request:\n\nFrom: ${bid.bidder}\nBid: $${bid.amountUsdc} USDC\nRequest: "${bid.requestText}"${tweetContext}${imageNote}`,
       })
 

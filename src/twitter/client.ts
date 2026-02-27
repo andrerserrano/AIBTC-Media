@@ -268,17 +268,42 @@ export class TwitterClient {
   }
 
   async findTweetAbout(query: string): Promise<string | undefined> {
-    // Extract meaningful words for a focused search
+    const stopWords = new Set([
+      'about', 'after', 'also', 'amid', 'been', 'before', 'being', 'between',
+      'both', 'could', 'does', 'doing', 'done', 'during', 'each', 'even',
+      'every', 'from', 'gets', 'getting', 'goes', 'going', 'have', 'having',
+      'here', 'into', 'just', 'keep', 'know', 'like', 'made', 'make', 'many',
+      'more', 'most', 'much', 'must', 'never', 'only', 'other', 'over', 'says',
+      'seem', 'share', 'shared', 'shows', 'some', 'still', 'such', 'take',
+      'tells', 'than', 'that', 'their', 'them', 'then', 'there', 'these',
+      'they', 'this', 'those', 'through', 'very', 'want', 'were', 'what',
+      'when', 'where', 'which', 'while', 'will', 'with', 'would', 'your',
+    ])
+
+    // Extract distinctive words (longer = more distinctive), filter stop words
+    const seen = new Set<string>()
     const words = query
       .replace(/[^\w\s]/g, '')
       .split(/\s+/)
-      .filter(w => w.length > 3)
+      .filter(w => w.length > 3 && !stopWords.has(w.toLowerCase()))
+      .sort((a, b) => b.length - a.length)
+      .filter(w => {
+        const lower = w.toLowerCase()
+        if (seen.has(lower)) return false
+        seen.add(lower)
+        return true
+      })
 
-    // Try with 5 keywords first, then broaden to 3 if no results
-    for (const count of [5, 3]) {
-      const keywords = words.slice(0, count).join(' ')
-      if (!keywords) continue
-      console.log(`[twitter] findTweetAbout: keywords="${keywords}" (${count} words)`)
+    const candidates: string[] = []
+    if (words.length >= 3) candidates.push(words.slice(0, 4).join(' '))
+    if (words.length >= 2) candidates.push(words.slice(0, 3).join(' '))
+    if (words.length >= 1) candidates.push(words.slice(0, 2).join(' '))
+
+    const tried = new Set<string>()
+    for (const keywords of candidates) {
+      if (tried.has(keywords)) continue
+      tried.add(keywords)
+      console.log(`[twitter] findTweetAbout: keywords="${keywords}" (${keywords.split(' ').length} words)`)
       try {
         const result = await this.readProvider.findTopTweet(keywords, 25)
         if (result) {

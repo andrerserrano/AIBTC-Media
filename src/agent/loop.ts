@@ -735,17 +735,21 @@ export class AgentLoop {
   private async findFreshQuoteTweet(signals: Signal[], topic: Topic): Promise<string | undefined> {
     const used = await this.getUsedTweetIds()
 
-    // Priority 1: tweet IDs from signals DIRECTLY linked to this topic
-    // (these are real viral tweets the scanner found — they're relevant)
+    // Priority 1: Pre-captured tweet IDs from topic creation
+    // These survive signal cache expiry (signal caches: 2-15min, topic cache: 60min)
+    if (topic.quoteCandidates?.length) {
+      for (const tweetId of topic.quoteCandidates) {
+        if (!used.has(tweetId)) {
+          this.events.monologue(`Using pre-captured quote tweet: ${tweetId}`)
+          return tweetId
+        }
+      }
+    }
+
+    // Priority 2: Live signal lookup (works when signals haven't expired yet)
     for (const sigId of topic.signals) {
       const signal = signals.find((s) => s.id === sigId)
       if (signal?.tweetId && !used.has(signal.tweetId)) return signal.tweetId
-    }
-
-    // Priority 2: Grok cluster post IDs — tweets from the news cluster
-    // These are real tweets related to the story. Pick the first unused one.
-    for (const sigId of topic.signals) {
-      const signal = signals.find((s) => s.id === sigId)
       if (signal?.grok?.postIds) {
         for (const postId of signal.grok.postIds) {
           if (!used.has(postId)) {

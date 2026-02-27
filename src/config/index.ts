@@ -5,7 +5,7 @@ export const config = {
   port: Number(process.env.PORT || 3000),
 
   // AI
-  textModel: 'claude-opus-4-6' as string,
+  textModel: 'claude-sonnet-4-6' as string,
   imageModel: 'google/gemini-3-pro-image' as const,
 
   // Twitter
@@ -22,7 +22,7 @@ export const config = {
   },
 
   // Agent loop
-  tickIntervalMs: testMode ? 10_000 : 30_000,
+  tickIntervalMs: testMode ? 10_000 : 120_000,
   flagshipIntervalMs: testMode ? 30_000 : 6 * 3600_000,     // 30s vs 6h
   quickhitCooldownMs: testMode ? 15_000 : 3600_000,          // 15s vs 1h
 

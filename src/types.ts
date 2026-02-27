@@ -55,6 +55,7 @@ export interface Topic {
   safety: { passed: boolean; reason?: string }
   status: 'candidate' | 'shortlisted' | 'selected' | 'posted' | 'rejected'
   evaluatedAt: number
+  quoteCandidates?: string[]
 }
 
 export interface CartoonConcept {

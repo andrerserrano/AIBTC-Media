@@ -96,6 +96,14 @@ export class Scorer {
       const validIndices = scored.signalIndices
         .filter(i => i >= 0 && i < capped.length)
 
+      // Capture tweet IDs now — signals may expire before posting
+      const quoteCandidates: string[] = []
+      for (const idx of validIndices) {
+        const sig = capped[idx]
+        if (sig.tweetId) quoteCandidates.push(sig.tweetId)
+        if (sig.grok?.postIds) quoteCandidates.push(...sig.grok.postIds)
+      }
+
       const composite =
         scored.virality * 0.15 +
         scored.visualPotential * 0.15 +
@@ -131,6 +139,7 @@ export class Scorer {
         safety: { passed: true },
         status: 'candidate',
         evaluatedAt: Date.now(),
+        quoteCandidates: [...new Set(quoteCandidates)],
       }
 
       topics.push(topic)

@@ -56,7 +56,7 @@ export class AgentLoop {
   private timelineEngagementIntervalMs = 15 * 60_000
   private followerVetIntervalMs = config.testMode ? 60_000 : 6 * 3600_000
   private timerStore: JsonStore<TimerState>
-  private rejectedTopics: JsonStore<string[]>
+  private rejectedTopics: JsonStore<Array<string | { summary: string; ts: number }>>
   private rejectedCartoons: JsonStore<Array<{
     caption: string
     imageUrl: string
@@ -644,9 +644,21 @@ export class AgentLoop {
       }
     }
 
+    // Post the cartoon without quote_tweet_id (quote tweeting is blocked by Twitter API tier)
     const tweetId = videoPath
-      ? await this.twitter.postVideo({ text: caption, videoPath, quoteTweetId })
-      : await this.twitter.postCartoon({ text: caption, imagePath, quoteTweetId })
+      ? await this.twitter.postVideo({ text: caption, videoPath })
+      : await this.twitter.postCartoon({ text: caption, imagePath })
+
+    // If we have a source tweet, reply to our own post with the link
+    if (quoteTweetId) {
+      try {
+        const sourceUrl = `https://x.com/i/status/${quoteTweetId}`
+        await this.twitter.reply({ text: sourceUrl, replyToId: tweetId })
+        this.events.monologue(`Linked source tweet in reply: ${sourceUrl}`)
+      } catch (err) {
+        this.events.monologue(`Could not reply with source link: ${(err as Error).message}`)
+      }
+    }
 
     return { tweetId, videoPath }
   }
@@ -673,7 +685,7 @@ export class AgentLoop {
 
   private async blacklistTopic(summary: string): Promise<void> {
     await this.rejectedTopics.update(
-      (list) => [...list, summary].slice(-500),
+      (list) => [...list, { summary, ts: Date.now() }].slice(-200),
       [],
     )
   }
@@ -682,24 +694,36 @@ export class AgentLoop {
     const cartoons = (await this.stores.cartoons.read()) ?? []
     const posts = (await this.stores.posts.read()) ?? []
 
+    // Only look at last 7 days of cartoons (not just 24h) for de-duplication
+    const recentWindow = 7 * 24 * 3600_000
     const recentCartoons = cartoons
-      .filter(c => Date.now() - c.createdAt < config.recentTopicWindowMs)
+      .filter(c => Date.now() - c.createdAt < recentWindow)
 
     const summaries: string[] = []
     for (const cartoon of recentCartoons) {
       summaries.push(cartoon.concept.visual)
-      summaries.push(cartoon.concept.reasoning)
       summaries.push(cartoon.caption)
     }
 
-    const recentPosts = posts.filter(p => Date.now() - p.postedAt < config.recentTopicWindowMs)
+    const recentPosts = posts.filter(p => Date.now() - p.postedAt < recentWindow)
     for (const post of recentPosts) {
       summaries.push(post.text)
     }
 
-    // Include blacklisted/rejected topics so the scorer skips them
+    // Include blacklisted/rejected topics — but only those from the last 3 days
+    const blacklistTtlMs = 3 * 24 * 3600_000
     const blacklisted = (await this.rejectedTopics.read()) ?? []
-    summaries.push(...blacklisted)
+    for (const entry of blacklisted) {
+      // Support both old format (plain string) and new format ({ summary, ts })
+      if (typeof entry === 'string') {
+        summaries.push(entry)
+      } else if (entry && typeof entry === 'object' && 'summary' in entry) {
+        const e = entry as { summary: string; ts: number }
+        if (Date.now() - e.ts < blacklistTtlMs) {
+          summaries.push(e.summary)
+        }
+      }
+    }
 
     return summaries
   }

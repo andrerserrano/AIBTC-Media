@@ -184,7 +184,10 @@ export class TwitterClient {
       return `local-${localId}`
     }
 
-    const result = await this.writer.v2.reply(opts.text, opts.replyToId)
+    const result = await this.writer.v2.tweet({
+      text: opts.text,
+      reply: { in_reply_to_tweet_id: opts.replyToId },
+    })
     const tweetId = result.data.id
 
     this.events.emit({

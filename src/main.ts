@@ -161,13 +161,13 @@ async function main() {
   const auctionReviewer = new AuctionReviewer(events, twitter)
   const editor = new Editor(events)
 
-  // --- Video pipeline ---
-  let videoProducer: VideoProducer | null = null
-  if (config.video.enabled) {
-    videoProducer = new VideoProducer(events)
-    await videoProducer.init()
-    console.log('Video pipeline enabled (Replicate Veo 3.1)')
-  }
+  // --- Video pipeline (disabled — Replicate billing exhausted) ---
+  const videoProducer: VideoProducer | null = null
+  // if (config.video.enabled) {
+  //   videoProducer = new VideoProducer(events)
+  //   await videoProducer.init()
+  //   console.log('Video pipeline enabled (Replicate Veo 3.1)')
+  // }
 
   // --- Agent loop ---
   const agent = new AgentLoop(

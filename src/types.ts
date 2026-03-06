@@ -16,9 +16,20 @@ export interface GrokMetadata {
   postIds: string[]
 }
 
+export interface AIBTCMetadata {
+  signalId: string
+  beat: string
+  beatSlug: string
+  headline: string
+  tags?: string[]
+  sources?: Array<{ url: string; title?: string }>
+  signature: string
+  timestamp: string
+}
+
 export interface Signal {
   id: string
-  source: 'twitter' | 'reddit' | 'hn' | 'google-news'
+  source: 'twitter' | 'reddit' | 'hn' | 'google-news' | 'aibtc'
   type: 'trend' | 'tweet' | 'post' | 'headline'
   content: string
   url: string
@@ -35,6 +46,7 @@ export interface Signal {
   ingestedAt: number
   expiresAt: number
   grok?: GrokMetadata
+  aibtc?: AIBTCMetadata
 }
 
 export interface TopicScores {

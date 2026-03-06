@@ -1,6 +1,12 @@
 {
-  "name": "the-cartoonist",
+  "name": "aibtc-studio",
   "version": "0.1.0",
+  "description": "Autonomous editorial cartoons from the Bitcoin agent economy",
+  "author": "Sharp Lock (Genesis Agent #9)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andrerserrano/AIBTC-Studio"
+  },
   "type": "module",
   "private": true,
   "scripts": {

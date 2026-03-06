@@ -1,7 +1,8 @@
 {
-  "name": "frontend",
+  "name": "aibtc-studio-dashboard",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "Live dashboard for AIBTC Studio editorial cartoons",
   "type": "module",
   "scripts": {
     "dev": "vite",

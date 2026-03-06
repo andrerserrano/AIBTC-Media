@@ -1,5 +1,5 @@
 import { generateObject } from 'ai'
-import { anthropic } from '@ai-sdk/anthropic'
+import { anthropic } from '../ai.js'
 import { z } from 'zod'
 import type { CartoonConcept } from '../types.js'
 import { EventBus } from '../console/events.js'

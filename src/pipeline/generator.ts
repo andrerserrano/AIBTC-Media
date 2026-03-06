@@ -1,5 +1,5 @@
 import { generateText, generateObject } from 'ai'
-import { anthropic } from '@ai-sdk/anthropic'
+import { anthropic } from '../ai.js'
 import { google } from '@ai-sdk/google'
 import { readFile, writeFile, mkdir } from 'fs/promises'
 import { join, dirname } from 'path'

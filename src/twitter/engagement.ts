@@ -1,5 +1,5 @@
 import { generateObject, generateText } from 'ai'
-import { anthropic } from '@ai-sdk/anthropic'
+import { anthropic } from '../ai.js'
 import { z } from 'zod'
 import { randomUUID } from 'crypto'
 import { EventBus } from '../console/events.js'

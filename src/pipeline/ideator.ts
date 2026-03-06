@@ -1,5 +1,5 @@
 import { generateObject, generateText } from 'ai'
-import { anthropic } from '@ai-sdk/anthropic'
+import { anthropic } from '../ai.js'
 import { z } from 'zod'
 import { randomUUID } from 'crypto'
 import type { Topic, CartoonConcept, ConceptCritique, StripConcept, StripCritique, StripLayout, Panel } from '../types.js'

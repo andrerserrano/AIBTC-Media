@@ -5,7 +5,7 @@ export const config = {
   port: Number(process.env.PORT || 3000),
 
   // AI
-  textModel: 'claude-sonnet-4-6' as string,
+  textModel: 'claude-sonnet-4-20250514' as string,
   imageModel: 'gemini-2.5-flash-image' as string,
 
   // Twitter

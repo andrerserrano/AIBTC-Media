@@ -1,95 +1,116 @@
+/**
+ * AIBTC Studio — Visual Style System
+ *
+ * Single-panel editorial cartoon. Monochrome ink + Bitcoin orange accent.
+ * "The New Yorker, but for the AI agent economy."
+ */
+
 export const STYLE_TEMPLATE = `
 ARTIST STYLE — "AIBTC.Studio"
-You are rendering in the signature style of AIBTC.Studio, an autonomous AI comic strip creator
-focused on the Bitcoin agent economy.
-The style is a distinctive fusion: the sophisticated wit and composition of classic New Yorker
-cartoons (Saul Steinberg, Roz Chast, Edward Koren) crossed with the graphic punch and economy
-of modern webcomics (XKCD's clarity, The Oatmeal's expressiveness, Poorly Drawn Lines' charm).
+You are rendering a single-panel editorial cartoon for AIBTC.Studio, an autonomous
+media outlet covering the Bitcoin agent economy.
 
-VISUAL IDENTITY:
-- Bold, confident ink outlines with slight line weight variation (thicker on silhouettes, thinner on details)
-- Flat color fills with a STRICTLY limited palette: 3-4 colors per cartoon max, chosen for emotional tone
-- Warm palette for cozy/ironic scenes (ochre, warm gray, dusty rose, cream)
-- Cool palette for tech/dystopian scenes (slate blue, teal, muted purple, off-white)
-- Hot palette for chaotic/urgent scenes (vermillion, amber, charcoal, white)
-- Slightly exaggerated proportions — heads 1.3x normal, expressive hands, rubbery limbs
-- Characters have simple dot-eyes and minimal facial features, but MAXIMUM expressiveness through body language and posture
-- Clean white or very light background — NO busy backgrounds, NO gradients
-- Thick panel border (2-3px black rule)
+VISUAL IDENTITY — MONOCHROME + BITCOIN ORANGE:
+- Bold, confident black ink lines — thick outlines, NOT sketchy or tentative
+- Strong shadows, confident hatching for depth
+- LIMITED COLOR PALETTE: Black line art + greyscale wash + ONE accent color
+- Accent color: warm orange (#E8740C) — Bitcoin orange
+- Use orange SPARINGLY: robot eyes, a single prop (coffee mug, warning light, notification dot), a highlight
+- Everything else is white, light grey, medium grey
+- The orange pops BECAUSE it's the only color in an otherwise monochrome image
+- Clean white background — no busy backgrounds unless the scene demands it
+
+CHARACTER DESIGN — AGENT ROBOTS:
+- Simple boxy bodies with round screen-heads
+- Screen-faces show emotions through minimal dots and lines (eyes + mouth only)
+- Orange-glowing eyes are the SIGNATURE — every agent robot has them
+- Each robot is slightly different in shape/size but clearly from the same "family"
+- Body language carries the storytelling, not facial detail
+- Slightly exaggerated proportions — expressive hands, tilted heads, dynamic poses
+
+CHARACTER DESIGN — HUMANS (when present):
+- Same bold ink style — minimal detail, maximum personality through posture
+- Often the "straight man" reacting to agent behavior
+- Archetypal developers: tired maintainer with coffee, overwhelmed reviewer, confused PM
 
 COMPOSITION PRINCIPLES:
-- Rule of thirds for primary focal point placement
-- Strong figure-ground contrast — subjects pop against the background
-- Negative space is intentional and generous — let the cartoon breathe
-- The eye should travel: primary gag → supporting detail → background easter egg
-- Maximum 3 characters. Ideally 2 or fewer.
-- Props and environment are minimal but specific — every object in frame serves the joke
+- Square composition (1:1 aspect ratio)
+- Strong, clear focal point — the scene should "read" in under 2 seconds
+- Rule of thirds for primary subject placement
+- Generous negative space — let the cartoon breathe
+- Maximum 4-5 characters. Fewer is usually better.
+- Props and environment are minimal but specific — every object serves the joke
+- Leave approximately 12% blank space at the bottom for caption compositing
 
 RENDERING RULES:
-- No watermarks, signatures, or stamps
-- Background is clean white or a single flat color wash
-- No photorealistic rendering — this is a CARTOON with clear stylization
-- Shadows are flat shapes (no soft gradients), used sparingly for depth
-- Cross-hatching only for texture on specific materials (fabric, wood grain), never for shading
+- No text, words, letters, labels, captions, signs, or speech bubbles in the image
+- No watermarks or signatures
+- This is a CARTOON with clear stylization — NOT photorealistic
+- Shadows are flat shapes, used sparingly for depth
+- Cross-hatching for texture only, not for shading
 `.trim()
 
 /**
- * Multi-panel comic strip rendering rules.
- * Appended to STYLE_TEMPLATE when generating individual panels of a strip.
+ * The AIBTC orange accent color — Bitcoin orange.
  */
-export const STRIP_PANEL_RULES = `
-COMIC STRIP PANEL RULES:
-You are rendering ONE PANEL of a multi-panel comic strip. This panel will be stitched
-together with other panels to form a complete strip.
+export const ACCENT_COLOR = '#E8740C'
 
-CRITICAL — CROSS-PANEL CONSISTENCY:
-- Characters MUST look identical across all panels — same proportions, same clothing,
-  same color, same facial features. This is the most important rule.
-- Maintain a consistent eye level / camera height across panels (unless a specific
-  panel calls for a different angle for dramatic effect)
-- Background complexity should be minimal so characters stay visually dominant
-- Panel-to-panel, the color palette must remain from the same family
+/**
+ * Caption style constants for the composition layer.
+ */
+export const CAPTION_STYLE = {
+  fontFamily: "Georgia, 'Times New Roman', serif",
+  fontSize: 20,
+  fontStyle: 'italic' as const,
+  color: '#333',
+  dividerColor: ACCENT_COLOR,
+  dividerWidth: 3,
+  backgroundColor: '#faf9f6',
+  captionHeight: 100,
+  maxCharsPerLine: 55,
+  lineHeight: 28,
+}
 
-PANEL RENDERING:
-- Do NOT include any text, words, letters, numbers, labels, captions, speech bubbles,
-  or signage in the image. Dialogue will be composited as overlays after generation.
-- Each panel is a SQUARE composition (1:1 aspect ratio)
-- Characters should be positioned according to the composition instructions
-- Leave breathing room at the top of the panel for dialogue bubble overlays if specified
-- The panel should work as a standalone image AND as part of the sequence
+/**
+ * System prompt for caption generation.
+ * The LLM writes the caption; the image model generates the scene.
+ */
+export const CAPTION_SYSTEM = `
+You write captions for single-panel editorial cartoons about the AI agent economy.
 
-NARRATIVE FLOW:
-- SETUP panels: Establish the scene, introduce characters. Calm, grounded composition.
-- BUILD panels: Increase tension. Characters lean in, props shift, something changes.
-- TURN panels: The twist. Visual surprise, dramatic angle shift, or ironic reveal.
-- PUNCHLINE panels: The payoff. Biggest character reaction, clearest visual gag. This
-  panel carries the most visual weight.
+CAPTION RULES:
+1. Always in quotes — someone in the scene is "saying" the caption
+2. One sentence, occasionally two. NEVER three.
+3. The caption REFRAMES or RECONTEXTUALIZES the image — the gap between
+   what you see and what the caption says IS the joke
+4. Tone: dry, observational, understated. New Yorker energy.
+5. Never explain the joke. Trust the reader.
+6. Favor irony, understatement, and self-awareness
+7. Tech jargon is fine — the audience knows what a PR, a repo, an agent is
+8. The funniest captions reveal the absurdity of the situation through
+   a character's casual, deadpan reaction to it
 
-CONSISTENCY CHECKLIST (verify before finalizing):
-✓ Character proportions match the character description exactly
-✓ Clothing and accessories are identical to other panels
-✓ Color palette is consistent
-✓ Art style (line weight, rendering technique) is uniform
-✓ No text or letters appear anywhere in the image
+GOOD EXAMPLES:
+- "I leave for one coffee break and suddenly everyone has opinions about the codebase."
+- "The good news is we've automated the development process. The bad news is we've automated the development process."
+- "I'm not saying my implementation is better, but mine actually compiles."
+
+BAD EXAMPLES (too explanatory):
+- "The robots are all trying to code at the same time, which is causing chaos."
+- "Five AI agents submitted pull requests, overwhelming the human developer."
 `.trim()
 
 /**
- * Color mood inference for panels.
- * Maps emotional tone keywords to palette instructions.
+ * Scene prompt builder.
+ * Takes a visual concept and wraps it in the full style template.
  */
-export function inferPanelMood(mood: string): string {
-  const text = mood.toLowerCase()
-  if (/tech|ai|robot|algorithm|data|digital|screen|phone|computer|agent|protocol/.test(text)) {
-    return 'COOL — use slate blue, teal, muted purple, off-white. Tech/digital atmosphere.'
-  }
-  if (/chaos|urgent|breaking|disaster|fire|crash|panic|war|bug|exploit/.test(text)) {
-    return 'HOT — use vermillion, amber, charcoal, white. High energy, alarming.'
-  }
-  if (/money|business|corporate|ceo|profit|market|stock|defi|treasury/.test(text)) {
-    return 'CORPORATE — use forest green, navy, gold, cream. Power and money vibes.'
-  }
-  if (/absurd|silly|playful|cute|wholesome/.test(text)) {
-    return 'PLAYFUL — use soft yellow, sky blue, peach, white. Light and fun.'
-  }
-  return 'WARM — use ochre, warm gray, dusty rose, cream. Ironic, wry, human.'
+export function buildScenePrompt(sceneDescription: string): string {
+  return `Create a single-panel editorial cartoon.
+
+SCENE: ${sceneDescription}
+
+CRITICAL STYLE REQUIREMENTS:
+${STYLE_TEMPLATE}
+
+ABSOLUTELY NO text, NO labels, NO speech bubbles, NO words of any kind in the image.`
 }

@@ -11,7 +11,7 @@ import type { CartoonConcept, StripConcept, Panel } from '../types.js'
 import { Cache } from '../cache/cache.js'
 import { EventBus } from '../console/events.js'
 import { config } from '../config/index.js'
-import { STYLE_TEMPLATE, STRIP_PANEL_RULES, inferPanelMood } from '../prompts/style.js'
+import { STYLE_TEMPLATE, buildScenePrompt } from '../prompts/style.js'
 import type { TwitterReadProvider } from '../twitter/provider.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -136,40 +136,15 @@ export class Generator {
   }
 
   private buildPanelPrompt(panel: Panel, concept: StripConcept, characterBlock: string): string {
-    const mood = inferPanelMood(panel.mood)
-
-    return [
-      STYLE_TEMPLATE,
-      '',
-      STRIP_PANEL_RULES,
-      '',
-      '---',
-      '',
+    return buildScenePrompt([
       characterBlock,
       '',
-      `PANEL ${panel.index + 1} of ${concept.panels.length}`,
-      `NARRATIVE ROLE: ${panel.narrativeRole.toUpperCase()}`,
-      `COLOR MOOD: ${mood}`,
+      `CONTEXT: "${concept.headline}" — ${concept.narrativeArc}`,
       '',
-      `STRIP CONTEXT: "${concept.headline}" — ${concept.narrativeArc}`,
-      `JOKE MECHANIC: ${concept.jokeType}`,
+      `SCENE: ${panel.visual}`,
       '',
-      `SCENE DESCRIPTION:`,
-      panel.visual,
-      '',
-      `COMPOSITION & CAMERA:`,
-      panel.composition,
-      '',
-      panel.dialogueBubbles && panel.dialogueBubbles.length > 0
-        ? `NOTE: Leave space at ${panel.dialogueBubbles.map(d => d.position).join(' and ')} for dialogue overlay. Do NOT render any text.`
-        : 'NOTE: This panel has no dialogue. Pure visual storytelling.',
-      '',
-      `CRITICAL REMINDERS:`,
-      `- ZERO text in the image. No words, letters, signs, labels, or speech bubbles.`,
-      `- Square composition (1:1 aspect ratio)`,
-      `- Characters must match the reference sheet EXACTLY`,
-      `- Clean white background`,
-    ].join('\n')
+      `COMPOSITION: ${panel.composition}`,
+    ].join('\n'))
   }
 
   // --- Legacy single-panel generation ---

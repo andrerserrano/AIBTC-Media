@@ -7,11 +7,11 @@ import { fileURLToPath } from 'url'
 import { z } from 'zod'
 import sharp from 'sharp'
 import { uploadToR2 } from '../cdn/r2.js'
-import type { CartoonConcept } from '../types.js'
+import type { CartoonConcept, StripConcept, Panel } from '../types.js'
 import { Cache } from '../cache/cache.js'
 import { EventBus } from '../console/events.js'
 import { config } from '../config/index.js'
-import { STYLE_TEMPLATE } from '../prompts/style.js'
+import { STYLE_TEMPLATE, STRIP_PANEL_RULES, inferPanelMood } from '../prompts/style.js'
 import type { TwitterReadProvider } from '../twitter/provider.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -46,6 +46,133 @@ export class Generator {
       this.events.monologue('Signature file not found — cartoons will be unsigned.')
     }
   }
+
+  // --- Multi-panel strip generation ---
+
+  /**
+   * Generate all panels for a comic strip.
+   * Each panel is rendered individually with character consistency context,
+   * then returns file paths for each panel image.
+   */
+  async generateStrip(concept: StripConcept): Promise<{ panelImages: string[]; prompts: string[] }> {
+    this.events.transition('generating')
+    this.events.monologue(
+      `Generating ${concept.panels.length}-panel strip: "${concept.headline}"`,
+    )
+
+    const panelImages: string[] = []
+    const prompts: string[] = []
+
+    // Build character consistency block (shared across all panels)
+    const characterBlock = this.buildCharacterBlock(concept)
+
+    for (const panel of concept.panels) {
+      const panelPrompt = this.buildPanelPrompt(panel, concept, characterBlock)
+      prompts.push(panelPrompt)
+
+      this.events.monologue(
+        `Panel ${panel.index + 1}/${concept.panels.length} (${panel.narrativeRole}): generating...`,
+      )
+      this.events.emit({
+        type: 'generate',
+        prompt: panelPrompt.slice(0, 200),
+        variantCount: 1,
+        ts: Date.now(),
+      })
+
+      try {
+        const refImages = panel.index === 0
+          ? await this.findReferenceImages({
+              id: concept.id,
+              topicId: concept.topicId,
+              visual: panel.visual,
+              composition: panel.composition,
+              caption: concept.caption,
+              jokeType: concept.jokeType,
+              reasoning: concept.reasoning,
+              referenceImageUrls: concept.referenceImageUrls,
+            })
+          : (concept.referenceImageUrls ?? [])
+
+        const messages = await this.buildMessages(panelPrompt, refImages)
+        const { files } = await generateText({
+          model: gateway(config.imageModel),
+          messages,
+        })
+
+        if (files && files.length > 0) {
+          const file = files[0]
+          const filename = `${concept.id}-panel${panel.index + 1}.png`
+          const filepath = join(this.imageDir, filename)
+          const raw = Buffer.from(file.base64, 'base64')
+          await writeFile(filepath, raw) // No signature on individual panels
+          uploadToR2(filepath, 'images').catch(() => {})
+          panelImages.push(filepath)
+          this.events.monologue(`Panel ${panel.index + 1} generated.`)
+        } else {
+          this.events.monologue(`Panel ${panel.index + 1}: no image returned. Skipping.`)
+        }
+      } catch (err) {
+        this.events.monologue(
+          `Panel ${panel.index + 1} failed: ${(err as Error).message}`,
+        )
+      }
+    }
+
+    return { panelImages, prompts }
+  }
+
+  private buildCharacterBlock(concept: StripConcept): string {
+    if (concept.characters.length === 0) return ''
+
+    return [
+      'CHARACTER REFERENCE SHEET — these characters MUST look identical in every panel:',
+      ...concept.characters.map((c, i) =>
+        `  Character ${i + 1}: "${c.name}" (${c.role})\n    ${c.description}`
+      ),
+      '',
+      'CRITICAL: Maintain exact proportions, clothing, colors, and features for each character.',
+    ].join('\n')
+  }
+
+  private buildPanelPrompt(panel: Panel, concept: StripConcept, characterBlock: string): string {
+    const mood = inferPanelMood(panel.mood)
+
+    return [
+      STYLE_TEMPLATE,
+      '',
+      STRIP_PANEL_RULES,
+      '',
+      '---',
+      '',
+      characterBlock,
+      '',
+      `PANEL ${panel.index + 1} of ${concept.panels.length}`,
+      `NARRATIVE ROLE: ${panel.narrativeRole.toUpperCase()}`,
+      `COLOR MOOD: ${mood}`,
+      '',
+      `STRIP CONTEXT: "${concept.headline}" — ${concept.narrativeArc}`,
+      `JOKE MECHANIC: ${concept.jokeType}`,
+      '',
+      `SCENE DESCRIPTION:`,
+      panel.visual,
+      '',
+      `COMPOSITION & CAMERA:`,
+      panel.composition,
+      '',
+      panel.dialogueBubbles && panel.dialogueBubbles.length > 0
+        ? `NOTE: Leave space at ${panel.dialogueBubbles.map(d => d.position).join(' and ')} for dialogue overlay. Do NOT render any text.`
+        : 'NOTE: This panel has no dialogue. Pure visual storytelling.',
+      '',
+      `CRITICAL REMINDERS:`,
+      `- ZERO text in the image. No words, letters, signs, labels, or speech bubbles.`,
+      `- Square composition (1:1 aspect ratio)`,
+      `- Characters must match the reference sheet EXACTLY`,
+      `- Clean white background`,
+    ].join('\n')
+  }
+
+  // --- Legacy single-panel generation ---
 
   async generate(
     concept: CartoonConcept,
@@ -124,6 +251,8 @@ export class Generator {
     return this.generate(modified, 1)
   }
 
+  // --- Shared utilities ---
+
   private async findReferenceImages(concept: CartoonConcept): Promise<string[]> {
     const urls: string[] = [...(concept.referenceImageUrls ?? [])]
 
@@ -140,7 +269,6 @@ export class Generator {
           continue
         }
 
-        // Layer 1: Wikipedia — best source for high-quality photos of public figures
         const wikiImage = await this.fetchWikipediaImage(subject.name)
         if (wikiImage) {
           this.refImageCache.set(subject.name, wikiImage)
@@ -149,7 +277,6 @@ export class Generator {
           continue
         }
 
-        // Layer 2: Twitter profile picture — fallback
         if (this.twitterApiIo && subject.twitterHandle) {
           try {
             const user = await this.twitterApiIo.getUserInfo(subject.twitterHandle)
@@ -207,7 +334,7 @@ export class Generator {
     return [{ role: 'user' as const, content }]
   }
 
-  private async applySignature(imageBuffer: Buffer): Promise<Buffer> {
+  async applySignature(imageBuffer: Buffer): Promise<Buffer> {
     if (!this.signatureBuffer) return imageBuffer
 
     try {
@@ -215,7 +342,6 @@ export class Generator {
       const { width, height } = await image.metadata()
       if (!width || !height) return imageBuffer
 
-      // Scale signature to ~12% of image width, placed in the top-right corner
       const sigWidth = Math.round(width * 0.12)
       const margin = Math.round(width * 0.02)
 
@@ -237,7 +363,6 @@ export class Generator {
   }
 
   private buildPrompt(concept: CartoonConcept): string {
-    // Determine color mood from joke type
     const mood = this.inferMood(concept)
 
     return [

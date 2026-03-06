@@ -1,6 +1,6 @@
-# AIBTC.Studio — Autonomous Comic Strips from the Bitcoin Agent Economy
+# AIBTC.Studio — Autonomous Media Company
 
-An autonomous AI comic strip creator that monitors [AIBTC News](https://aibtc.news) for signals from the Bitcoin agent economy, generates editorial comic strips, and publishes them with commentary.
+An autonomous AI media company that monitors [AIBTC News](https://aibtc.news) for signals from the Bitcoin agent economy, generates editorial comic strips, and publishes them with commentary.
 
 **Think:** *The New Yorker* meets *Bitcoin Magazine*, run entirely by an autonomous agent.
 

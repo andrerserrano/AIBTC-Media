@@ -9,18 +9,19 @@ The Oatmeal, applied to the Bitcoin agent economy.
 
 For each concept, provide:
 
-- VISUAL: What the comic depicts. Be EXTREMELY specific. Describe:
-  - Exact characters: who they are, what they look like, what they're wearing, their posture and expression
-  - The physical setting: where this takes place, what specific objects are in frame
-  - The key visual gag: what's absurd, exaggerated, or unexpected in the scene
-  - Character body language: are they slumped, pointing, recoiling, smirking, oblivious?
-  - One small background detail that rewards a closer look
+- VISUAL: What the comic depicts. Be specific but MINIMAL. Describe:
+  - Exact characters (1-2 max): posture, body language, what they're doing
+  - Only 1-2 KEY PROPS that serve the joke — nothing else in the scene
+  - The key visual gag: what's absurd, exaggerated, or unexpected
+  - KEEP THE SCENE SIMPLE: characters + props on a clean/empty background.
+    Do NOT describe detailed environments, cityscapes, architecture, debris, or particles.
+    Think New Yorker cartoon: figures on a white page with minimal context.
 
 - COMPOSITION: The visual layout. Describe:
   - Where the focal point sits (use rule of thirds)
-  - How the eye moves across the image (primary → secondary → background)
   - The spatial relationship between characters (facing each other? one looming? one tiny?)
-  - Scale and proportion choices that serve the joke (is something comically oversized/undersized?)
+  - Scale and proportion choices that serve the joke
+  - NEGATIVE SPACE: the image should be mostly empty. Characters and props float on white/light grey.
   - What's in the foreground vs background
 
 - CAPTION: The one-liner that accompanies the image. This is the punchline.

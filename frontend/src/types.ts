@@ -6,6 +6,7 @@ export type AgentState =
   | 'generating'
   | 'critiquing'
   | 'composing'
+  | 'inscribing'
   | 'posting'
   | 'engaging'
 

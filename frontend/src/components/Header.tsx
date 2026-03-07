@@ -9,6 +9,7 @@ const STATE_LABELS: Record<string, { label: string; color: string; bg: string }>
   generating:   { label: 'Drawing',             color: 'text-cobalt',     bg: 'bg-cobalt/8' },
   critiquing:   { label: 'Judging the work',    color: 'text-vermillion', bg: 'bg-vermillion/8' },
   composing:    { label: 'Writing the line',    color: 'text-violet',     bg: 'bg-violet/8' },
+  inscribing:   { label: 'Inscribing to Bitcoin', color: 'text-ochre',     bg: 'bg-ochre/8' },
   posting:      { label: 'Publishing',          color: 'text-forest',     bg: 'bg-forest/8' },
   engaging:     { label: 'Replying',            color: 'text-forest',     bg: 'bg-forest/8' },
 }

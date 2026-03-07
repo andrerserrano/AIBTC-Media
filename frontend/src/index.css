@@ -160,6 +160,13 @@ body::before {
   border: 2.5px solid var(--color-ink);
   border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
   box-shadow: 4px 4px 0 0 rgba(26, 26, 26, 0.08);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+/* Card hover lift — subtle rise + deeper shadow */
+.cartoon-panel-hover:hover {
+  box-shadow: 6px 8px 0 0 rgba(26, 26, 26, 0.12);
+  transform: translateY(-2px);
 }
 
 /* Cartoon button */
@@ -342,6 +349,32 @@ button, [role="button"] {
 
 .stat-glow {
   text-shadow: 0 0 20px currentColor;
+}
+
+/* Stat block — polished dashboard widget */
+.stat-block {
+  background: var(--color-paper-warm);
+  border: 1.5px solid var(--color-border);
+  border-radius: 225px 15px 255px 15px/15px 255px 15px 225px;
+  border-left: 3px solid var(--color-vermillion);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.stat-block:hover {
+  box-shadow: 0 0 12px -4px rgba(194, 54, 22, 0.2);
+  border-color: var(--color-border-strong);
+}
+
+/* Console container — inset terminal look */
+.console-container {
+  background: var(--color-paper-warm);
+  border: 2px solid var(--color-border-strong);
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  box-shadow: inset 2px 2px 6px rgba(26, 26, 26, 0.06);
+}
+
+/* Masthead text — embossed newspaper header */
+.masthead-title {
+  text-shadow: 2px 2px 0 rgba(26, 26, 26, 0.06), -1px -1px 0 rgba(250, 246, 235, 0.4);
 }
 
 /* Status pill shimmer */

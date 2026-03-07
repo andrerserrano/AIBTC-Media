@@ -86,6 +86,7 @@ export function Sidebar({ stats, shortlist, postCount }: SidebarProps) {
 
       {/* Identity / Worldview */}
       <div className="p-5 border-b border-border">
+        <div className="sketch-rule-thin mb-4" />
         <button
           onClick={() => setIdentityOpen(!identityOpen)}
           className="w-full flex items-center justify-between group"
@@ -183,37 +184,40 @@ export function Sidebar({ stats, shortlist, postCount }: SidebarProps) {
       <div className="p-5 border-b border-border">
         <SectionTitle>What I see right now</SectionTitle>
 
-        {shortlist.length === 0 ? (
-          <div className="flex items-center gap-2.5 py-3">
-            <div className="w-[5px] h-[5px] rounded-full bg-cyan animate-[pulse-soft_1.5s_infinite]" />
-            <p className="font-hand text-[15px] text-ink-muted">
-              Scanning for stories...
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-1 mt-2">
-            {shortlist.map((t, i) => (
-              <div
-                key={t.id}
-                className="flex gap-3 group py-1.5 px-2 -mx-2 rounded hover:bg-paper-warm/60 transition-colors"
-              >
-                <div className="shrink-0 flex items-baseline gap-1">
-                  <span className="font-mono text-[9px] text-ink-faint">{i + 1}.</span>
-                  <span className="font-mono text-sm font-bold text-ochre tabular-nums w-7 text-right">
-                    {t.score.toFixed(1)}
+        <div className="console-container mt-3 p-3 max-h-[240px] overflow-y-auto">
+          {shortlist.length === 0 ? (
+            <div className="flex items-center gap-2.5 py-2">
+              <div className="w-[5px] h-[5px] rounded-full bg-cyan animate-[pulse-soft_1.5s_infinite]" />
+              <p className="font-hand text-[15px] text-ink-muted">
+                Scanning for stories...
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              {shortlist.map((t, i) => (
+                <div
+                  key={t.id}
+                  className="flex gap-3 group py-1.5 px-2 -mx-1 rounded hover:bg-paper/60 transition-colors"
+                >
+                  <div className="shrink-0 flex items-baseline gap-1">
+                    <span className="font-mono text-[9px] text-ink-faint">{i + 1}.</span>
+                    <span className="font-mono text-sm font-bold text-ochre tabular-nums w-7 text-right">
+                      {t.score.toFixed(1)}
+                    </span>
+                  </div>
+                  <span className="font-hand text-[15px] text-ink-light leading-snug group-hover:text-ink transition-colors">
+                    {t.summary}
                   </span>
                 </div>
-                <span className="font-hand text-[15px] text-ink-light leading-snug group-hover:text-ink transition-colors">
-                  {t.summary}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* How it works */}
       <div className="p-5 border-b border-border">
+        <div className="sketch-rule-thin mb-4" />
         <SectionTitle>How it works</SectionTitle>
 
         <div className="space-y-3.5 mt-3">
@@ -256,7 +260,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 
 function StatBlock({ label, value, accent }: { label: string; value: number | string; accent?: boolean }) {
   return (
-    <div className="text-center py-2.5 bg-paper sketch-border-thin">
+    <div className="text-center py-2.5 stat-block">
       <div className={`font-mono text-xl font-bold tabular-nums leading-none ${accent ? 'text-vermillion' : 'text-ink'}`}>
         {value}
       </div>

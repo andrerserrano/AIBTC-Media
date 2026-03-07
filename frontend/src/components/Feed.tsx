@@ -158,7 +158,7 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
                 post.imagePath && (
                   <div
                     key={post.id}
-                    className="cartoon-panel overflow-hidden cursor-pointer group animate-[fade-in_0.3s_ease-out]"
+                    className="cartoon-panel cartoon-panel-hover overflow-hidden cursor-pointer group animate-[fade-in_0.3s_ease-out]"
                     style={{ animationDelay: `${i * 0.03}s`, animationFillMode: 'backwards' }}
                     onClick={() => handleImageClick(post, () => setLightboxIndex(i))}
                   >
@@ -272,7 +272,7 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
             >
               {post.imagePath && (
                 <div
-                  className={`relative cartoon-panel overflow-hidden ${post.videoPath ? 'cursor-pointer group' : ''}`}
+                  className={`relative cartoon-panel cartoon-panel-hover overflow-hidden ${post.videoPath ? 'cursor-pointer group' : ''}`}
                   onClick={() => { if (streamMode) return; const s = post.videoPath ? sanitizeVideoPath(post.videoPath) : null; if (s) setVideoSrc(s) }}
                 >
                   <img

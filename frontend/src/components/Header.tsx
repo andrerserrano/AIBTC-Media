@@ -62,7 +62,7 @@ export function Header({ state, connected }: HeaderProps) {
         <div className="px-6 sm:px-10 py-4 sm:py-5">
           <div className="flex items-end justify-between">
             <div className="flex items-baseline gap-3">
-              <h1 className="font-cartoon text-[52px] sm:text-[64px] font-bold text-ink leading-none" style={{ letterSpacing: '-0.02em' }}>
+              <h1 className="font-cartoon text-[52px] sm:text-[64px] font-bold text-ink leading-none masthead-title" style={{ letterSpacing: '-0.02em' }}>
                 AIBTC Media
               </h1>
               <button

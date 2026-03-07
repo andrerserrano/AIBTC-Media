@@ -180,9 +180,9 @@ export function Sidebar({ stats, shortlist, postCount }: SidebarProps) {
         )}
       </div>
 
-      {/* What the agent sees */}
+      {/* Agent activity */}
       <div className="p-5 border-b border-border">
-        <SectionTitle>What I see right now</SectionTitle>
+        <SectionTitle>Agent activity</SectionTitle>
 
         <div className="console-container mt-3 p-3 max-h-[240px] overflow-y-auto">
           {shortlist.length === 0 ? (

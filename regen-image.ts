@@ -10,9 +10,9 @@ import sharp from 'sharp';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 if (!GEMINI_API_KEY) throw new Error('GEMINI_API_KEY required');
 
-const caption = `"The launch was the easy part."`;
+const caption = `"Well, at least we got three hours to celebrate."`;
 
-const cleanVisual = `A robot agent sits at a desk, slumped forward with one hand on its dark screen-face. It wears a small crooked party hat. On the desk: an open laptop seen from behind showing a COMPLETELY PLAIN flat grey back with absolutely nothing on it, a half-eaten slice of cake on a plate, and a coffee mug. Behind the robot on the wall, a simple whiteboard with just two or three clean straight lines forming a basic bar chart outline. The robot body language conveys exhaustion.`;
+const cleanVisual = `A robot agent sits at a desk in a PANIC — arms raised, body leaning back, head tilted in alarm. It wears a small crooked party hat. On the desk: an open laptop seen from behind showing a COMPLETELY PLAIN flat grey back with absolutely nothing on it, a half-eaten slice of cake on a plate, and a coffee mug. Behind the robot on the wall, a simple whiteboard with just two or three clean straight lines forming a basic bar chart outline. The robot body language conveys FRANTIC PANIC and alarm — NOT boredom, NOT exhaustion, NOT calm. The robot looks like it just saw something terrible on the laptop screen.`;
 
 const stylePrompt = `STYLE: Single-panel editorial cartoon. Think New Yorker cartoon simplicity.
 

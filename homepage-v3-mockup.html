@@ -681,8 +681,6 @@ const cartoons = [
       inscriptionId: 'a0eac2ab98787626c980c9dcda4585690db4ca60e45067109ba749144d505b39i0',
       commitTxid: '6db5882c2909da7bacba9bfce26ba67ce868cb69690fddf7f4f89c68d498c719',
       revealTxid: 'a0eac2ab98787626c980c9dcda4585690db4ca60e45067109ba749144d505b39',
-      costSat: 704,
-      costUSD: 0.48,
       feeRate: 1,
       network: 'testnet'
     },
@@ -773,8 +771,6 @@ function openDetail(idx) {
     }
     html += '<span style="color:var(--color-ink-faint);">Network</span>';
     html += '<span style="text-transform:capitalize;">' + (p.network || 'mainnet') + '</span>';
-    html += '<span style="color:var(--color-ink-faint);">Cost</span>';
-    html += '<span>' + (p.costSat || '—') + ' sats (~$' + (p.costUSD || '0') + ')</span>';
     html += '</div>';
     provContent.innerHTML = html;
     provSection.style.display = 'block';

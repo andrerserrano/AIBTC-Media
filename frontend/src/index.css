@@ -364,12 +364,10 @@ button, [role="button"] {
   border-color: var(--color-border-strong);
 }
 
-/* Console container — inset terminal look */
+/* Console container — simple border */
 .console-container {
-  background: var(--color-paper-warm);
-  border: 2px solid var(--color-border-strong);
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  box-shadow: inset 2px 2px 6px rgba(26, 26, 26, 0.06);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
 }
 
 /* Masthead text — embossed newspaper header */

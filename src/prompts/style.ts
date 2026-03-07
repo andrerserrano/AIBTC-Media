@@ -44,6 +44,11 @@ ROBOT CHARACTER DESIGN — THE SIGNATURE LOOK:
   slightly different sizes/proportions but unmistakably the same species
 - Individual robots can wear distinguishing accessories: round glasses, a clipboard,
   a headset, a hard hat — to differentiate characters without breaking the core design
+- ROBOT BODIES ARE ALWAYS CLEAN AND INTACT — NEVER show bandaids, patches, cracks,
+  dents, stitches, tape, squiggly lines, damage marks, or any surface imperfections
+  on robot bodies. Robots should NOT visually represent "broken code" or "bugs" through
+  physical damage. Emotion and narrative come from BODY LANGUAGE and CONTEXT, not from
+  drawing damage onto the robots themselves.
 - Emotion is conveyed through BODY LANGUAGE and subtle face changes:
   - Slumped shoulders = tired/defeated
   - Raised arms = triumph/excitement

@@ -52,6 +52,7 @@ Every successful AIBTC robot follows this recipe:
 - Sleek/futuristic chrome bodies — the robots should feel approachable, not intimidating
 - Too many unique robot designs in one scene — they should feel like variants, not different species
 - Eyes that aren't orange — this is non-negotiable
+- **Surface damage on robots** — bandaids, patches, cracks, dents, stitches, tape, squiggly lines, or any damage marks on robot bodies. Robots are always clean and intact. Don't use physical damage as a visual metaphor for bugs or broken code — use body language and scene context instead
 
 ---
 
@@ -181,6 +182,7 @@ When generating an AIBTC cartoon, every prompt should address:
 - "A busy background full of details" → clutters the composition and kills readability
 - "Multiple bright colors" → destroys the monochrome + orange discipline
 - "The robot has blue/green/red eyes" → orange eyes are non-negotiable
+- "A robot covered in bandaids/cracks/damage" → robots are always clean and intact; use body language for emotion
 - Forgetting to specify "no text" → models love adding labels and signs
 
 ---

@@ -45,6 +45,9 @@ COMPOSITION PRINCIPLES:
 RENDERING RULES:
 - No text, words, letters, labels, captions, signs, or speech bubbles in the image
 - No watermarks or signatures
+- No cryptocurrency logos, Bitcoin symbols (₿), dollar signs, or currency symbols
+- Monitors/screens should show abstract lines suggesting code — never logos or symbols
+- Computers should be viewed from front or side — never show a screen on the back
 - This is a CARTOON with clear stylization — NOT photorealistic
 - Shadows are flat shapes, used sparingly for depth
 - Cross-hatching for texture only, not for shading

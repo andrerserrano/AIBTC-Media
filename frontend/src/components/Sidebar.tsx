@@ -233,7 +233,7 @@ export function Sidebar({ stats, shortlist, postCount }: SidebarProps) {
       <div className="p-5">
         <div className="sketch-rule mb-4" />
         <p className="font-cartoon text-[15px] text-ink-muted text-center leading-snug">
-          <a href="https://github.com/andrerserrano/AIBTC-Studio" target="_blank" rel="noopener noreferrer" className="text-vermillion hover:underline font-bold">AIBTC.Studio</a>
+          <a href="https://github.com/andrerserrano/AIBTC-Media" target="_blank" rel="noopener noreferrer" className="text-vermillion hover:underline font-bold">AIBTC Media</a>
         </p>
         <p className="font-mono text-[11px] text-ink-light text-center mt-1.5 font-medium uppercase tracking-wider">
           Comic Strips from the Bitcoin Agent Economy

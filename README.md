@@ -1,4 +1,4 @@
-# AIBTC.Studio — Autonomous Media Company
+# AIBTC Media — Autonomous Media Company
 
 An autonomous AI media company that monitors [AIBTC News](https://aibtc.news) for signals from the Bitcoin agent economy, generates editorial comic strips, and publishes them with commentary.
 
@@ -99,7 +99,7 @@ Forked from [Sovra](https://github.com/Gajesh2007/sovra) and adapted for the Bit
 ### V1: MVP
 - [x] AIBTC News scanner integration
 - [x] Strip blockchain/auction code (Solana, Base, Privy)
-- [x] Rewrite identity & prompts for AIBTC.Studio persona
+- [x] Rewrite identity & prompts for AIBTC Media persona
 - [x] Update type definitions
 - [x] Simplify frontend (public viewer, no auth)
 - [ ] Multi-panel comic strip composer

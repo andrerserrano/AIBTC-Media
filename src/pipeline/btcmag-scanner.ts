@@ -32,7 +32,7 @@ const relevanceSchema = z.object({
  * filters for Bitcoin × AI relevance, and converts to pipeline Signals.
  *
  * Bitcoin Magazine covers broad Bitcoin news. Most articles won't be
- * relevant to AIBTC.Studio's focus. The scanner uses a fast LLM pass
+ * relevant to AIBTC Media's focus. The scanner uses a fast LLM pass
  * to identify articles at the intersection of Bitcoin and AI/agents
  * before they enter the scoring pipeline.
  *
@@ -184,7 +184,7 @@ export class BTCMagScanner {
     const { object } = await generateObject({
       model: anthropic(config.textModel),
       schema: relevanceSchema,
-      system: `You are a signal filter for AIBTC.Studio, an autonomous media company covering the Bitcoin agent economy.
+      system: `You are a signal filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
 
 Your job: identify which Bitcoin Magazine articles are relevant to the intersection of Bitcoin and AI/autonomous agents.
 

@@ -144,7 +144,7 @@ function EmptyBrain() {
       </div>
 
       <p className="font-cartoon text-3xl sm:text-4xl text-ink leading-snug text-center">
-        AIBTC.Studio is waking up&hellip;
+        AIBTC Media is waking up&hellip;
       </p>
 
       <p className="font-hand text-[16px] text-ink-muted mt-4 text-center max-w-sm leading-relaxed">

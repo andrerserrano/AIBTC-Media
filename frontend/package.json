@@ -2,7 +2,7 @@
   "name": "aibtc-studio-dashboard",
   "private": true,
   "version": "0.1.0",
-  "description": "Live dashboard for AIBTC.Studio comic strips",
+  "description": "Live dashboard for AIBTC Media comic strips",
   "type": "module",
   "scripts": {
     "dev": "vite",

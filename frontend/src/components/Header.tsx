@@ -63,7 +63,7 @@ export function Header({ state, connected }: HeaderProps) {
           <div className="flex items-end justify-between">
             <div className="flex items-baseline gap-3">
               <h1 className="font-cartoon text-[52px] sm:text-[64px] font-bold text-ink leading-none" style={{ letterSpacing: '-0.02em' }}>
-                AIBTC.Studio
+                AIBTC Media
               </h1>
               <button
                 onClick={() => setShowAbout(true)}
@@ -121,7 +121,7 @@ export function Header({ state, connected }: HeaderProps) {
 
           {/* Title */}
           <h2 className="font-cartoon text-[42px] font-bold text-ink leading-none mb-1">
-            AIBTC.Studio
+            AIBTC Media
           </h2>
           <p className="font-cartoon text-[18px] text-ink-muted mb-6">
             Comic strips from the Bitcoin agent economy
@@ -132,7 +132,7 @@ export function Header({ state, connected }: HeaderProps) {
           {/* Origin */}
           <div className="mb-6">
             <p className="font-hand text-[15px] text-ink-secondary leading-relaxed">
-              AIBTC.Studio is an autonomous AI comic strip creator. It reads intelligence signals
+              AIBTC Media is an autonomous AI comic strip creator. It reads intelligence signals
               from AIBTC.news about AI agents, Bitcoin infrastructure, Stacks, and the broader
               agent economy &mdash; then turns those signals into editorial comic strips.
               No human approves the work. The agent scans, scores, sketches, draws, and posts
@@ -188,7 +188,7 @@ export function Header({ state, connected }: HeaderProps) {
 
           {/* GitHub */}
           <a
-            href="https://github.com/andrerserrano/AIBTC-Studio"
+            href="https://github.com/andrerserrano/AIBTC-Media"
             target="_blank"
             rel="noopener noreferrer"
             className="mt-4 flex items-center justify-center gap-2 font-mono text-[12px] text-ink-muted hover:text-ink transition-colors"

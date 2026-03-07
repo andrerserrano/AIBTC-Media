@@ -1,5 +1,5 @@
 // ============================================================
-// AIBTC.Studio — Frontend Configuration
+// AIBTC Media — Frontend Configuration
 // ============================================================
 
 export const config = {} as const

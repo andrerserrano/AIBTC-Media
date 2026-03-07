@@ -1,4 +1,4 @@
-# AIBTC Studio — Visual Style Guide
+# AIBTC Media — Visual Style Guide
 
 ## Format
 Single-panel editorial cartoon + italic caption. Not a multi-panel comic strip.

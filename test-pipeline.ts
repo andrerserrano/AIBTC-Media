@@ -1,7 +1,7 @@
 /**
  * Test: Scan → Score pipeline
  *
- * Exercises Phase 1 of AIBTC.Studio:
+ * Exercises Phase 1 of AIBTC Media:
  * 1. AIBTCScanner fetches signals from aibtc.news
  * 2. Scorer evaluates and ranks them for comic strip potential
  *
@@ -19,7 +19,7 @@ import type { Signal } from './src/types.js'
 const DATA_DIR = '.data-test'
 
 async function testPipeline() {
-  console.log('=== AIBTC.Studio Pipeline Test ===\n')
+  console.log('=== AIBTC Media Pipeline Test ===\n')
 
   // Setup
   await mkdir(DATA_DIR, { recursive: true })

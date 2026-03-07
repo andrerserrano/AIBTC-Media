@@ -22,7 +22,7 @@ const batchScoreSchema = z.object({
       audienceBreadth: z.number().describe('Score 0-10'),
       timeliness: z.number().describe('Score 0-10'),
       humor: z.number().describe('Score 0-10'),
-      worldviewAlignment: z.number().describe('Score 0-10: how well does this connect to AIBTC.Studio\'s themes (Bitcoin agent economy, Stacks/sBTC, open protocols)?'),
+      worldviewAlignment: z.number().describe('Score 0-10: how well does this connect to AIBTC Media\'s themes (Bitcoin agent economy, Stacks/sBTC, open protocols)?'),
       reasoning: z.string().describe('Brief explanation of the scoring'),
     }),
   ),

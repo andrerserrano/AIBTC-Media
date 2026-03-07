@@ -186,7 +186,7 @@ async function main() {
 
   // Start
   await app.listen({ port: config.port, host: '0.0.0.0' })
-  console.log(`AIBTC.Studio dashboard: http://localhost:${config.port}`)
+  console.log(`AIBTC Media dashboard: http://localhost:${config.port}`)
   console.log(`Console stream: http://localhost:${config.port}/api/console/stream`)
 
   agent.start()

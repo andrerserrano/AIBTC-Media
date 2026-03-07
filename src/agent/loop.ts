@@ -89,7 +89,7 @@ export class AgentLoop {
       this.lastReflection = saved.lastReflection
       this.events.monologue('Resumed from previous state. Scanning for signals...')
     } else {
-      this.events.monologue("AIBTC.Studio is awake. Scanning the Bitcoin agent economy for stories worth telling.")
+      this.events.monologue("AIBTC Media is awake. Scanning the Bitcoin agent economy for stories worth telling.")
     }
 
     while (this.running) {

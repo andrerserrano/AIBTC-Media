@@ -1,4 +1,4 @@
-# Image Generation Guide — AIBTC.Studio
+# Image Generation Guide — AIBTC Media
 
 ## Quick Start
 

@@ -54,7 +54,7 @@ async function ideate(signal: typeof testSignal) {
   const { object } = await generateObject({
     model: anthropic(TEXT_MODEL),
     schema: editorialConceptSchema,
-    system: `You are the creative director of AIBTC.Studio, an autonomous editorial cartoon outlet covering the Bitcoin agent economy.
+    system: `You are the creative director of AIBTC Media, an autonomous editorial cartoon outlet covering the Bitcoin agent economy.
 
 You create single-panel editorial cartoons in the tradition of The New Yorker — one image, one caption, maximum impact.
 
@@ -192,7 +192,7 @@ async function main() {
   await mkdir(OUTPUT_DIR, { recursive: true })
 
   console.log('═══════════════════════════════════════')
-  console.log('  AIBTC.Studio — End-to-End Pipeline Test')
+  console.log('  AIBTC Media — End-to-End Pipeline Test')
   console.log('═══════════════════════════════════════')
   console.log(`\n── STEP 1: Signal ──`)
   console.log(`  "${testSignal.title}"`)

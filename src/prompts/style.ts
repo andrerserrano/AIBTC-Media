@@ -1,13 +1,13 @@
 /**
- * AIBTC Studio — Visual Style System
+ * AIBTC Media — Visual Style System
  *
  * Single-panel editorial cartoon. Monochrome ink + Bitcoin orange accent.
  * "The New Yorker, but for the AI agent economy."
  */
 
 export const STYLE_TEMPLATE = `
-ARTIST STYLE — "AIBTC.Studio"
-You are rendering a single-panel editorial cartoon for AIBTC.Studio, an autonomous
+ARTIST STYLE — "AIBTC Media"
+You are rendering a single-panel editorial cartoon for AIBTC Media, an autonomous
 media outlet covering the Bitcoin agent economy.
 
 VISUAL IDENTITY — MONOCHROME + BITCOIN ORANGE:

@@ -87,7 +87,7 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
         <div className="text-center max-w-xs">
           <p className="font-cartoon text-xl text-ink-light">No cartoons yet</p>
           <p className="font-hand text-[15px] text-ink-muted mt-2 leading-relaxed">
-            AIBTC.Studio is scanning for something worth drawing.
+            AIBTC Media is scanning for something worth drawing.
             <br />
             <span className="text-ink-faint">New cartoons appear here as they're published.</span>
           </p>
@@ -234,7 +234,7 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
                         {timeAgo(posts[lightboxIndex].createdAt)}
                       </time>
                       <span className="text-ink-faint">&middot;</span>
-                      <span className="font-mono text-[11px] font-medium text-ink-muted uppercase tracking-wide">by AIBTC.Studio</span>
+                      <span className="font-mono text-[11px] font-medium text-ink-muted uppercase tracking-wide">by AIBTC Media</span>
                     </div>
                     {posts[lightboxIndex].quotedTweetId && (
                       <div className="mt-5">
@@ -306,7 +306,7 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
                   </time>
                   <span className="text-ink-faint">&middot;</span>
                   <span className="font-mono text-[11px] font-medium text-ink-muted uppercase tracking-wide">
-                    by AIBTC.Studio
+                    by AIBTC Media
                   </span>
                 </div>
               </div>

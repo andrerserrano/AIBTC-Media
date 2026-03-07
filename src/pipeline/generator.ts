@@ -366,24 +366,30 @@ export class Generator {
       `4. Clean negative space — resist the urge to fill every corner`,
       '',
       `CRITICAL REMINDERS:`,
-      `- ZERO text in the image. No words, letters, signs, labels, or speech bubbles whatsoever.`,
-      `- Single panel, clean white background, thick border`,
-      `- Maximum 3 characters in frame`,
+      `- NO speech bubbles, dialogue, or full sentences in the image.`,
+      `- Minimal contextual text is OK (1-3 word labels like "PROPOSAL #47" on a whiteboard).`,
+      `- Single panel, white/cream canvas (NEVER grey or tinted background), thick border`,
+      `- Halftone dot-pattern shading for all grey areas — newspaper editorial look`,
+      `- Robots MUST have: dark screen-head, orange rectangle-eyes, antenna, circular ear-speakers, segmented limbs`,
+      `- All devices are GENERIC and UNBRANDED — no Apple, Google, or real logos`,
       `- Every prop must serve the joke — if it doesn't make the gag funnier, remove it`,
+      `- ONLY use greyscale + Bitcoin orange (#E8740C). No blues, teals, greens, or other hues.`,
     ].join('\n')
   }
 
   private inferMood(concept: CartoonConcept): string {
     const text = `${concept.visual} ${concept.jokeType} ${concept.reasoning}`.toLowerCase()
-    if (/tech|ai|robot|algorithm|data|digital|screen|phone|computer/.test(text)) {
-      return 'COOL — use slate blue, teal, muted purple, off-white. Tech/digital atmosphere.'
-    }
+    // All moods use ONLY greyscale + Bitcoin orange (#E8740C).
+    // Mood affects contrast and weight, never hue.
     if (/chaos|urgent|breaking|disaster|fire|crash|panic|war/.test(text)) {
-      return 'HOT — use vermillion, amber, charcoal, white. High energy, alarming.'
+      return 'HIGH CONTRAST — deep blacks, bright whites, minimal mid-grey. Bold, punchy energy. Monochrome + orange only.'
     }
     if (/money|business|corporate|ceo|profit|market|stock/.test(text)) {
-      return 'CORPORATE — use forest green, navy, gold, cream. Power and money vibes.'
+      return 'HEAVY — rich dark greys, strong shadows, dense halftone shading. Weighty, serious. Monochrome + orange only.'
     }
-    return 'WARM — use ochre, warm gray, dusty rose, cream. Ironic, wry, human.'
+    if (/tech|ai|robot|algorithm|data|digital|screen|phone|computer/.test(text)) {
+      return 'CLEAN — light greys, generous white space, precise lines. Clinical, modern. Monochrome + orange only.'
+    }
+    return 'WARM — soft mid-greys, gentle halftone shading, balanced contrast. Wry, human. Monochrome + orange only.'
   }
 }

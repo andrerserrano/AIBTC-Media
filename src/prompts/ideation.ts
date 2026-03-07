@@ -10,18 +10,27 @@ The Oatmeal, applied to the Bitcoin agent economy.
 For each concept, provide:
 
 - VISUAL: A clear scene with a SIMPLE SETTING and specific props that tell the story.
-  - 1-3 characters: robot agents (boxy bodies, round dark screen-heads, small orange dot-eyes) and/or humans
+  - FEATURED CHARACTERS: 1-3 robot agents and/or humans with full detail and expression.
+    Robots have: rounded-rectangle dark screen-heads, orange glowing rectangle-eyes,
+    small antenna on top, circular ear-speakers on sides, boxy segmented bodies.
+  - CROWD/SWARM: When the joke IS a mass of robots (rushing somewhere, flooding a space),
+    describe them as a crowd of small identical robots — simplified, repeated shapes.
+    The swarm reads as one visual element.
   - Each robot has EXACTLY TWO arms and TWO legs. Never describe a robot with extra limbs.
-  - Include a SETTING that grounds the joke: a desk, a server room, a conference table, a workbench, etc.
-  - Include 2-4 SPECIFIC PROPS that serve the joke: coffee cups, stacks of paper, tools, monitors, chairs
-  - Humans are welcome — tired developers, confused PMs, overwhelmed reviewers
+  - Robots can have distinguishing accessories: round glasses, a clipboard, a headset, a hard hat.
+  - Include a SETTING that grounds the joke: a desk, a server room, a conference table, a bridge, etc.
+  - Include 1-3 SPECIFIC PROPS that serve the joke: coffee cups, stacks of paper, tools, monitors, chairs
+  - Humans are welcome — tired developers, confused PMs, overwhelmed reviewers,
+    construction workers with hard hats and safety vests
   - The scene should feel like a SITUATION — something is happening, there's a story
-  - BUT keep it clean: no cluttered cityscapes, no particle effects, no debris clouds, no busy backgrounds
-  - Background should be simple (plain white wall, simple room outline) not complex architecture
-  - Any whiteboards or boards in the scene should be COMPLETELY BLANK — just an empty rectangle
+  - Background: the page/canvas is always WHITE or CREAM. Environments are drawn on that white canvas.
+    NEVER describe a grey, blue, or tinted background fill.
+  - Any whiteboards or boards in the scene can have SHORT contextual labels (1-3 words max)
+    or abstract marks (wavy lines, grid patterns). No full sentences.
   - All laptops and devices must be GENERIC and UNBRANDED — no Apple, Google, or any real logos
-  - NO text in the scene — no signs, labels, banners, screen text. Screens show abstract lines only.
-  - NO floating Bitcoin symbols or crypto logos scattered around
+  - NO speech bubbles or dialogue in the image — the caption below carries the words
+  - NO floating Bitcoin symbols or crypto logos scattered around — Bitcoin appears only
+    as small environmental details (logo on a building, icon on a badge)
 
 - COMPOSITION: The visual layout. Describe:
   - Where the focal point sits (use rule of thirds)
@@ -41,11 +50,12 @@ For each concept, provide:
 
 Rules:
 - Each concept must use a DIFFERENT joke angle. Don't generate variations of the same gag.
-- Keep visuals SIMPLE — single panel, 1-3 characters max, clear focal point.
-- ABSOLUTELY no text IN the image. The caption is separate and posted alongside.
-  This means your VISUAL description must NEVER describe readable text on screens, signs,
-  banners, labels, or badges. Instead of "monitor showing '404 ERROR'", write
-  "monitor with abstract error-like lines". Instead of "banner reading 'LAUNCH DAY'",
+- Keep visuals CLEAN — single panel, clear focal point.
+- The caption is SEPARATE from the image and posted alongside.
+  This means your VISUAL description must NEVER describe readable full sentences on screens,
+  signs, or banners. Short contextual labels (1-3 words like "PROPOSAL #47") are fine.
+  Instead of "monitor showing '404 ERROR'", write "monitor with abstract error-like lines"
+  or "monitor with a small error icon". Instead of "banner reading 'LAUNCH DAY'",
   write "a small celebratory banner". The image generator WILL render any text you describe.
 - All devices (laptops, monitors, tablets) must be described as GENERIC and UNBRANDED.
   Never mention "MacBook", "iPhone", or any brand. Say "laptop" or "generic laptop".

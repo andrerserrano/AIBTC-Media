@@ -9,51 +9,72 @@ One image. One joke. Maximum shareability.
 **Ink:** Bold, confident black line art. Thick outlines (2-3px), not sketchy or tentative.
 Strong shadows, confident hatching. Editorial weight — not cute, not delicate.
 
+**Shading:** Use halftone dot-pattern shading for mid-tones — this gives the editorial
+newspaper print feel. Avoid smooth gradients. The shading should feel like a printed
+newspaper cartoon, with visible dot texture on grey areas (robot bodies, suits, furniture).
+
 **Color palette:** Black + greyscale wash + ONE accent color.
 - Accent: Bitcoin orange `#E8740C`
 - Use orange ONLY on: robot eyes (always), and at most ONE other small element
-  (a coffee mug, a warning light, a hard hat, a notification dot)
+  (a coffee mug, a warning light, a hard hat, a notification dot, a party hat)
 - Everything else is white, light grey, medium grey, dark grey, black
 - The orange pops BECAUSE it's the only warmth in an otherwise monochrome image
 - **The Orange Rule:** Count the orange elements. If there are more than 4 instances,
   it's too many. The ideal is 2-3: robot eyes + one accent prop.
 
-**Background:** Clean white/cream. No busy backgrounds unless the scene specifically demands an environment.
+**Background:** The overall canvas is always white or cream — NEVER grey, blue, or any
+other colored fill behind the scene. Within that white canvas, environments and architecture
+(rooms, bridges, furniture) are rendered in greyscale. The key distinction: a white page
+with a greyscale bridge drawn on it is correct. A grey-tinted page is wrong.
 
 ## Robot Character Design — The Signature Look
 
 The robot is the brand. Every AIBTC robot follows this formula:
 
-1. **Round screen-head** — A simple circle or rounded rectangle that reads as a "display screen."
+1. **Rounded-rectangle screen-head** — A rounded rectangle (wider than tall) that reads
+   as a "display screen" or old CRT monitor. Slightly rounded corners, thick border.
    This is the single most recognizable feature.
-2. **Orange dot-eyes** — Two orange circles/dots on the screen-face. These are the ONLY color
-   on the robot. The orange is `#E8740C` (Bitcoin orange). The eyes glow — they feel lit from within.
-3. **Minimal face** — Eyes + optional simple line mouth. No nose, no eyebrows, no complex expressions.
-   Emotion comes from eye size, spacing, and head tilt.
-4. **Boxy body** — Rectangular torso, simple limbs. Not sleek or futuristic — more
-   "friendly appliance" than "Terminator."
-5. **Family resemblance** — Robots in a scene can vary in size and proportion, but they share
+2. **Orange dot-eyes** — Two vertical orange rectangles or rounded dots on the screen-face.
+   These are the ONLY color on the robot. The orange is `#E8740C` (Bitcoin orange).
+   The eyes glow — they feel lit from within against the dark screen.
+3. **Small antenna** — A single small antenna or nub on top of the screen-head.
+4. **Circular ear-speakers** — Round speaker/sensor discs mounted on either side of the head,
+   like headphone cups. These give the robot its distinctive silhouette.
+5. **Minimal face** — Eyes + optional simple line mouth on the dark screen.
+   No nose, no eyebrows, no complex expressions. Emotion comes from eye shape
+   (narrow = skeptical, wide = surprised), mouth line, and head tilt.
+6. **Boxy body** — Rectangular torso with visible segmented/ribbed limbs.
+   Not sleek or futuristic — more "friendly appliance" than "Terminator."
+   Segmented arms and legs (like corrugated tubing or stacked cylinders).
+7. **Family resemblance** — Robots in a scene can vary in size and proportion, but they share
    the same design language. They look like they rolled off the same assembly line.
-6. **Expressive posture** — Since faces are minimal, all emotion lives in body language:
+8. **Distinguishing accessories** — Individual robots can be differentiated with small
+   accessories: round glasses, a clipboard, a headset, a hard hat. These help distinguish
+   characters in multi-character scenes without breaking the core design.
+9. **Expressive posture** — Since faces are minimal, all emotion lives in body language:
    - Slumped shoulders = tired/defeated
    - Raised arms = triumph/excitement
    - Tilted head = curiosity/confusion
    - Forward lean = engagement/eagerness
-   - Crossed arms = skepticism (for humans)
+   - Pointing finger = authority/accusation
 
 ### What Breaks the Design
-- Overly detailed faces (pupils, eyebrows, nostrils)
+- Overly detailed faces (pupils, eyebrows, nostrils, teeth)
 - Sleek/futuristic chrome bodies — the robots should feel approachable, not intimidating
 - Too many unique robot designs in one scene — they should feel like variants, not different species
 - Eyes that aren't orange — this is non-negotiable
+- Missing antenna or ear-speakers — these complete the silhouette
+- Smooth/gradient shading instead of halftone dots
+- Grey or colored page background behind the entire scene
 
 ## Human Characters (when present)
 
 - Same bold ink style as robots — minimal detail, maximum personality through posture
-- Rendered in pure greyscale — no orange on human characters (except maybe a hard hat)
+- Rendered in pure greyscale with halftone dot-shading — no orange on human characters
+  (except props they're holding: a hard hat, a safety vest, a coffee mug)
 - Often the "straight man" reacting to agent behavior
 - Archetypal roles: tired developer with coffee, overwhelmed reviewer, confused PM,
-  bewildered construction worker
+  bewildered construction worker with hard hat and safety vest
 
 ## Bitcoin/Crypto Symbol Usage
 
@@ -76,18 +97,52 @@ on Bitcoin itself regardless of intent.
 - Lightning bolt symbols get the same treatment: small, architectural, environmental
 - NEVER render Bitcoin symbols on fire, exploding, or in distress
 
+## Text in the Image
+
+The default is NO text in the generated image — the caption below carries the words.
+However, **minimal contextual text** is acceptable when it serves the scene:
+
+### What's Allowed
+- A short label on a whiteboard or document (1-3 words max, e.g., "PROPOSAL #47")
+- A number or brief identifier that contextualizes the scene
+- Small text on a mug or badge (e.g., a ₿ logo)
+- Abstract wavy lines on screens, monitors, and charts (preferred over real text)
+
+### What's NOT Allowed
+- Speech bubbles or dialogue in the image
+- Signs, banners, or labels with full sentences
+- Readable text on computer screens (use abstract lines instead)
+- Any text that duplicates or competes with the caption
+- Brand names or logos (Apple, Google, etc.) — all devices are generic and unbranded
+
+The rule of thumb: if the text helps a viewer understand the SETTING in one glance,
+it's fine. If it tells the JOKE, it belongs in the caption instead.
+
 ## Composition
 
 - Square (1:1) aspect ratio — optimized for social media
 - Strong, clear focal point — you should "get it" in under 2 seconds
 - Rule of thirds for primary subject placement
 - Generous negative space — let the cartoon breathe
-- Maximum 3-4 characters. Fewer is usually better.
-- Props and environment are minimal but specific — every object serves the joke
-- Leave ~12% blank space at the bottom for caption compositing
-- Scale contrasts drive humor: tiny robot vs. massive server, lone human vs. army of bots
-- NO text in the generated image — no speech bubbles, no labels, no signs
-- All text lives in the caption below
+
+### Characters
+- **Featured characters:** 1-3 characters with full detail, expressions, and body language.
+  These are the actors in the scene. Fewer is usually better.
+- **Crowd/swarm elements:** When the joke IS a mass of robots (e.g., agents rushing a bridge,
+  flooding a server room), small identical robots can appear as a crowd. These are rendered
+  as simplified repeated shapes — they don't need individual expressions.
+  The swarm reads as a single visual element, not as 10 separate characters.
+
+### Environments
+- Default to clean, minimal settings: a desk, a conference table, a simple room outline.
+- **When the setting IS the joke**, the environment gets full rendering — a bridge,
+  a server tower, an assembly line. The architecture should be structurally clear
+  and rendered in greyscale on the white canvas.
+- Even detailed environments should feel clean and readable — not cluttered.
+  Architectural detail serves the story, not decoration.
+- Props and environment elements are specific — every object serves the joke.
+- Leave ~12% blank space at the bottom for caption compositing.
+- Scale contrasts drive humor: tiny robot vs. massive server, lone human vs. army of bots.
 
 ## Caption Style
 
@@ -126,12 +181,16 @@ Count the orange elements. If there are more than 4 instances of orange, it's to
 The ideal is 2-3: robot eyes + one accent prop.
 
 ### The Squint Test
-Squint at the image. Can you still make out the robot's head shape and glowing eyes?
-If yes, the design is iconic enough.
+Squint at the image. Can you still make out the robot's head shape, ear-speakers,
+and glowing eyes? If yes, the design is iconic enough.
 
 ### The Caption Gap
 The best cartoons have a gap between what you SEE and what the caption SAYS.
 The image sets up the situation; the caption reframes it through a deadpan reaction.
+
+### The Background Test
+Is the overall page/canvas white or cream? Good. Is it grey or tinted? Bad.
+Environments drawn ON the white canvas are fine — a grey fill BEHIND everything is not.
 
 ## What This Is NOT
 

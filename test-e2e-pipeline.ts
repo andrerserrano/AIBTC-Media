@@ -264,13 +264,15 @@ COMPOSITION STYLE (CRITICAL — this defines the brand):
 - NO debris clouds, NO particle effects, NO scattered floating objects
 - Generous negative space — the cartoon should BREATHE, with white space around the scene
 - Think editorial cartoon: the scene is grounded and readable but not photorealistic or cluttered
+- WHITEBOARDS or BOARDS in background: Keep extremely clean — just 2-3 simple straight lines forming a basic chart or a few short horizontal lines. NOT messy squiggles, NOT chaotic scribbles. Think of a clean presentation slide with minimal content.
 - Leave ~12% blank space at bottom edge for caption overlay
 - Square 1:1 aspect ratio
 
 ABSOLUTE RULES:
 - ZERO text anywhere — no words, letters, labels, signs, speech bubbles, banners
 - Monitors/screens show abstract lines — NEVER readable text
-- NO real-world brand logos (Apple, Google, Microsoft, etc.) — laptops and devices should be generic/unbranded
+- NO logos of ANY kind on ANY device — laptops must have COMPLETELY PLAIN, FLAT backs with NO symbol, NO circle, NO apple shape, NO bite mark, NO emblem, NO lines, NO decoration whatsoever. Just a plain solid grey rectangle.
+- NO real-world brand logos (Apple, Google, Microsoft, etc.) anywhere in the scene
 - Maximum 3 characters
 - Bitcoin symbols: small environmental detail only, never focal`;
 

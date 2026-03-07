@@ -23,7 +23,10 @@ VISUAL IDENTITY — MONOCHROME + BITCOIN ORANGE:
 - LIMITED COLOR PALETTE: Black line art + greyscale wash + ONE accent color
 - Accent color: warm orange (#E8740C) — Bitcoin orange
 - Use orange ONLY on: robot eyes (always), and at most ONE other small element
-  (a coffee mug, a warning light, a hard hat, a notification dot)
+  (a coffee mug, a warning light, a hard hat, a notification dot, a candle flame)
+- Flames and fire should be orange — this is a natural use of the accent color
+- Orange accents should be applied directly to objects (e.g. the flame itself), NOT as
+  circles, halos, or glowing orbs around objects
 - Everything else is white, light grey, medium grey, dark grey, black
 - The orange pops BECAUSE it's the only warmth in an otherwise monochrome image
 - COUNT THE ORANGE: if more than 3-4 orange elements appear, it's too many. Ideal is 2-3.

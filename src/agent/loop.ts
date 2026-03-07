@@ -15,6 +15,7 @@ import { TwitterClient } from '../twitter/client.js'
 import { EngagementLoop } from '../twitter/engagement.js'
 import { Editor } from '../pipeline/editor.js'
 import { Composer } from '../pipeline/composer.js'
+import { Inscriber } from '../pipeline/inscriber.js'
 import { JsonStore } from '../store/json-store.js'
 import { toCdnUrl } from '../cdn/r2.js'
 import { config } from '../config/index.js'
@@ -69,6 +70,7 @@ export class AgentLoop {
     private engagement: EngagementLoop,
     private editor: Editor,
     private composer: Composer,
+    private inscriber: Inscriber,
     private stores: AgentStores,
     private worldview?: WorldviewStore,
   ) {
@@ -280,6 +282,9 @@ export class AgentLoop {
     // Compose the final framed cartoon (image + orange divider + caption)
     const composedPath = await this.composer.composeCartoon(variants[0], caption)
 
+    // Inscribe onto Bitcoin (non-blocking — failure won't prevent posting)
+    const provenance = await this.inscriber.inscribe(composedPath)
+
     const cartoon: Cartoon = {
       id: randomUUID(),
       conceptId: best.id,
@@ -292,6 +297,7 @@ export class AgentLoop {
       critique,
       caption,
       createdAt: Date.now(),
+      provenance,
     }
 
     const tweetId = await this.twitter.postCartoon({ text: caption, imagePath: composedPath })
@@ -305,6 +311,7 @@ export class AgentLoop {
       type: 'flagship',
       postedAt: Date.now(),
       engagement: { likes: 0, retweets: 0, replies: 0, views: 0, lastChecked: 0 },
+      provenance,
     }
 
     await this.stores.cartoons.update((c) => [...c, cartoon], [])
@@ -373,6 +380,9 @@ export class AgentLoop {
     // Compose the final framed cartoon (image + orange divider + caption)
     const composedPath = await this.composer.composeCartoon(variants[0], caption)
 
+    // Inscribe onto Bitcoin (non-blocking — failure won't prevent posting)
+    const provenance = await this.inscriber.inscribe(composedPath)
+
     const cartoon: Cartoon = {
       id: randomUUID(),
       conceptId: concept.id,
@@ -388,6 +398,7 @@ export class AgentLoop {
       },
       caption,
       createdAt: Date.now(),
+      provenance,
     }
 
     const tweetId = await this.twitter.postCartoon({ text: caption, imagePath: composedPath })
@@ -401,6 +412,7 @@ export class AgentLoop {
       type: 'quickhit',
       postedAt: Date.now(),
       engagement: { likes: 0, retweets: 0, replies: 0, views: 0, lastChecked: 0 },
+      provenance,
     }
 
     await this.stores.cartoons.update((c) => [...c, cartoon], [])

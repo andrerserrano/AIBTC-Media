@@ -18,6 +18,7 @@ import type { TwitterReadProvider } from './twitter/provider.js'
 import { EngagementLoop } from './twitter/engagement.js'
 import { Editor } from './pipeline/editor.js'
 import { Composer } from './pipeline/composer.js'
+import { Inscriber } from './pipeline/inscriber.js'
 import { AgentLoop } from './agent/loop.js'
 import { WorldviewStore } from './agent/worldview.js'
 import { BackupStore } from './store/backup.js'
@@ -101,6 +102,7 @@ async function main() {
   const captioner = new Captioner(events)
   const editor = new Editor(events)
   const composer = new Composer(events, generator)
+  const inscriber = new Inscriber(events)
 
   // --- Engagement ---
   const engagement = new EngagementLoop(events, twitter, stores.posts)
@@ -109,7 +111,7 @@ async function main() {
   // --- Agent loop ---
   const agent = new AgentLoop(
     events, scanner, scorer, ideator, generator, captioner,
-    twitter, engagement, editor, composer, stores, worldview,
+    twitter, engagement, editor, composer, inscriber, stores, worldview,
   )
 
   // --- HTTP server ---
@@ -156,6 +158,7 @@ async function main() {
         imagePath,
         quotedTweetId: p.quotedTweetId,
         createdAt: p.postedAt,
+        provenance: p.provenance ?? null,
       } : null
     }))
 

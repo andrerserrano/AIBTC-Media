@@ -147,6 +147,17 @@ export interface ConceptCritique {
   critique: string
 }
 
+/** On-chain provenance from Bitcoin Ordinals inscription */
+export interface Provenance {
+  inscriptionId: string
+  commitTxid: string
+  revealTxid: string
+  costSat: number
+  costUSD: number
+  feeRate: number
+  network: string
+}
+
 export interface Cartoon {
   id: string
   conceptId: string
@@ -159,6 +170,7 @@ export interface Cartoon {
   critique: ConceptCritique
   caption: string
   createdAt: number
+  provenance?: Provenance
 }
 
 export interface Post {
@@ -178,4 +190,5 @@ export interface Post {
     views: number
     lastChecked: number
   }
+  provenance?: Provenance
 }

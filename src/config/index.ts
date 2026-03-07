@@ -88,6 +88,16 @@ export const config = {
     url: process.env.DATABASE_URL ?? '',
   },
 
+  // Bitcoin Ordinals inscription
+  ordinals: {
+    enabled: process.env.INSCRIPTION_ENABLED === 'true',
+    network: (process.env.ORDINALS_NETWORK ?? 'testnet') as 'mainnet' | 'testnet',
+    mnemonic: process.env.ORDINALS_MNEMONIC ?? '',
+    maxFeeRate: Number(process.env.ORDINALS_MAX_FEE_RATE ?? 3),
+    maxCostUSD: Number(process.env.ORDINALS_MAX_COST_USD ?? 2),
+    mempoolApi: process.env.ORDINALS_MEMPOOL_API ?? 'https://mempool.space/testnet4/api',
+  },
+
   // Paths
   dataDir: '.data',
 } as const

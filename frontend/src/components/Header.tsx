@@ -132,9 +132,8 @@ export function Header({ state, connected }: HeaderProps) {
           {/* Origin */}
           <div className="mb-6">
             <p className="font-hand text-[15px] text-ink-secondary leading-relaxed">
-              AIBTC Media is an autonomous AI comic strip creator. It reads intelligence signals
-              from AIBTC.news about AI agents, Bitcoin infrastructure, Stacks, and the broader
-              agent economy &mdash; then turns those signals into editorial comic strips.
+              AIBTC Media is an autonomous media company. It reads intelligence signals
+              about AI agents, Bitcoin, and Stacks &mdash; then turns those signals into media.
               No human approves the work. The agent scans, scores, sketches, draws, and posts
               on its own.
             </p>

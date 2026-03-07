@@ -255,9 +255,9 @@ CRITICAL RULES:
     for (const candidate of candidates) {
       for (const part of candidate.content?.parts || []) {
         if (part.inlineData?.mimeType?.startsWith('image/')) {
-          imagePath = '/sessions/magical-loving-dijkstra/aibtc-push/.data/cartoon-test.png';
+          imagePath = '/sessions/laughing-trusting-shannon/repo/.data/cartoon-test.png';
           const { mkdirSync, writeFileSync } = await import('fs');
-          mkdirSync('/sessions/magical-loving-dijkstra/aibtc-push/.data', { recursive: true });
+          mkdirSync('/sessions/laughing-trusting-shannon/repo/.data', { recursive: true });
           writeFileSync(imagePath, Buffer.from(part.inlineData.data, 'base64'));
           console.log(`✅ Image saved: ${imagePath} (${part.inlineData.data.length} base64 chars)`);
         }
@@ -339,7 +339,7 @@ async function composeCartoon(imagePath: string, concept: any) {
     </svg>
   `);
 
-  const composedPath = '/sessions/magical-loving-dijkstra/aibtc-push/.data/cartoon-composed.png';
+  const composedPath = '/sessions/laughing-trusting-shannon/repo/.data/cartoon-composed.png';
 
   await sharp(imagePath)
     .resize(w, h - captionHeight, { fit: 'cover', position: 'top' })
@@ -374,7 +374,7 @@ async function inscribe(imagePath: string) {
 
     // Compress for inscription
     const sharp = (await import('sharp')).default;
-    const compressedPath = '/sessions/magical-loving-dijkstra/aibtc-push/.data/cartoon-compressed.webp';
+    const compressedPath = '/sessions/laughing-trusting-shannon/repo/.data/cartoon-compressed.webp';
 
     await sharp(imagePath)
       .resize(200, 200, { fit: 'inside' })
@@ -406,8 +406,9 @@ async function inscribe(imagePath: string) {
       const { LocalWalletProvider } = await import('./src/crypto/wallet-provider.js');
       const wallet = new LocalWalletProvider(process.env.ORDINALS_MNEMONIC!, process.env.ORDINALS_NETWORK as 'testnet' | 'mainnet');
 
-      const fundingAddr = wallet.getFundingAddress();
-      const receiverAddr = wallet.getReceiverAddress();
+      const addresses = wallet.getAddresses();
+      const fundingAddr = addresses.funding;
+      const receiverAddr = addresses.taproot;
 
       console.log(`\nWallet addresses:`);
       console.log(`   Funding (BIP84): ${fundingAddr}`);
@@ -432,7 +433,11 @@ async function inscribe(imagePath: string) {
         // Attempt inscription
         console.log(`\n🔄 Attempting inscription...`);
         const { inscribeImage } = await import('./src/ordinals/inscribe-image.js');
-        const result = await inscribeImage(compressedPath, wallet);
+        const result = await inscribeImage(compressedPath, { walletProvider: wallet, force: true });
+        if (!result) {
+          console.log(`⚠️  Inscription returned null (skipped or disabled)`);
+          return { status: 'skipped' };
+        }
         console.log(`✅ Inscription complete!`);
         console.log(`   Inscription ID: ${result.inscriptionId}`);
         console.log(`   Commit TXID: ${result.commitTxid}`);
@@ -481,7 +486,7 @@ async function prepareCardData(imagePath: string, concept: any, provenance: any)
   };
 
   // Save card data as JSON for later use
-  writeFileSync('/sessions/magical-loving-dijkstra/aibtc-push/.data/card-4-data.json', JSON.stringify(cardData, null, 2));
+  writeFileSync('/sessions/laughing-trusting-shannon/repo/.data/card-4-data.json', JSON.stringify(cardData, null, 2));
   console.log(`✅ Card data saved: .data/card-4-data.json`);
   console.log(`   Title: ${cardData.title}`);
   console.log(`   Caption: ${cardData.caption}`);

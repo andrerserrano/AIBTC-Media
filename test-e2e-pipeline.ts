@@ -174,25 +174,27 @@ REASONING: ${selected.reasoning}
 
 Create ONE cartoon concept. The formula:
 
-1. VISUAL: A MINIMAL scene. Think New Yorker cartoon: characters on a mostly white/empty page.
-   - Max 2 characters (robot agents with boxy bodies, round dark screen-heads, small orange dot-eyes)
-   - Only 1-2 props that serve the joke. NOTHING else.
-   - NO detailed backgrounds, cityscapes, architecture, debris, particles, or floating objects
-   - NO text described in the scene — no signs, labels, banners, screen text, version numbers
-   - NO Bitcoin symbols floating or scattered
-   - NO fire, smoke, or explosion effects
-   - The scene should be SIMPLE: characters + one key prop on a clean empty background
+1. VISUAL: A clear scene with a SIMPLE SETTING and specific props that tell the story.
+   - 1-3 characters: robot agents (boxy bodies, round dark screen-heads, small orange dot-eyes) and/or humans
+   - Include a SETTING that grounds the joke: a desk, a server room, a conference table, a workbench, etc.
+   - Include 2-4 SPECIFIC PROPS that serve the joke: coffee cups, stacks of paper, tools, monitors, chairs
+   - Humans are welcome — tired developers, confused PMs, overwhelmed reviewers
+   - The scene should feel like a SITUATION — something is happening, there's a story
+   - BUT keep it clean: no cluttered cityscapes, no particle effects, no debris clouds, no busy backgrounds
+   - NO text in the scene — no signs, labels, banners, screen text. Screens show abstract lines only.
+   - NO floating Bitcoin symbols or crypto logos scattered around
+   - Background should be simple (plain wall, simple room outline) not complex architecture
 
 2. JOKE TYPE: irony, absurdism, exaggeration, juxtaposition, understatement, or role reversal.
 
 3. CAPTION: A single quoted sentence. Dry, observational. Reframes the image. Never explain the joke.
 
-4. COMPOSITION: Simple layout with generous negative space. Characters float on white background.
+4. COMPOSITION: Rule of thirds, clear focal point, generous negative space around the scene.
 
 Output JSON:
 {
-  "visual": "<brief, minimal scene — characters + 1-2 props only, clean background>",
-  "composition": "<simple layout with lots of empty space>",
+  "visual": "<scene with setting + characters + specific props, simple background>",
+  "composition": "<layout with focal point and breathing room>",
   "caption": "<the punchline in quotes>",
   "jokeType": "<irony|absurdism|exaggeration|juxtaposition|understatement|role_reversal>",
   "reasoning": "<why this is funny>",
@@ -255,14 +257,12 @@ ROBOT CHARACTER DESIGN (CRITICAL — follow exactly):
 SCENE: ${cleanVisual}
 
 COMPOSITION STYLE (CRITICAL — this defines the brand):
-- MINIMALIST. Clean. Simple. Lots of white/empty space.
-- Plain white or very light grey background — NO detailed environments, NO cityscapes, NO complex architecture
-- Only draw the characters and 1-2 essential props. Nothing else.
-- The background should be mostly EMPTY — like a New Yorker cartoon on a white page
-- If the scene has a desk, draw the desk and chair. Do NOT draw the entire room, walls, floor tiles, ceiling.
-- If the scene has a bridge, draw a SIMPLE bridge outline. Do NOT draw a full cityscape behind it.
-- NO debris, NO particle effects, NO smoke clouds, NO flying objects
-- Generous negative space on all sides — the cartoon should BREATHE
+- Clean and uncluttered, but with enough detail to tell a story
+- Draw the characters, their setting (desk, table, workbench), and specific props
+- Keep backgrounds SIMPLE: a plain wall, a simple room outline, a flat horizon — NOT busy cityscapes or detailed architecture
+- NO debris clouds, NO particle effects, NO scattered floating objects
+- Generous negative space — the cartoon should BREATHE, with white space around the scene
+- Think editorial cartoon: the scene is grounded and readable but not photorealistic or cluttered
 - Leave ~12% blank space at bottom edge for caption overlay
 - Square 1:1 aspect ratio
 

@@ -12,7 +12,7 @@ if (!GEMINI_API_KEY) throw new Error('GEMINI_API_KEY required');
 
 const caption = `"Well, at least we got three hours to celebrate."`;
 
-const cleanVisual = `A robot agent sits at a desk FRANTICALLY TYPING on an open laptop, panicked and working urgently on a fix. It wears a small crooked party hat. The desk is messy — knocked-over coffee cups, scattered papers, crumpled cans. A small birthday cake with a single candle sits on a plate to one side. The robot is hunched forward typing fast, head slightly shaking with motion lines, conveying frantic urgency. Behind the robot on the wall, a simple whiteboard with just a few clean straight lines forming a basic bar chart — NOT messy squiggles, just 2-3 simple clean bars. The laptop is seen from behind showing a COMPLETELY PLAIN flat grey back with absolutely nothing on it.`;
+const cleanVisual = `A robot agent sits at a desk FRANTICALLY TYPING on an open laptop, panicked and working urgently on a fix. It wears a small crooked party hat. The desk is messy — knocked-over coffee cups, scattered papers, crumpled cans. A small birthday cake with a single candle sits on a plate to one side. The robot is hunched forward typing fast, head slightly shaking with motion lines, conveying frantic urgency. Behind the robot on the wall, a BLANK whiteboard — completely empty, just a white rectangle with a thin border, nothing drawn on it at all. The laptop is seen from behind showing a COMPLETELY PLAIN flat grey back with absolutely nothing on it.`;
 
 const stylePrompt = `STYLE: Single-panel editorial cartoon. Think New Yorker cartoon simplicity.
 
@@ -40,7 +40,7 @@ COMPOSITION STYLE (CRITICAL — this defines the brand):
 - Keep backgrounds SIMPLE: a plain white wall or nothing
 - NO debris clouds, NO particle effects, NO scattered floating objects
 - Generous negative space — the cartoon should BREATHE, with white space around the scene
-- WHITEBOARD in background: Keep extremely clean — just 2-3 simple straight lines forming a basic bar chart. NOT messy squiggles, NOT chaotic scribbles. Think of a clean presentation slide with minimal content.
+- WHITEBOARD in background must be COMPLETELY BLANK — just an empty white rectangle with a thin border. Draw NOTHING inside it. No lines, no charts, no squiggles, no marks of any kind.
 - Leave ~12% blank space at bottom edge for caption overlay
 - Square 1:1 aspect ratio
 

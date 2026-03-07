@@ -5,13 +5,16 @@
  * Based on Ordinals protocol: inscriptions are embedded in the witness data
  * of a Taproot (P2TR) transaction using an envelope format:
  *   OP_FALSE OP_IF <"ord"> <content-type> <data> OP_ENDIF
+ *
+ * Security: Private keys are NEVER accessed directly. All signing goes through
+ * the WalletProvider interface, which may be backed by a local key or a TEE
+ * enclave (EigenCloud EigenCompute). See src/crypto/wallet-provider.ts.
  */
 import * as btc from '@scure/btc-signer'
 import { hex } from '@scure/base'
-import { HDKey } from '@scure/bip32'
-import { mnemonicToSeedSync } from '@scure/bip39'
 import { readFileSync } from 'fs'
-import { getOrdinalConfig, getBtcNetwork, addressToScript, sha256Async } from './utils.js'
+import { getOrdinalConfig, getBtcNetwork, addressToScript } from './utils.js'
+import type { WalletProvider } from '../crypto/wallet-provider.js'
 
 // Unspendable internal key (NUMS point) for script-only P2TR
 const NUMS_KEY = new Uint8Array(32).fill(0x50)
@@ -21,6 +24,8 @@ export interface InscriptionParams {
   contentType: string
   feeRate: number
   network?: 'mainnet' | 'testnet'
+  /** WalletProvider handles all signing — keys never leave the provider boundary */
+  walletProvider: WalletProvider
 }
 
 export interface InscriptionResult {
@@ -29,29 +34,6 @@ export interface InscriptionResult {
   revealTxid: string
   totalCostSat: number
   feeRate: number
-}
-
-/**
- * Derive wallet keys from BIP39 mnemonic.
- * BIP84 (P2WPKH) for funding, BIP86 (P2TR) for Taproot.
- */
-function deriveKeys(mnemonic: string, network: typeof btc.NETWORK) {
-  const seed = mnemonicToSeedSync(mnemonic)
-  const root = HDKey.fromMasterSeed(seed)
-
-  // BIP84 path for SegWit (funding wallet)
-  const coinType = network === btc.NETWORK ? 0 : 1
-  const bip84 = root.derive(`m/84'/${coinType}'/0'/0/0`)
-  const funding = btc.p2wpkh(bip84.publicKey!, network)
-
-  // BIP86 path for Taproot
-  const bip86 = root.derive(`m/86'/${coinType}'/0'/0/0`)
-  const taproot = btc.p2tr(bip86.publicKey!.slice(1), undefined, network)
-
-  return {
-    funding: { payment: funding, privateKey: bip84.privateKey! },
-    taproot: { payment: taproot, privateKey: bip86.privateKey! },
-  }
 }
 
 /**
@@ -149,17 +131,20 @@ async function waitForTx(txid: string, mempoolApi: string, timeoutMs = 120_000):
  *
  * 1. Commit: Send BTC to a P2TR address whose script tree contains the inscription
  * 2. Reveal: Spend the commit output, revealing the inscription in the witness
+ *
+ * All signing is delegated to the WalletProvider — private keys never
+ * appear in this module. In TEE mode (EigenCompute), the signing happens
+ * inside the enclave and only signed bytes come back.
  */
 export async function inscribe(params: InscriptionParams): Promise<InscriptionResult> {
   const config = getOrdinalConfig()
   const networkName = params.network ?? config.network
   const network = getBtcNetwork(networkName)
   const mempoolApi = config.mempoolApi
+  const wallet = params.walletProvider
 
-  if (!config.mnemonic) throw new Error('No mnemonic configured')
-
+  const addresses = wallet.getAddresses()
   const data = readFileSync(params.filePath)
-  const keys = deriveKeys(config.mnemonic, network)
 
   // Build inscription script
   const inscriptionScript = buildInscriptionScript(params.contentType, new Uint8Array(data))
@@ -180,9 +165,9 @@ export async function inscribe(params: InscriptionParams): Promise<InscriptionRe
   const commitVsize = 150
   const commitFee = commitVsize * params.feeRate
 
-  // Fetch UTXOs from funding address
-  const utxos = await fetchUtxos(keys.funding.payment.address!, mempoolApi)
-  if (utxos.length === 0) throw new Error(`No UTXOs found for ${keys.funding.payment.address}`)
+  // Fetch UTXOs from funding address (address is safe to expose)
+  const utxos = await fetchUtxos(addresses.funding, mempoolApi)
+  if (utxos.length === 0) throw new Error(`No UTXOs found for ${addresses.funding}`)
 
   // Select a UTXO with enough funds
   const totalNeeded = revealAmount + commitFee + dustLimit
@@ -194,7 +179,7 @@ export async function inscribe(params: InscriptionParams): Promise<InscriptionRe
   // === COMMIT TX ===
   // Send funds to the inscription P2TR address
   const rawHex = await fetchRawTx(utxo.txid, mempoolApi)
-  const rawTx = btc.Transaction.fromRaw(hex.decode(rawHex), {
+  const _rawTx = btc.Transaction.fromRaw(hex.decode(rawHex), {
     allowUnknownOutputs: true, // faucet txs may have OP_RETURN outputs
   })
 
@@ -207,7 +192,7 @@ export async function inscribe(params: InscriptionParams): Promise<InscriptionRe
     txid: utxo.txid,
     index: utxo.vout,
     witnessUtxo: {
-      script: keys.funding.payment.script,
+      script: wallet.getFundingScript(),
       amount: BigInt(utxo.value),
     },
   })
@@ -222,13 +207,13 @@ export async function inscribe(params: InscriptionParams): Promise<InscriptionRe
   const change = utxo.value - revealAmount - commitFee
   if (change > dustLimit) {
     commitTx.addOutput({
-      script: addressToScript(keys.funding.payment.address!, network),
+      script: addressToScript(addresses.funding, network),
       amount: BigInt(change),
     })
   }
 
-  // Sign and broadcast commit
-  commitTx.sign(keys.funding.privateKey)
+  // Sign via WalletProvider (keys never leave the provider boundary)
+  wallet.signTransaction(commitTx, { keyPath: 'funding' })
   commitTx.finalize()
   const commitRaw = hex.encode(commitTx.extract())
   const commitTxid = await broadcastTx(commitRaw, mempoolApi)
@@ -253,20 +238,17 @@ export async function inscribe(params: InscriptionParams): Promise<InscriptionRe
       script: inscriptionPayment.script,
       amount: BigInt(revealAmount),
     },
-    tapLeafScript: [{
-      version: 0xc0,
-      script: inscriptionScript,
-      controlBlock: inscriptionPayment.tapLeafScript![0].controlBlock,
-    }],
+    tapLeafScript: inscriptionPayment.tapLeafScript,
   })
 
   // Output: send dust to our taproot address (inscription receiver)
   revealTx.addOutput({
-    script: addressToScript(keys.taproot.payment.address!, network),
+    script: addressToScript(addresses.taproot, network),
     amount: BigInt(dustLimit),
   })
 
-  revealTx.sign(keys.taproot.privateKey)
+  // Sign via WalletProvider
+  wallet.signTransaction(revealTx, { keyPath: 'taproot' })
   revealTx.finalize()
   const revealRaw = hex.encode(revealTx.extract())
   const revealTxid = await broadcastTx(revealRaw, mempoolApi)

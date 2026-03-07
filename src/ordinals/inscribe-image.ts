@@ -11,6 +11,7 @@ import { estimateFees } from './estimate-fees.js'
 import { inscribe } from './inscribe.js'
 import { isDuplicate, appendLog, type InscriptionLogEntry } from './logger.js'
 import { getOrdinalConfig, satToUsd } from './utils.js'
+import type { WalletProvider } from '../crypto/wallet-provider.js'
 
 export interface InscribeImageResult {
   inscriptionId: string
@@ -41,6 +42,8 @@ export interface InscribeImageOptions {
   dryRun?: boolean
   /** Override content type (default: image/webp) */
   contentType?: string
+  /** WalletProvider for secure signing (required) */
+  walletProvider: WalletProvider
 }
 
 /**
@@ -52,7 +55,7 @@ export interface InscribeImageOptions {
  */
 export async function inscribeImage(
   imagePath: string,
-  options: InscribeImageOptions = {}
+  options: InscribeImageOptions
 ): Promise<InscribeImageResult | null> {
   const config = getOrdinalConfig()
 
@@ -61,8 +64,8 @@ export async function inscribeImage(
     return null
   }
 
-  if (!config.mnemonic) {
-    console.warn('[ordinals] No mnemonic configured — skipping inscription')
+  if (!options.walletProvider) {
+    console.warn('[ordinals] No WalletProvider configured — skipping inscription')
     return null
   }
 
@@ -104,6 +107,7 @@ export async function inscribeImage(
     contentType: options.contentType ?? 'image/webp',
     feeRate: feeEstimate.feeRate,
     network: config.network,
+    walletProvider: options.walletProvider,
   })
 
   const costUSD = Number(satToUsd(result.totalCostSat).toFixed(2))

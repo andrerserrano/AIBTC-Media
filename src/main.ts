@@ -19,6 +19,8 @@ import { EngagementLoop } from './twitter/engagement.js'
 import { Editor } from './pipeline/editor.js'
 import { Composer } from './pipeline/composer.js'
 import { Inscriber } from './pipeline/inscriber.js'
+import { createWalletProvider, type WalletProvider } from './crypto/wallet-provider.js'
+import { ContentSigner } from './crypto/content-signer.js'
 import { AgentLoop } from './agent/loop.js'
 import { WorldviewStore } from './agent/worldview.js'
 import { BackupStore } from './store/backup.js'
@@ -102,7 +104,31 @@ async function main() {
   const captioner = new Captioner(events)
   const editor = new Editor(events)
   const composer = new Composer(events, generator)
-  const inscriber = new Inscriber(events)
+
+  // --- Secure wallet provider (local dev or TEE enclave) ---
+  let walletProvider: WalletProvider | undefined
+  let contentSigner: ContentSigner | undefined
+
+  if (config.ordinals.enabled && config.ordinals.mnemonic) {
+    try {
+      walletProvider = createWalletProvider({
+        mnemonic: config.ordinals.mnemonic,
+        network: config.ordinals.network,
+      })
+      const addresses = walletProvider.getAddresses()
+      console.log(`[wallet] Mode: ${walletProvider.mode}`)
+      console.log(`[wallet] Funding address: ${addresses.funding}`)
+      console.log(`[wallet] Taproot address: ${addresses.taproot}`)
+
+      // Content signer for ECDSA signatures on editorial content
+      contentSigner = new ContentSigner(config.ordinals.mnemonic, config.ordinals.network)
+      console.log(`[wallet] Content signer: ${contentSigner.address}`)
+    } catch (err) {
+      console.error('[wallet] Failed to initialize:', (err as Error).message)
+    }
+  }
+
+  const inscriber = new Inscriber(events, walletProvider)
 
   // --- Engagement ---
   const engagement = new EngagementLoop(events, twitter, stores.posts)
@@ -216,6 +242,9 @@ async function main() {
   const shutdown = async () => {
     console.log('Shutting down...')
     agent.stop()
+    // Securely wipe key material from memory
+    walletProvider?.destroy()
+    contentSigner?.destroy()
     await Promise.all([signalCache.persist(), evalCache.persist(), imageCache.persist()])
     if (backup) {
       const count = await backup.backupAll(config.dataDir)

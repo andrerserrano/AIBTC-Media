@@ -30,10 +30,18 @@ export interface LocalPost {
   videoPath?: string | null
   quotedTweetId?: string | null
   createdAt: number
-  /** Agent's editorial reasoning for covering this story */
+  /** Category tag for the post (e.g. INFRASTRUCTURE, GOVERNANCE, DEV TOOLS) */
+  category?: string
+  /** The source signal — the news event or data that triggered coverage */
+  sourceSignal?: string
+  /** Agent's editorial reasoning for the humor angle / coverage approach */
   editorialReasoning?: string
-  /** News source or signal that inspired the post */
+  /** News source or signal attribution */
   source?: string
+  /** Description of the cartoon scene */
+  sceneDescription?: string
   /** On-chain provenance URL (e.g. Ordinals inscription) */
   provenanceUrl?: string
+  /** Raw inscription ID for display */
+  inscriptionId?: string
 }

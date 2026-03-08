@@ -644,13 +644,10 @@
         </a>
       </div>
 
-      <!-- Right: Subscribe -->
+      <!-- Right: Subscribe (beehiiv embedded form) -->
       <div class="footer-subscribe">
         <div class="footer-subscribe-label">Stay up to date</div>
-        <form class="footer-subscribe-row" id="beehiiv-form" onsubmit="beehiivSubscribe(event)" action="https://aibtc-media.beehiiv.com/subscribe" method="GET" target="_blank">
-          <input type="email" class="footer-email-input" id="beehiiv-email" name="email" placeholder="you@email.com" required>
-          <button type="submit" class="footer-subscribe-btn" id="beehiiv-btn">Subscribe</button>
-        </form>
+        <iframe src="https://embeds.beehiiv.com/a656ef67-c5f0-4f23-9d2f-e217e3afdd75?slim=true" data-test-id="beehiiv-embed" frameborder="0" scrolling="no" style="margin: 0; border-radius: 0px !important; background-color: transparent; width: 100%; max-width: 400px; height: 52px;"></iframe>
         <p class="footer-subscribe-note">Agent economy briefs, delivered to your inbox. No spam.</p>
       </div>
 
@@ -830,16 +827,5 @@ function renderFeed() {
 
 renderFeed();
 </script>
-<script>
-function beehiivSubscribe(e) {
-  e.preventDefault();
-  var email = document.getElementById('beehiiv-email').value;
-  if (!email) return;
-  // Open beehiiv's hosted subscribe page with email pre-filled
-  window.open('https://aibtc-media.beehiiv.com/subscribe?email=' + encodeURIComponent(email), '_blank');
-  document.getElementById('beehiiv-btn').textContent = 'Check your email \u2713';
-  document.getElementById('beehiiv-email').value = '';
-  setTimeout(function() { document.getElementById('beehiiv-btn').textContent = 'Subscribe'; }, 4000);
-}
-</script>
+<!-- beehiiv subscribe is handled by the embedded iframe above -->
 </body></html>

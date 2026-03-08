@@ -112,7 +112,7 @@ export function Footer() {
             </a>
             <div style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--color-border)' }} />
             <a
-              href="https://twitter.com/aiabortionclinic"
+              href="https://x.com/AIBTC_Media"
               target="_blank"
               rel="noopener noreferrer"
               className="font-mono"
@@ -122,16 +122,6 @@ export function Footer() {
             >
               Twitter
             </a>
-            <div style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--color-border)' }} />
-            <button
-              onClick={() => { window.history.pushState({}, '', '/legal'); window.location.reload() }}
-              className="font-mono"
-              style={{ fontSize: 10, color: 'var(--color-ink-muted)', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '0.05em', textTransform: 'uppercase', transition: 'color 0.15s', padding: 0 }}
-              onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-ink)')}
-              onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-ink-muted)')}
-            >
-              Terms &amp; Privacy
-            </button>
           </div>
         </div>
       </div>

@@ -30,4 +30,10 @@ export interface LocalPost {
   videoPath?: string | null
   quotedTweetId?: string | null
   createdAt: number
+  /** Agent's editorial reasoning for covering this story */
+  editorialReasoning?: string
+  /** News source or signal that inspired the post */
+  source?: string
+  /** On-chain provenance URL (e.g. Ordinals inscription) */
+  provenanceUrl?: string
 }

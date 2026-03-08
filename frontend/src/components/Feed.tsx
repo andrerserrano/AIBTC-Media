@@ -47,12 +47,115 @@ interface RejectedCartoon {
   rejectedAt: number
 }
 
+function PostDetail({ post, postNumber, onClose }: { post: LocalPost; postNumber: number; onClose: () => void }) {
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [onClose])
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/80 backdrop-blur-sm animate-[fade-in_0.15s_ease-out]"
+      onClick={onClose}
+    >
+      <div
+        className="relative max-w-3xl w-full max-h-[90vh] bg-paper-bright rounded overflow-y-auto"
+        style={{ border: '1px solid var(--color-border)' }}
+        onClick={e => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center bg-paper-bright/90 rounded text-ink hover:text-bitcoin"
+          style={{ border: '1px solid var(--color-border)' }}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+
+        {post.imagePath && (
+          <img
+            src={sanitizeImagePath(post.imagePath)}
+            alt="post"
+            className="w-full object-contain"
+            style={{ borderRadius: '4px 4px 0 0' }}
+          />
+        )}
+
+        <div className="p-6 sm:p-8">
+          <p className="font-editorial text-[22px] sm:text-[28px] text-ink font-bold leading-snug">
+            {post.text.split('\n')[0]}
+          </p>
+          {post.text.split('\n').slice(1).filter(Boolean).length > 0 && (
+            <p className="mt-2 font-editorial text-[15px] text-ink-muted italic leading-relaxed">
+              {post.text.split('\n').slice(1).join('\n')}
+            </p>
+          )}
+
+          <div className="mt-4 flex items-center gap-3">
+            <span className="font-mono" style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-bitcoin)', background: 'rgba(232,116,12,0.08)', padding: '2px 8px', borderRadius: 3 }}>
+              #{postNumber}
+            </span>
+            <span className="font-mono text-[11px] text-ink-muted uppercase tracking-wide">
+              {formatDate(post.createdAt)}
+            </span>
+            <span className="text-ink-faint">&middot;</span>
+            <span className="font-mono text-[11px] text-ink-muted uppercase tracking-wide">by AIBTC Media</span>
+          </div>
+
+          {/* Editorial reasoning */}
+          {post.editorialReasoning && (
+            <div className="mt-5 rounded" style={{ background: 'rgba(232,116,12,0.04)', border: '1px solid rgba(232,116,12,0.12)', padding: '0.75rem 1rem' }}>
+              <p className="font-mono font-bold uppercase text-[10px] tracking-wider" style={{ color: 'var(--color-bitcoin)', marginBottom: 4 }}>
+                Editorial Reasoning
+              </p>
+              <p className="font-sans text-[13px] text-ink-light leading-relaxed">
+                {post.editorialReasoning}
+              </p>
+            </div>
+          )}
+
+          {/* Source */}
+          {post.source && (
+            <div className="mt-3 flex items-start gap-2">
+              <span className="font-mono font-bold uppercase text-[10px] tracking-wider text-ink-faint shrink-0" style={{ marginTop: 2 }}>Source</span>
+              <span className="font-sans text-[13px] text-ink-muted">{post.source}</span>
+            </div>
+          )}
+
+          {/* Provenance — on-chain inscription link */}
+          {post.provenanceUrl && (
+            <div className="mt-3 flex items-start gap-2">
+              <span className="font-mono font-bold uppercase text-[10px] tracking-wider text-ink-faint shrink-0" style={{ marginTop: 2 }}>Provenance</span>
+              <a
+                href={post.provenanceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-[12px] hover:underline"
+                style={{ color: 'var(--color-bitcoin)', wordBreak: 'break-all' }}
+              >
+                {post.provenanceUrl.includes('ordinals.com') ? 'View Bitcoin Ordinals Inscription ↗' : post.provenanceUrl}
+              </a>
+            </div>
+          )}
+
+          {post.quotedTweetId && (
+            <div className="mt-5">
+              <TweetEmbed tweetId={post.quotedTweetId} />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; streamMode?: boolean }) {
   const [rejected, setRejected] = useState<RejectedCartoon[]>([])
   const [showRejected, setShowRejected] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('feed')
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [videoSrc, setVideoSrc] = useState<string | null>(null)
+  const [selectedPost, setSelectedPost] = useState<{ post: LocalPost; number: number } | null>(null)
 
   const handleImageClick = useCallback((post: LocalPost, fallback?: () => void) => {
     if (streamMode) return
@@ -182,7 +285,7 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
                         {post.text.split('\n')[0]}
                       </p>
                       <time className="block mt-1 font-mono text-[10px] text-ink-faint uppercase">
-                        {timeAgo(post.createdAt)}
+                        {formatDate(post.createdAt)}
                       </time>
                     </div>
                   </div>
@@ -234,7 +337,7 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
                     )}
                     <div className="mt-4 flex items-center gap-3">
                       <time className="font-mono text-[11px] font-medium text-ink-muted tabular-nums uppercase tracking-wide">
-                        {timeAgo(posts[lightboxIndex].createdAt)}
+                        {formatDate(posts[lightboxIndex].createdAt)}
                       </time>
                       <span className="text-ink-faint">&middot;</span>
                       <span className="font-mono text-[11px] font-medium text-ink-muted uppercase tracking-wide">by AIBTC Media</span>
@@ -270,18 +373,20 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
           {posts.map((post, i) => (
             <article
               key={post.id}
-              className="editorial-card overflow-hidden animate-[fade-in_0.4s_ease-out]"
+              className="editorial-card overflow-hidden animate-[fade-in_0.4s_ease-out] cursor-pointer hover:shadow-md transition-shadow"
               style={{ animationDelay: `${i * 0.06}s`, animationFillMode: 'backwards' }}
+              onClick={() => {
+                if (streamMode) return
+                const s = post.videoPath ? sanitizeVideoPath(post.videoPath) : null
+                if (s) { setVideoSrc(s) } else { setSelectedPost({ post, number: posts.length - i }) }
+              }}
             >
               {post.imagePath && (
-                <div
-                  className={`relative overflow-hidden ${post.videoPath ? 'cursor-pointer group' : ''}`}
-                  onClick={() => { if (streamMode) return; const s = post.videoPath ? sanitizeVideoPath(post.videoPath) : null; if (s) setVideoSrc(s) }}
-                >
+                <div className="relative overflow-hidden group">
                   <img
                     src={sanitizeImagePath(post.imagePath)}
                     alt="post"
-                    className="w-full object-contain"
+                    className="w-full object-contain group-hover:scale-[1.02] transition-transform duration-300"
                     loading="lazy"
                     style={{ borderRadius: '4px 4px 0 0' }}
                   />
@@ -309,7 +414,7 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
                     #{posts.length - i}
                   </span>
                   <span className="font-mono" style={{ fontSize: 10, color: 'var(--color-ink-faint)' }}>
-                    {timeAgo(post.createdAt)}
+                    {formatDate(post.createdAt)}
                   </span>
                   <span style={{ color: 'var(--color-ink-faint)' }}>&middot;</span>
                   <span className="font-mono" style={{ fontSize: 10, color: 'var(--color-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -363,7 +468,7 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
                       </p>
                     </div>
                     <time className="block mt-2 font-mono text-[10px] text-ink-faint uppercase">
-                      {timeAgo(r.rejectedAt)}
+                      {formatDate(r.rejectedAt)}
                     </time>
                   </div>
                 </article>
@@ -375,16 +480,27 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
       </div>
 
       {videoSrc && <VideoOverlay src={videoSrc} onClose={() => setVideoSrc(null)} />}
+      {selectedPost && (
+        <PostDetail
+          post={selectedPost.post}
+          postNumber={selectedPost.number}
+          onClose={() => setSelectedPost(null)}
+        />
+      )}
     </div>
   )
 }
 
-function timeAgo(ts: number): string {
+function formatDate(ts: number): string {
   const seconds = Math.floor((Date.now() - ts) / 1000)
   if (seconds < 60) return 'just now'
   const minutes = Math.floor(seconds / 60)
   if (minutes < 60) return `${minutes}m ago`
   const hours = Math.floor(minutes / 60)
   if (hours < 24) return `${hours}h ago`
-  return `${Math.floor(hours / 24)}d ago`
+  const days = Math.floor(hours / 24)
+  if (days < 7) return `${days}d ago`
+  const d = new Date(ts)
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+  return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`
 }

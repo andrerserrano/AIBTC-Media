@@ -55,7 +55,7 @@ export const config = {
 
   // Agent loop
   tickIntervalMs: testMode ? 10_000 : 120_000,
-  flagshipIntervalMs: testMode ? 30_000 : 8 * 3600_000,     // 30s vs 8h
+  flagshipIntervalMs: testMode ? 30_000 : 12 * 3600_000,    // 30s vs 12h (2x/day)
   quickhitCooldownMs: testMode ? 15_000 : 3600_000,          // 15s vs 1h
 
   // Adaptive posting: starts fast, slows exponentially per post

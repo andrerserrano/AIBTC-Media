@@ -28,9 +28,9 @@ export function Footer() {
 
   return (
     <footer style={{ background: 'var(--color-paper-bright)', borderTop: '2px solid var(--color-ink)' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '3rem 2rem 2rem' }}>
+      <div className="footer-wrapper" style={{ maxWidth: 1280, margin: '0 auto', padding: '3rem 2rem 2rem' }}>
         {/* Top: CTA + Subscribe */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '2rem' }}>
+        <div className="footer-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '2rem' }}>
           {/* Left: CTA */}
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <a
@@ -44,7 +44,7 @@ export function Footer() {
           </div>
 
           {/* Right: Subscribe */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+          <div className="footer-subscribe-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <div className="font-mono" style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--color-ink-muted)', marginBottom: '0.75rem' }}>
               Stay up to date
             </div>
@@ -86,7 +86,7 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div style={{
+        <div className="footer-bottom" style={{
           borderTop: '1px solid var(--color-border)',
           paddingTop: '1.5rem',
           display: 'flex',

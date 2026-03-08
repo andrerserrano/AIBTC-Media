@@ -4,6 +4,10 @@ An autonomous AI media company that monitors [AIBTC News](https://aibtc.news) fo
 
 **Think:** *The New Yorker* meets *Bitcoin Magazine*, run entirely by an autonomous agent.
 
+<p align="center">
+  <img src="public/images/seed-2-composed.png" alt="Sample AIBTC Media comic strip" width="600" />
+</p>
+
 ## How It Works
 
 1. **Scan** — Monitors aibtc.news for intelligence signals from autonomous agents across beats (dev-tools, governance, ordinals, DeFi)
@@ -12,7 +16,7 @@ An autonomous AI media company that monitors [AIBTC News](https://aibtc.news) fo
 4. **Generate** — Creates illustrated variants (targeting expressive line art, minimal backgrounds, personality through design)
 5. **Caption** — Generates and selects the perfect caption to complete the joke
 6. **Edit** — Independent quality review ensures strips are funny, clear, and aligned with editorial voice
-7. **Publish** — Posts to aibtc.studio with full story context and attribution
+7. **Publish** — Posts with full story context and attribution
 
 ## Architecture
 
@@ -83,6 +87,13 @@ src/
 ├── cdn/               # R2 upload & CDN serving
 └── main.ts            # Orchestrator
 
+tests/                 # Test scripts & utilities
+├── test-e2e.ts           # Full pipeline test
+├── test-e2e-pipeline.ts  # Scan → compose → inscribe
+├── test-image-gen.ts     # Image generation harness
+├── test-pipeline.ts      # Scan → score pipeline
+└── regen-image.ts        # Image regeneration utility
+
 frontend/
 ├── src/
 │   ├── components/    # React components
@@ -92,29 +103,28 @@ frontend/
 
 ## Origin
 
-Forked from [Sovra](https://github.com/Gajesh2007/sovra) and adapted for the Bitcoin agent economy. Blockchain auction systems, wallet integrations, and TEE deployment have been removed for V1. The core AI pipeline (scan → score → ideate → generate → caption → edit → publish) is preserved.
+Forked from [Sovra](https://github.com/Gajesh2007/sovra) and adapted for the Bitcoin agent economy. Blockchain auction systems were stripped for V1, while TEE deployment and the Ordinals wallet are being reintegrated. The core AI pipeline (scan → score → ideate → generate → caption → edit → publish) is preserved.
 
 ## Roadmap
 
-### V1: MVP
+### V1: Core Pipeline
 - [x] AIBTC News scanner integration
 - [x] Strip blockchain/auction code (Solana, Base, Privy)
 - [x] Rewrite identity & prompts for AIBTC Media persona
 - [x] Update type definitions
 - [x] Simplify frontend (public viewer, no auth)
-- [ ] Multi-panel comic strip composer
-- [ ] Generate first sample strips
+- [x] Generate first sample strips
+- [x] Improve illustration quality & style consistency
+- [x] Add more RSS feeds
+- [ ] TEE deployment for verifiable autonomy
+- [ ] Ordinals wallet (agent self-custody)
 - [ ] Deploy to Vercel
 
-### V2: Polish
-- [ ] Improve illustration quality
-- [ ] Build archive page + RSS feed
+### V2: Polish & Revenue
 - [ ] Add more beats: mining, Lightning, Stacks, RGB
-
-### V3: Revenue & Autonomy
-- [ ] On-chain auctions for paid requests (Stacks/sBTC)
-- [ ] TEE deployment for verifiable autonomy
-- [ ] Agent wallet for self-custody
+- [ ] Build archive page + RSS feed
+- [ ] Ordinals marketplace
+- [ ] Paid requests (Stacks/sBTC)
 
 ## Credits
 

@@ -56,15 +56,21 @@ async function main() {
     posts: new JsonStore<Post[]>(join(config.dataDir, 'posts.json')),
   }
 
-  // --- Twitter read provider ---
-  const { TwitterApi } = await import('twitter-api-v2')
-  const oauth = new TwitterApi({
-    appKey: config.twitter.apiKey,
-    appSecret: config.twitter.apiSecret,
-    accessToken: config.twitter.accessToken,
-    accessSecret: config.twitter.accessSecret,
-  })
-  const readProvider: TwitterReadProvider = new TwitterV2Reader(config.twitter.bearerToken, oauth)
+  // --- Twitter read provider (only if credentials are available) ---
+  let readProvider: TwitterReadProvider | null = null
+  const hasTwitterCreds = config.twitter.apiKey && config.twitter.apiSecret
+  if (hasTwitterCreds) {
+    const { TwitterApi } = await import('twitter-api-v2')
+    const oauth = new TwitterApi({
+      appKey: config.twitter.apiKey,
+      appSecret: config.twitter.apiSecret,
+      accessToken: config.twitter.accessToken,
+      accessSecret: config.twitter.accessSecret,
+    })
+    readProvider = new TwitterV2Reader(config.twitter.bearerToken, oauth)
+  } else {
+    console.log('[twitter] No API credentials configured — running in local-only mode')
+  }
 
   const twitter = new TwitterClient(events, readProvider)
 
@@ -114,7 +120,7 @@ async function main() {
 
   const scorer = new Scorer(events, evalCache)
   const ideator = new Ideator(events, worldview)
-  const generator = new Generator(events, imageCache, readProvider)
+  const generator = new Generator(events, imageCache, readProvider ?? undefined)
   await generator.init()
   const captioner = new Captioner(events)
   const editor = new Editor(events)

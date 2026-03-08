@@ -18,30 +18,33 @@ export interface LocalPost {
 
 export class TwitterClient {
   /** Read-only client using bearer token (for Grok News only) */
-  private reader: TwitterApi
+  private reader: TwitterApi | null
   /** Read-write client using OAuth 1.0a (only when posting enabled) */
-  private writer: TwitterApi
-  private readProvider: TwitterReadProvider
+  private writer: TwitterApi | null
+  private readProvider: TwitterReadProvider | null
   /** Local post store (when posting is disabled) */
   private localPosts: JsonStore<LocalPost[]>
 
-  constructor(private events: EventBus, readProvider: TwitterReadProvider) {
-    this.reader = new TwitterApi(config.twitter.bearerToken)
-    this.writer = new TwitterApi({
-      appKey: config.twitter.apiKey,
-      appSecret: config.twitter.apiSecret,
-      accessToken: config.twitter.accessToken,
-      accessSecret: config.twitter.accessSecret,
-    })
+  constructor(private events: EventBus, readProvider: TwitterReadProvider | null) {
+    const hasTwitterCreds = config.twitter.apiKey && config.twitter.apiSecret
+    this.reader = config.twitter.bearerToken ? new TwitterApi(config.twitter.bearerToken) : null
+    this.writer = hasTwitterCreds
+      ? new TwitterApi({
+          appKey: config.twitter.apiKey,
+          appSecret: config.twitter.apiSecret,
+          accessToken: config.twitter.accessToken,
+          accessSecret: config.twitter.accessSecret,
+        })
+      : null
     this.readProvider = readProvider
     this.localPosts = new JsonStore(join(config.dataDir, 'local-posts.json'))
   }
 
-  get raw(): TwitterApi {
+  get raw(): TwitterApi | null {
     return this.reader
   }
 
-  get provider(): TwitterReadProvider {
+  get provider(): TwitterReadProvider | null {
     return this.readProvider
   }
 
@@ -69,6 +72,7 @@ export class TwitterClient {
     }
 
     // Actual Twitter posting
+    if (!this.writer) throw new Error('Twitter writer not initialized — set API credentials')
     const imageBuffer = await readFile(opts.imagePath)
     const mediaId = await this.writer.v1.uploadMedia(imageBuffer, {
       mimeType: 'image/png',
@@ -119,6 +123,7 @@ export class TwitterClient {
     }
 
     // Upload video (chunked upload handled by library)
+    if (!this.writer) throw new Error('Twitter writer not initialized — set API credentials')
     let videoBuffer: Buffer
     if (opts.videoPath.startsWith('https://') || opts.videoPath.startsWith('http://')) {
       const resp = await fetch(opts.videoPath)
@@ -184,6 +189,7 @@ export class TwitterClient {
       return `local-${localId}`
     }
 
+    if (!this.writer) throw new Error('Twitter writer not initialized — set API credentials')
     const result = await this.writer.v2.tweet({
       text: opts.text,
       reply: { in_reply_to_tweet_id: opts.replyToId },
@@ -211,6 +217,7 @@ export class TwitterClient {
     }>
   > {
     try {
+      if (!this.readProvider) return []
       const res = await this.readProvider.getMentions(
         config.twitter.username,
         sinceTimestamp,
@@ -243,6 +250,7 @@ export class TwitterClient {
     replies: number
   }>> {
     try {
+      if (!this.writer) return []
       const timeline = await this.writer.v2.homeTimeline({
         max_results: maxResults,
         'tweet.fields': ['public_metrics', 'author_id', 'created_at'],
@@ -271,6 +279,7 @@ export class TwitterClient {
   }
 
   async findTweetAbout(query: string): Promise<string | undefined> {
+    if (!this.readProvider) return undefined
     const stopWords = new Set([
       'about', 'after', 'also', 'amid', 'been', 'before', 'being', 'between',
       'both', 'could', 'does', 'doing', 'done', 'during', 'each', 'even',
@@ -323,7 +332,7 @@ export class TwitterClient {
   }
 
   async follow(userId: string): Promise<void> {
-    if (!config.twitter.postingEnabled) {
+    if (!config.twitter.postingEnabled || !this.writer) {
       this.events.monologue(`[DRY RUN] Would follow user ${userId}`)
       return
     }
@@ -332,7 +341,7 @@ export class TwitterClient {
   }
 
   async blockUser(userId: string): Promise<void> {
-    if (!config.twitter.postingEnabled) {
+    if (!config.twitter.postingEnabled || !this.writer) {
       this.events.monologue(`[DRY RUN] Would block user ${userId}`)
       return
     }
@@ -341,7 +350,7 @@ export class TwitterClient {
   }
 
   async unfollow(userId: string): Promise<void> {
-    if (!config.twitter.postingEnabled) {
+    if (!config.twitter.postingEnabled || !this.writer) {
       this.events.monologue(`[DRY RUN] Would unfollow user ${userId}`)
       return
     }
@@ -351,6 +360,7 @@ export class TwitterClient {
 
   async getFollowingCount(): Promise<number> {
     try {
+      if (!this.writer) return 0
       const me = await this.writer.v2.me({ 'user.fields': ['public_metrics'] })
       return me.data.public_metrics?.following_count ?? 0
     } catch {
@@ -366,6 +376,7 @@ export class TwitterClient {
     followers: number
   }>> {
     try {
+      if (!this.writer) return []
       const me = await this.writer.v2.me()
       const result = await this.writer.v2.following(me.data.id, {
         max_results: 1000,
@@ -395,6 +406,7 @@ export class TwitterClient {
     author: string
     text: string
   }>> {
+    if (!this.readProvider) return []
     const chain: Array<{ author: string; text: string }> = []
     let currentId = tweetId
 

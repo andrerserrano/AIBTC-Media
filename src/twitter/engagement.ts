@@ -276,6 +276,7 @@ export class EngagementLoop {
     try {
       // Deep vet via twitterapi.io — get full profile + recent tweets
       const provider = this.twitter.provider
+      if (!provider) return
       const profile = await provider.getUserInfo(best.authorUsername)
       const tweetsRes = await provider.getUserTweets(best.authorUsername)
       const recentTweets = tweetsRes.tweets.slice(0, 5).map(t => t.text.slice(0, 120)).join('\n')
@@ -300,7 +301,7 @@ export class EngagementLoop {
         return
       }
 
-      const userId = profile?.id ?? (await this.twitter.raw.v2.userByUsername(best.authorUsername)).data?.id
+      const userId = profile?.id ?? (this.twitter.raw ? (await this.twitter.raw.v2.userByUsername(best.authorUsername)).data?.id : undefined)
       if (!userId) return
 
       await this.twitter.follow(userId)
@@ -416,6 +417,7 @@ export class EngagementLoop {
 
     // Fetch recent tweets for each via twitterapi.io to make informed decisions
     const provider = this.twitter.provider
+    if (!provider) return
     const summaries: string[] = []
     for (const u of sample) {
       let recentContent = ''
@@ -463,6 +465,7 @@ export class EngagementLoop {
 
   async vetFollowers(): Promise<void> {
     const provider = this.twitter.provider
+    if (!provider) return
     const myInfo = await provider.getUserInfo(config.twitter.username)
     if (!myInfo) return
 

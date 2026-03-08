@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import type { LocalPost } from '../types'
 import { TweetEmbed } from './TweetEmbed'
-import { sanitizeImagePath, sanitizeImageUrl } from '../security'
+import { sanitizeImagePath, sanitizeImageUrl, sanitizeVideoPath } from '../security'
 
 type ViewMode = 'feed' | 'gallery'
 

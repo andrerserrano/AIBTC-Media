@@ -14,7 +14,7 @@ interface ConsoleStreamOptions {
   onEvent?: (type: string, rawEvent?: ConsoleEvent) => void
 }
 
-export function useConsoleStream(options?: ConsoleStreamOptions) {
+export function useConsoleStream(_options?: ConsoleStreamOptions) {
   const [entries, setEntries] = useState<ConsoleEntry[]>([])
   const [agentState, setAgentState] = useState<AgentState>('scanning')
   const [connected, setConnected] = useState(false)

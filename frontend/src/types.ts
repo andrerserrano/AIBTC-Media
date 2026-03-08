@@ -27,5 +27,7 @@ export interface LocalPost {
   tweetId?: string
   text: string
   imagePath: string | null
+  videoPath?: string | null
+  quotedTweetId?: string | null
   createdAt: number
 }

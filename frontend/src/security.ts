@@ -19,6 +19,19 @@ export function sanitizeImagePath(imagePath: string): string {
   return `/images/${filename}`
 }
 
+const VIDEO_FILENAME_RE = /^[\w\-. ]+\.(mp4|webm|mov|ogg)$/i
+
+export function sanitizeVideoPath(videoPath: string): string | null {
+  if (!videoPath || typeof videoPath !== 'string') return null
+  if (videoPath.startsWith('https://')) {
+    try { if (new URL(videoPath).protocol === 'https:') return videoPath } catch {}
+    return null
+  }
+  const filename = videoPath.split('/').pop() ?? ''
+  if (!VIDEO_FILENAME_RE.test(filename)) return null
+  return `/videos/${filename}`
+}
+
 export function sanitizeImageUrl(url: string): string | null {
   if (!url || typeof url !== 'string') return null
   if (url.startsWith('/images/')) return sanitizeImagePath(url)

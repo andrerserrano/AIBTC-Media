@@ -1,2 +1,2 @@
 import { Buffer } from 'buffer'
-globalThis.Buffer = Buffer
+;(globalThis as Record<string, unknown>).Buffer = Buffer

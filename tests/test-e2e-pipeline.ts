@@ -18,7 +18,7 @@ for (const line of readFileSync('.env', 'utf8').split('\n')) {
   process.env[trimmed.slice(0, eqIdx).trim()] = trimmed.slice(eqIdx + 1).trim();
 }
 
-import { config } from './src/config/index.js';
+import { config } from '../src/config/index.js';
 import { join } from 'path';
 import { mkdirSync } from 'fs'
 
@@ -239,11 +239,11 @@ async function generateImage(concept: any) {
   console.log('═══════════════════════════════════════\n');
 
   // Strip any text descriptions from the concept visual to prevent Gemini rendering text
-  const { stripTextFromVisual } = await import('./src/prompts/style.js');
+  const { stripTextFromVisual } = await import('../src/prompts/style.js');
   const cleanVisual = stripTextFromVisual(concept.visual);
 
   // Import the shared style template — single source of truth for all image generation
-  const { STYLE_TEMPLATE } = await import('./src/prompts/style.js');
+  const { STYLE_TEMPLATE } = await import('../src/prompts/style.js');
 
   const stylePrompt = `${STYLE_TEMPLATE}
 
@@ -422,7 +422,7 @@ async function inscribe(imagePath: string) {
     // Try to use the inscription module
     try {
       // Import the wallet provider to derive addresses
-      const { LocalWalletProvider } = await import('./src/crypto/wallet-provider.js');
+      const { LocalWalletProvider } = await import('../src/crypto/wallet-provider.js');
       const wallet = new LocalWalletProvider(process.env.ORDINALS_MNEMONIC!, process.env.ORDINALS_NETWORK as 'testnet' | 'mainnet');
 
       const addresses = wallet.getAddresses();
@@ -451,7 +451,7 @@ async function inscribe(imagePath: string) {
 
         // Attempt inscription
         console.log(`\n🔄 Attempting inscription...`);
-        const { inscribeImage } = await import('./src/ordinals/inscribe-image.js');
+        const { inscribeImage } = await import('../src/ordinals/inscribe-image.js');
         const result = await inscribeImage(compressedPath, { walletProvider: wallet, force: true });
         if (!result) {
           console.log(`⚠️  Inscription returned null (skipped or disabled)`);

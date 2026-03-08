@@ -5,7 +5,7 @@
  * 1. AIBTCScanner fetches signals from aibtc.news
  * 2. Scorer evaluates and ranks them for comic strip potential
  *
- * Run: TEST_MODE=true ANTHROPIC_API_KEY=<key> npx tsx test-pipeline.ts
+ * Run: TEST_MODE=true ANTHROPIC_API_KEY=<key> npx tsx tests/test-pipeline.ts
  */
 
 import { join } from 'path'

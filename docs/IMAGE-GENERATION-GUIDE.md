@@ -4,12 +4,12 @@
 
 ```bash
 # Run all tests (style comparison + single panel + strip panels)
-AI_GATEWAY_API_KEY=<key> npx tsx test-image-gen.ts
+AI_GATEWAY_API_KEY=<key> npx tsx tests/test-image-gen.ts
 
 # Run a specific test
-AI_GATEWAY_API_KEY=<key> npx tsx test-image-gen.ts --test style-compare
-AI_GATEWAY_API_KEY=<key> npx tsx test-image-gen.ts --test single-panel
-AI_GATEWAY_API_KEY=<key> npx tsx test-image-gen.ts --test strip-panel
+AI_GATEWAY_API_KEY=<key> npx tsx tests/test-image-gen.ts --test style-compare
+AI_GATEWAY_API_KEY=<key> npx tsx tests/test-image-gen.ts --test single-panel
+AI_GATEWAY_API_KEY=<key> npx tsx tests/test-image-gen.ts --test strip-panel
 ```
 
 Results go to `.data-test/image-tests/`.
@@ -118,7 +118,7 @@ The hardest part of comic strips is **character consistency across panels**. Her
 
 ## Iteration Workflow
 
-1. **Run `test-image-gen.ts`** to generate test images
+1. **Run `tests/test-image-gen.ts`** to generate test images
 2. **Review results** in `.data-test/image-tests/`
 3. **Identify issues** (text leaks, style drift, character inconsistency)
 4. **Adjust the style template** in `src/prompts/style.ts`

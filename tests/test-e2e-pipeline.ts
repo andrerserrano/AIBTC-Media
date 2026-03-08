@@ -4,7 +4,7 @@
  * Tests: Scan → Score → Ideate → Generate → Caption → Compose → Inscribe
  * Outputs: Final cartoon image + provenance data for homepage card #4
  *
- * Usage: bun run test-e2e-pipeline.ts
+ * Usage: bun run tests/test-e2e-pipeline.ts
  * (No need for `export $(grep ...)`  — .env is loaded below)
  */
 

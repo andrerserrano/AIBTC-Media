@@ -30,16 +30,6 @@ Thumbs.db
 *.sln
 *.sw?
 
-# Foundry (Base contracts)
-contracts/base/out/
-contracts/base/cache/
-contracts/base/broadcast/
-
-# Anchor / Solana contracts
-contracts/solana/target/
-contracts/solana/.anchor/test-ledger/
-contracts/solana/node_modules/
-
 # Frontend
 frontend/node_modules/
 frontend/dist/
@@ -47,7 +37,6 @@ frontend/.playwright-cli/
 
 # Lock files (non-root)
 frontend/bun.lock
-contracts/solana/bun.lock
 
 # Private docs
 ARTICLE.md

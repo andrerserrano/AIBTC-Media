@@ -5,10 +5,10 @@
  * Tests different style approaches and saves results for comparison.
  *
  * Usage:
- *   GOOGLE_GENERATIVE_AI_API_KEY=<key> npx tsx test-image-gen.ts
- *   GOOGLE_GENERATIVE_AI_API_KEY=<key> npx tsx test-image-gen.ts --test single-panel
- *   GOOGLE_GENERATIVE_AI_API_KEY=<key> npx tsx test-image-gen.ts --test strip-panel
- *   GOOGLE_GENERATIVE_AI_API_KEY=<key> npx tsx test-image-gen.ts --test style-compare
+ *   GOOGLE_GENERATIVE_AI_API_KEY=<key> npx tsx tests/test-image-gen.ts
+ *   GOOGLE_GENERATIVE_AI_API_KEY=<key> npx tsx tests/test-image-gen.ts --test single-panel
+ *   GOOGLE_GENERATIVE_AI_API_KEY=<key> npx tsx tests/test-image-gen.ts --test strip-panel
+ *   GOOGLE_GENERATIVE_AI_API_KEY=<key> npx tsx tests/test-image-gen.ts --test style-compare
  */
 
 import { generateText } from 'ai'
@@ -290,7 +290,7 @@ async function main() {
     console.log('To get started:')
     console.log('  1. Go to https://aistudio.google.com/apikey')
     console.log('  2. Create an API key')
-    console.log('  3. Run: GOOGLE_GENERATIVE_AI_API_KEY=<your-key> npx tsx test-image-gen.ts')
+    console.log('  3. Run: GOOGLE_GENERATIVE_AI_API_KEY=<your-key> npx tsx tests/test-image-gen.ts')
     console.log('  Or add it to your .env file.')
     process.exit(1)
   }

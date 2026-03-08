@@ -8,7 +8,7 @@
  * 4. Composer frames it with orange divider + caption
  *
  * Usage:
- *   GOOGLE_GENERATIVE_AI_API_KEY=<key> ANTHROPIC_API_KEY=<key> npx tsx test-e2e.ts
+ *   GOOGLE_GENERATIVE_AI_API_KEY=<key> ANTHROPIC_API_KEY=<key> npx tsx tests/test-e2e.ts
  */
 
 import { generateObject, generateText } from 'ai'

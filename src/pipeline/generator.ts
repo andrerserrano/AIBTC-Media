@@ -366,16 +366,12 @@ export class Generator {
       `4. Clean negative space — resist the urge to fill every corner`,
       '',
       `CRITICAL REMINDERS:`,
-      `- ZERO TEXT IN THE IMAGE. No words, letters, numbers, labels, speech bubbles, or writing of any kind.`,
-      `  Whiteboards show only abstract shapes or wavy lines. Papers are blank. Screens show abstract graphics only.`,
-      `- Single panel, PURE WHITE canvas (#FFFFFF, NEVER cream/grey/tinted background), thick border`,
-      `- Halftone dot-pattern shading for all grey areas — newspaper editorial look`,
-      `- Robot faces: dark/black screen + two SMALL orange rectangle-eyes ONLY. No mouths, noses, or eyebrows.`,
-      `- Robot bodies: EXACTLY 2 arms, EXACTLY 2 legs. Count them. No extra limbs.`,
-      `- Laptop backs are PLAIN FLAT RECTANGLES — absolutely no logos, circles, or symbols. Not Apple, not any brand.`,
-      `- Every prop must serve the joke — if it doesn't make the gag funnier, remove it`,
-      `- ONLY use greyscale + Bitcoin orange (#E8740C). No blues, teals, greens, or other hues.`,
-      `- ABSOLUTELY NO watermarks, signatures, or branding text anywhere. The image must be completely clean.`,
+      `- PURE WHITE canvas background (#FFFFFF). NOT cream, NOT grey, NOT tinted. Bright white paper.`,
+      `- Robot bodies are WHITE with bold black outlines. Shading uses flat grey fills, NOT dense dot patterns.`,
+      `- ONLY greyscale + Bitcoin orange (#E8740C). No blues, teals, greens, or other hues.`,
+      `- Robot bodies: EXACTLY 2 arms, EXACTLY 2 legs. Count them.`,
+      `- Laptop backs are PLAIN FLAT RECTANGLES — no logos or symbols. Not Apple, not any brand.`,
+      `- NO watermarks, signatures, or branding text anywhere.`,
     ].join('\n')
   }
 
@@ -387,7 +383,7 @@ export class Generator {
       return 'HIGH CONTRAST — deep blacks, bright whites, minimal mid-grey. Bold, punchy energy. Monochrome + orange only.'
     }
     if (/money|business|corporate|ceo|profit|market|stock/.test(text)) {
-      return 'HEAVY — rich dark greys, strong shadows, dense halftone shading. Weighty, serious. Monochrome + orange only.'
+      return 'HEAVY — moderate greys, clean shadows, light halftone accents. Weighty but clean. Monochrome + orange only.'
     }
     if (/tech|ai|robot|algorithm|data|digital|screen|phone|computer/.test(text)) {
       return 'CLEAN — light greys, generous white space, precise lines. Clinical, modern. Monochrome + orange only.'

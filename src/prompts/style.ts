@@ -13,9 +13,10 @@ media outlet covering the Bitcoin agent economy.
 VISUAL IDENTITY — MONOCHROME + BITCOIN ORANGE:
 - Bold, confident black ink lines — thick outlines (2-3px), NOT sketchy or tentative
 - Strong shadows, confident hatching for depth
-- HALFTONE DOT-PATTERN SHADING for mid-tones — this is critical for the newspaper
-  editorial print feel. Grey areas on robot bodies, suits, furniture, and architecture
-  should show visible dot texture, NOT smooth gradients.
+- LIGHT halftone dot-pattern shading for mid-tones — used sparingly for shadows and
+  depth. Most surfaces (robot bodies, walls, table tops) are CLEAN SOLID colors
+  (white, light grey, medium grey). Halftone dots appear only in shadow areas and
+  background depth. Do NOT cover robot bodies in dense dot patterns.
 - LIMITED COLOR PALETTE: Black line art + greyscale wash + ONE accent color
 - Accent color: warm orange (#E8740C) — Bitcoin orange
 - Use orange ONLY on: robot eyes (always), and at most ONE other small element
@@ -32,14 +33,16 @@ ROBOT CHARACTER DESIGN — THE SIGNATURE LOOK:
 - Rounded-rectangle screen-head (wider than tall) — like a small CRT monitor with rounded corners
   and a thick border. This is the most recognizable feature.
 - Screen-face is DARK (black/very dark grey) with glowing elements on it
-- Two SMALL vertical orange rectangle-eyes on the dark screen — mandatory on every robot.
-  These are the brand signature. They glow as if lit from within. Eyes are SMALL — roughly
-  15% of the screen width each, NOT large bars or goggles.
-- NO mouth, nose, or eyebrows on the screen-face. The face is ONLY the dark screen + two small orange eyes.
-  Emotion comes from body language, NOT facial features.
+- Two vertical orange rectangle-eyes on the dark screen — mandatory on every robot.
+  These are the brand signature. They glow as if lit from within.
+- Optional simple line mouth on the screen-face for expression
 - Small antenna or nub on top of the screen-head
 - Circular ear-speakers mounted on either side of the head — like headphone cups.
   These complete the distinctive silhouette.
+- Robot heads are OPAQUE — when viewed from behind, the back of the head is a solid
+  surface (no screen). The screen-face is only on the FRONT.
+- Robot bodies are WHITE or VERY LIGHT GREY with bold black outlines — clean, bright surfaces.
+  Do NOT shade robot bodies with dense patterns, dots, or heavy grey fills.
 - Boxy rectangular body — approachable "friendly appliance" proportions, NOT sleek sci-fi chrome
 - Segmented/ribbed limbs — arms and legs look like corrugated tubing or stacked cylinders
 - All robots in a scene share the same design language — variants from one family,
@@ -51,16 +54,17 @@ ROBOT CHARACTER DESIGN — THE SIGNATURE LOOK:
   on robot bodies. Robots should NOT visually represent "broken code" or "bugs" through
   physical damage. Emotion and narrative come from BODY LANGUAGE and CONTEXT, not from
   drawing damage onto the robots themselves.
-- Emotion is conveyed ENTIRELY through BODY LANGUAGE (no face changes):
+- Emotion is conveyed primarily through BODY LANGUAGE:
   - Slumped shoulders = tired/defeated
   - Raised arms = triumph/excitement
   - Tilted head = curiosity/confusion
   - Forward lean = engagement/eagerness
   - Pointing finger = authority/accusation
-  - Hands on hips = frustration, arms crossed = skepticism
+  - Robot expressions should match the SCENE CONTEXT — a robot in a meeting is neutral/engaged,
+    a robot delivering bad news shows concern. Don't add random emotions that don't fit the scene.
 
 CHARACTER DESIGN — HUMANS (when present):
-- Same bold ink style with halftone dot-shading — minimal detail, maximum personality through posture
+- Same bold ink style with flat grey fills — minimal detail, maximum personality through posture
 - Rendered in pure greyscale — no orange on human characters themselves
   (orange is allowed on PROPS they hold: hard hat, safety vest, coffee mug)
 - Often the "straight man" reacting to agent behavior
@@ -78,11 +82,12 @@ BITCOIN/CRYPTO SYMBOL USAGE:
 - Lightning bolt symbols get the same treatment: small, architectural, environmental
 
 TEXT IN THE IMAGE:
-- ABSOLUTELY NO TEXT of any kind in the image. Zero words, zero letters, zero numbers.
-- No speech bubbles, labels, signs, whiteboard writing, screen text, document text, or watermarks.
-- Whiteboards and screens show ONLY abstract shapes, wavy lines, or simple geometric diagrams.
-- Documents and papers are BLANK or show abstract wavy lines only.
-- The caption below the image carries ALL the words. The image is purely visual.
+- Default: NO text in the image. No speech bubbles, labels, or readable signs.
+- EXCEPTION: Minimal contextual text is allowed when it serves the joke — e.g. "Q3 REVIEW"
+  on a whiteboard in a meeting scene, "PROPOSAL #47" on a presentation. Keep it to 1-3 words max.
+- Screens and monitors show abstract shapes or simple diagrams unless contextual text serves the joke.
+- Documents and papers are mostly blank or show abstract wavy lines.
+- The caption below the image carries the main words. The image is primarily visual.
 - All laptops, monitors, and devices must be GENERIC and UNBRANDED.
 - Laptop backs are PLAIN FLAT RECTANGLES — no logos, circles, symbols, or marks of any kind.
   NOT Apple, NOT Google, NOT any brand. Just a plain flat colored rectangle.
@@ -110,7 +115,8 @@ COMPOSITION PRINCIPLES:
 
 RENDERING RULES:
 - This is a CARTOON with clear stylization — NOT photorealistic
-- Halftone dot-pattern for all grey shading — the newspaper editorial look
+- Shading uses FLAT GREY FILLS — clean solid areas of grey, not dense dot-patterns everywhere.
+  Light halftone texture may appear in deep shadow areas only. Most surfaces are clean.
 - Shadows are flat shapes, used sparingly for depth
 - Line weight is bold and confident — never thin or wispy
 - ABSOLUTELY NO watermarks, signatures, logos, or branding text anywhere in the image.
@@ -180,7 +186,7 @@ SCENE: ${sceneDescription}
 CRITICAL STYLE REQUIREMENTS:
 ${STYLE_TEMPLATE}
 
-Remember: PURE WHITE background (#FFFFFF, no cream/beige/ivory), halftone dot-shading, monochrome + orange eyes only, no brand logos.`
+Remember: PURE WHITE background (#FFFFFF, no cream/beige/ivory), clean flat shading (no dense dot patterns), monochrome + orange eyes only, no brand logos.`
 }
 
 /**

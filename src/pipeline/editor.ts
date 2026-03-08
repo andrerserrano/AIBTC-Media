@@ -40,21 +40,26 @@ Your job:
 
 4. IMAGE REVIEW — You can SEE the generated cartoon. Check EVERY item:
    TEXT CHECK (instant reject if any fail):
-   - ZERO text, words, letters, or numbers anywhere in the image
-   - No speech bubbles, signs with writing, labels, banners, or readable screen text
-   - Whiteboards/boards show ONLY abstract shapes, wavy lines, or simple geometric diagrams — no letters or words
-   - Papers and documents are blank or show abstract wavy lines only
-   - NOTE: Abstract wavy lines (squiggles that don't form letters) are ACCEPTABLE on whiteboards and screens.
-     Only reject if you can read actual words, letters, or numbers.
+   - No large blocks of readable text, paragraphs, or sentences anywhere in the image
+   - No speech bubbles with readable dialogue
+   - Small contextual text that serves the joke IS acceptable (e.g. "Q3 REVIEW" on a whiteboard,
+     "PROPOSAL #47" on a screen) — only reject text that is garbled, nonsensical, or excessive
+   - Abstract wavy lines, squiggles, and simple symbols (₿, ✓, arrows) are always fine
+   - Bitcoin ₿ symbols on props (mugs, badges, stickers) are part of the brand — never reject these
 
    ROBOT ANATOMY CHECK (instant reject if any fail):
    - Every FEATURED (foreground) robot has EXACTLY TWO arms and EXACTLY TWO legs — count them.
      Three arms = reject. (Background crowd robots may be simplified/partially visible — only
      count limbs on clearly visible foreground characters.)
-   - Robot heads are dark/black screens with two SMALL orange rectangle-eyes — no mouths,
-     eyebrows, noses, or smiles. The screen-face shows ONLY the dark background + orange eyes.
-   - Eyes should be SMALL vertical rectangles (~15% of screen width), NOT large bars, goggles,
-     or rectangular blocks that fill the screen.
+   - Robot heads should be dark/black screens with orange rectangle-eyes
+   - Mouths, subtle expressions, and eye style variations are ACCEPTABLE — do not reject for these
+   - Robot heads are OPAQUE from behind — if you see a screen on the BACK of a robot's head, reject.
+     The screen-face is only on the front.
+
+   SHADING CHECK (reject if heavy):
+   - Robot bodies should be CLEAN solid colors (white, light grey) — NOT covered in dense dot patterns
+   - Dense halftone dots covering entire robot bodies = reject. Light halftone in shadows only is fine.
+   - The overall image should feel CLEAN and BRIGHT, not grey or murky
 
    BRAND & STYLE CHECK (instant reject if any fail):
    - Background is WHITE or very light cream — NEVER grey or dark. If the background looks grey, reject.

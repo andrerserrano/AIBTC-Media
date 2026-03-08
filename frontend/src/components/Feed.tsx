@@ -338,7 +338,7 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
   return (
     <div ref={scrollRef} className="h-full overflow-y-auto bg-paper">
       {/* Feed header */}
-      <div style={{ padding: '1.5rem 2rem 0' }}>
+      <div className="feed-header-pad" style={{ padding: '1.5rem 2rem 0' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span className="font-editorial" style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-ink)' }}>Latest</span>
@@ -372,7 +372,7 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
         </div>
       </div>
 
-      <div style={{ padding: '0 2rem 2rem' }}>
+      <div className="feed-content-pad" style={{ padding: '0 2rem 2rem' }}>
         {viewMode === 'gallery' ? (
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

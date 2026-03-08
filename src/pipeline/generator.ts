@@ -374,6 +374,7 @@ export class Generator {
       `- All devices are GENERIC and UNBRANDED — no Apple, Google, or real logos`,
       `- Every prop must serve the joke — if it doesn't make the gag funnier, remove it`,
       `- ONLY use greyscale + Bitcoin orange (#E8740C). No blues, teals, greens, or other hues.`,
+      `- ABSOLUTELY NO watermarks, signatures, logos, or branding text anywhere in the image. Do NOT write "AIBTC", "AIBTC Media", "@AIBTC_Media", or ANY text in the corners or margins. The image must be completely clean — branding is added in post-processing.`,
     ].join('\n')
   }
 

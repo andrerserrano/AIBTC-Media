@@ -89,10 +89,15 @@ COMPOSITION PRINCIPLES:
 - Strong, clear focal point — the scene should "read" in under 2 seconds
 - Rule of thirds for primary subject placement
 - Generous negative space — let the cartoon breathe
-- FEATURED CHARACTERS: 1-3 characters with full detail and expression. Fewer is better.
-- CROWD/SWARM: When the joke IS a mass of robots (rushing a bridge, flooding a room),
-  small identical robots can appear as a crowd — simplified, repeated shapes that read
-  as a single visual element, not individual characters.
+- FEATURED CHARACTERS: 1-3 fully detailed characters with expressions and body language.
+  These are the actors — the ones delivering the joke. Default to fewer: 2-3 is the sweet spot.
+- CROWD/BACKGROUND CHARACTERS: Additional robots CAN appear when the crowd IS the joke
+  (e.g., robots streaming across a bridge like commuters, flooding a lobby). In these cases
+  the crowd is a single visual element — small, simplified, repeated shapes in the background.
+  The crowd creates SCALE CONTRAST with the featured character(s) in the foreground.
+- THE KEY TEST: If the joke works with 2-3 characters in an intimate scene, keep it intimate.
+  Only use a crowd when the QUANTITY of robots is what makes the scene funny or meaningful.
+  A conversation between 2 robots does NOT need 20 robots behind them.
 - Props and environment are minimal but specific — every object serves the joke
 - Leave approximately 12% blank space at the bottom for caption compositing
 - Scale contrasts drive humor: tiny robot vs. massive server, lone human vs. army of bots
@@ -105,7 +110,7 @@ RENDERING RULES:
 - Halftone dot-pattern for all grey shading — the newspaper editorial look
 - Shadows are flat shapes, used sparingly for depth
 - Line weight is bold and confident — never thin or wispy
-- No watermarks or signatures
+- ABSOLUTELY NO watermarks, signatures, logos, or branding text in the image. Do NOT write "AIBTC", "AIBTC Media", or ANY text in corners/margins. Leave the image completely clean.
 `.trim()
 
 /**

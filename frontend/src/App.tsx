@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useConsoleStream } from './hooks/useConsoleStream'
 import { useFeed } from './hooks/useFeed'
 import { Header } from './components/Header'
@@ -6,17 +5,8 @@ import { Monologue } from './components/Monologue'
 import { Feed } from './components/Feed'
 import { Sidebar } from './components/Sidebar'
 import { Footer } from './components/Footer'
-import { Legal } from './components/Legal'
 
 export default function App() {
-  const [page, setPage] = useState<'main' | 'legal'>(() =>
-    window.location.pathname === '/legal' ? 'legal' : 'main'
-  )
-
-  if (page === 'legal') {
-    return <Legal onBack={() => { window.history.pushState({}, '', '/'); setPage('main') }} />
-  }
-
   const { entries, agentState, connected, shortlist, stats } = useConsoleStream({})
   const posts = useFeed()
   const params = new URLSearchParams(window.location.search)

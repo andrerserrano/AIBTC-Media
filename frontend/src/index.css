@@ -401,12 +401,86 @@ button, [role="button"] {
   box-shadow: 0 4px 12px rgba(232, 116, 12, 0.25);
 }
 
-/* Responsive: hide sidebar on small screens */
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+/* Header title — desktop */
+.header-title {
+  font-size: 44px;
+}
+.header-title-break {
+  display: none;
+}
+.header-subtitle {
+  font-size: 10px;
+}
+
+/* Sidebar on mobile: show below feed as stacked column */
 @media (max-width: 900px) {
   .layout-grid {
     grid-template-columns: 1fr !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
   .sidebar-panel {
-    display: none;
+    position: static !important;
+    height: auto !important;
+    border-top: 2px solid var(--color-border);
+    border-right: none !important;
+  }
+  .feed-main {
+    border-right: none !important;
+  }
+
+  /* Header: shrink title + break "AIBTC" / "Media" onto two lines */
+  .header-title {
+    font-size: 32px !important;
+  }
+  .header-title-break {
+    display: inline !important;
+  }
+  .header-subtitle {
+    font-size: 8px;
+    letter-spacing: 0.15em !important;
+  }
+}
+
+/* Footer mobile spacing */
+@media (max-width: 640px) {
+  .footer-wrapper {
+    padding: 2rem 1.25rem 1.5rem !important;
+  }
+  .footer-top {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1.5rem !important;
+  }
+  .footer-subscribe-col {
+    align-items: flex-start !important;
+  }
+  .footer-bottom {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+  .footer-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Feed + header padding on mobile */
+@media (max-width: 640px) {
+  .header-inner {
+    padding: 1rem 1rem 0.5rem !important;
+  }
+  .feed-header-pad {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  .feed-content-pad {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
   }
 }

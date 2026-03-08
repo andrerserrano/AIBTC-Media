@@ -32,7 +32,7 @@ function VideoOverlay({ src, onClose }: { src: string; onClose: () => void }) {
           controls
           autoPlay
           playsInline
-          className="w-full cartoon-panel bg-ink"
+          className="w-full rounded bg-ink"
           onError={() => onClose()}
         />
       </div>
@@ -85,18 +85,18 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
           <circle cx="48" cy="22" r="4" stroke="currentColor" strokeWidth="1" opacity="0.25" />
         </svg>
         <div className="text-center max-w-xs">
-          <p className="font-cartoon text-xl text-ink-light">No cartoons yet</p>
-          <p className="font-hand text-[15px] text-ink-muted mt-2 leading-relaxed">
-            AIBTC Media is scanning for something worth drawing.
+          <p className="font-editorial text-xl text-ink-light">No posts yet</p>
+          <p className="font-sans text-[13px] text-ink-muted mt-2 leading-relaxed">
+            AIBTC Media is scanning for something worth covering.
             <br />
-            <span className="text-ink-faint">New cartoons appear here as they're published.</span>
+            <span className="text-ink-faint">New posts appear here as they're published.</span>
           </p>
         </div>
       </div>
     )
   }
 
-  // Auto-scroll in stream mode for livestream viewers
+  // Auto-scroll in stream mode
   const scrollRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (!streamMode || !scrollRef.current) return
@@ -114,34 +114,33 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
 
   return (
     <div ref={scrollRef} className="h-full overflow-y-auto bg-paper">
-      <div className="sticky top-0 z-10 glass-panel border-b-[2px] border-ink px-6 sm:px-10 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-[3px] h-5 bg-ochre rounded-full" />
-            <h2 className="font-cartoon text-2xl font-bold text-ink">Gallery</h2>
-            <span className="font-mono text-[12px] font-medium text-ink-muted tabular-nums">
+      {/* Feed header */}
+      <div style={{ padding: '1.5rem 2rem 0' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span className="font-editorial" style={{ fontSize: 16, fontWeight: 700, color: 'var(--color-ink)' }}>Latest</span>
+            <span className="font-mono" style={{ fontSize: 11, color: 'var(--color-ink-faint)' }}>
               {posts.length} published
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
             <button
               onClick={() => setViewMode('feed')}
-              className={`cartoon-btn font-mono text-[10px] uppercase tracking-wider px-2.5 py-1 ${viewMode === 'feed' ? 'bg-ink text-paper-bright' : 'bg-paper-warm text-ink-muted'}`}
+              className={`btn ${viewMode === 'feed' ? 'btn-active' : ''}`}
             >
               Feed
             </button>
             <button
               onClick={() => setViewMode('gallery')}
-              className={`cartoon-btn font-mono text-[10px] uppercase tracking-wider px-2.5 py-1 ${viewMode === 'gallery' ? 'bg-ink text-paper-bright' : 'bg-paper-warm text-ink-muted'}`}
+              className={`btn ${viewMode === 'gallery' ? 'btn-active' : ''}`}
             >
               Grid
             </button>
             {rejected.length > 0 && (
               <button
                 onClick={() => setShowRejected(!showRejected)}
-                className={`cartoon-btn font-cartoon text-[14px] px-3 py-0.5 ml-1 ${
-                  showRejected ? 'bg-vermillion text-paper-bright' : 'bg-paper-warm text-ink-muted'
-                }`}
+                className={`btn ${showRejected ? 'btn-active' : ''}`}
+                style={{ marginLeft: 4 }}
               >
                 {showRejected ? 'Hide Rejected' : `${rejected.length} Rejected`}
               </button>
@@ -150,7 +149,7 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
         </div>
       </div>
 
-      <div className="px-6 sm:px-10 py-8">
+      <div style={{ padding: '0 2rem 2rem' }}>
         {viewMode === 'gallery' ? (
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -158,27 +157,28 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
                 post.imagePath && (
                   <div
                     key={post.id}
-                    className="cartoon-panel cartoon-panel-hover overflow-hidden cursor-pointer group animate-[fade-in_0.3s_ease-out]"
+                    className="editorial-card overflow-hidden cursor-pointer group animate-[fade-in_0.3s_ease-out]"
                     style={{ animationDelay: `${i * 0.03}s`, animationFillMode: 'backwards' }}
                     onClick={() => handleImageClick(post, () => setLightboxIndex(i))}
                   >
                     <div className="relative overflow-hidden bg-paper">
                       <img
                         src={sanitizeImagePath(post.imagePath)}
-                        alt="cartoon"
+                        alt="post"
                         className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
+                        style={{ borderRadius: '4px 4px 0 0' }}
                       />
                       {post.videoPath && (
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                          <div className="w-10 h-10 rounded-full bg-ink/60 flex items-center justify-center group-hover:bg-vermillion/80 transition-colors">
+                          <div className="w-10 h-10 rounded-full bg-ink/60 flex items-center justify-center group-hover:bg-bitcoin/80 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="6 3 20 12 6 21 6 3"/></svg>
                           </div>
                         </div>
                       )}
                     </div>
                     <div className="p-3">
-                      <p className="font-cartoon text-[14px] sm:text-[16px] text-ink font-bold leading-snug line-clamp-2">
+                      <p className="font-editorial text-[14px] sm:text-[16px] text-ink font-semibold leading-snug line-clamp-2">
                         {post.text.split('\n')[0]}
                       </p>
                       <time className="block mt-1 font-mono text-[10px] text-ink-faint uppercase">
@@ -190,18 +190,21 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
               ))}
             </div>
 
+            {/* Lightbox */}
             {lightboxIndex !== null && posts[lightboxIndex] && (
               <div
                 className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/80 backdrop-blur-sm animate-[fade-in_0.15s_ease-out]"
                 onClick={() => setLightboxIndex(null)}
               >
                 <div
-                  className="relative max-w-4xl w-full max-h-[90vh] cartoon-panel bg-paper-bright overflow-y-auto"
+                  className="relative max-w-4xl w-full max-h-[90vh] bg-paper-bright rounded overflow-y-auto"
+                  style={{ border: '1px solid var(--color-border)' }}
                   onClick={e => e.stopPropagation()}
                 >
                   <button
                     onClick={() => setLightboxIndex(null)}
-                    className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center bg-paper-bright/90 cartoon-btn text-ink hover:text-vermillion"
+                    className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center bg-paper-bright/90 rounded text-ink hover:text-bitcoin"
+                    style={{ border: '1px solid var(--color-border)' }}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                   </button>
@@ -216,16 +219,16 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
                   ) : posts[lightboxIndex].imagePath ? (
                     <img
                       src={sanitizeImagePath(posts[lightboxIndex].imagePath!)}
-                      alt="cartoon"
+                      alt="post"
                       className="w-full object-contain"
                     />
                   ) : null}
                   <div className="p-6 sm:p-8">
-                    <p className="font-cartoon text-[22px] sm:text-[28px] text-ink font-bold leading-snug">
+                    <p className="font-editorial text-[22px] sm:text-[28px] text-ink font-bold leading-snug">
                       {posts[lightboxIndex].text.split('\n')[0]}
                     </p>
                     {posts[lightboxIndex].text.split('\n').slice(1).filter(Boolean).length > 0 && (
-                      <p className="mt-2 font-hand text-[16px] text-ink-muted">
+                      <p className="mt-2 font-editorial text-[14px] text-ink-muted italic leading-relaxed">
                         {posts[lightboxIndex].text.split('\n').slice(1).join('\n')}
                       </p>
                     )}
@@ -246,16 +249,16 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
                     <button
                       onClick={() => setLightboxIndex(Math.max(0, lightboxIndex - 1))}
                       disabled={lightboxIndex === 0}
-                      className="cartoon-btn font-mono text-[11px] uppercase px-3 py-1.5 bg-paper-warm text-ink disabled:opacity-30"
+                      className="btn disabled:opacity-30"
                     >
-                      ← Prev
+                      &larr; Prev
                     </button>
                     <button
                       onClick={() => setLightboxIndex(Math.min(posts.length - 1, lightboxIndex + 1))}
                       disabled={lightboxIndex === posts.length - 1}
-                      className="cartoon-btn font-mono text-[11px] uppercase px-3 py-1.5 bg-paper-warm text-ink disabled:opacity-30"
+                      className="btn disabled:opacity-30"
                     >
-                      Next →
+                      Next &rarr;
                     </button>
                   </div>
                 </div>
@@ -263,27 +266,28 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
             )}
           </>
         ) : (
-        <div className="max-w-3xl mx-auto space-y-14">
+        <div className="max-w-3xl space-y-6">
           {posts.map((post, i) => (
             <article
               key={post.id}
-              className="group animate-[fade-in_0.4s_ease-out]"
+              className="editorial-card overflow-hidden animate-[fade-in_0.4s_ease-out]"
               style={{ animationDelay: `${i * 0.06}s`, animationFillMode: 'backwards' }}
             >
               {post.imagePath && (
                 <div
-                  className={`relative cartoon-panel cartoon-panel-hover overflow-hidden ${post.videoPath ? 'cursor-pointer group' : ''}`}
+                  className={`relative overflow-hidden ${post.videoPath ? 'cursor-pointer group' : ''}`}
                   onClick={() => { if (streamMode) return; const s = post.videoPath ? sanitizeVideoPath(post.videoPath) : null; if (s) setVideoSrc(s) }}
                 >
                   <img
                     src={sanitizeImagePath(post.imagePath)}
-                    alt="cartoon"
+                    alt="post"
                     className="w-full object-contain"
                     loading="lazy"
+                    style={{ borderRadius: '4px 4px 0 0' }}
                   />
                   {post.videoPath && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="w-14 h-14 rounded-full bg-ink/50 flex items-center justify-center group-hover:bg-vermillion/80 transition-colors">
+                      <div className="w-14 h-14 rounded-full bg-ink/50 flex items-center justify-center group-hover:bg-bitcoin/80 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="6 3 20 12 6 21 6 3"/></svg>
                       </div>
                     </div>
@@ -291,37 +295,32 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
                 </div>
               )}
 
-              <div className="mt-5">
-                <p className="font-cartoon text-[22px] sm:text-[26px] text-ink font-bold leading-snug">
+              <div style={{ padding: '1rem 1.25rem 1.25rem' }}>
+                <p className="font-editorial" style={{ fontSize: 20, fontWeight: 600, color: 'var(--color-ink)', lineHeight: 1.3, marginBottom: '0.25rem' }}>
                   {post.text.split('\n')[0]}
                 </p>
                 {post.text.split('\n').slice(1).filter(Boolean).length > 0 && (
-                  <p className="mt-2 font-hand text-[16px] text-ink-muted leading-relaxed whitespace-pre-line">
+                  <p className="font-editorial" style={{ fontSize: 14, color: 'var(--color-ink-muted)', fontStyle: 'italic', lineHeight: 1.5 }}>
                     {post.text.split('\n').slice(1).join('\n')}
                   </p>
                 )}
-                <div className="mt-3 flex items-center gap-3">
-                  <time className="font-mono text-[11px] font-medium text-ink-muted tabular-nums uppercase tracking-wide">
+                <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <span className="font-mono" style={{ fontSize: 10, fontWeight: 600, color: 'var(--color-bitcoin)', background: 'rgba(232,116,12,0.08)', padding: '2px 6px', borderRadius: 3 }}>
+                    #{posts.length - i}
+                  </span>
+                  <span className="font-mono" style={{ fontSize: 10, color: 'var(--color-ink-faint)' }}>
                     {timeAgo(post.createdAt)}
-                  </time>
-                  <span className="text-ink-faint">&middot;</span>
-                  <span className="font-mono text-[11px] font-medium text-ink-muted uppercase tracking-wide">
+                  </span>
+                  <span style={{ color: 'var(--color-ink-faint)' }}>&middot;</span>
+                  <span className="font-mono" style={{ fontSize: 10, color: 'var(--color-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     by AIBTC Media
                   </span>
                 </div>
               </div>
 
               {post.quotedTweetId && (
-                <div className="mt-5">
+                <div className="px-5 pb-4">
                   <TweetEmbed tweetId={post.quotedTweetId} />
-                </div>
-              )}
-
-              {i < posts.length - 1 && !showRejected && (
-                <div className="mt-10 flex items-center gap-4">
-                  <div className="flex-1 editorial-rule" />
-                  <span className="font-cartoon text-ink-faint text-sm">&loz;</span>
-                  <div className="flex-1 editorial-rule" />
                 </div>
               )}
             </article>
@@ -331,49 +330,42 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
           {showRejected && rejected.length > 0 && (
             <>
               <div className="flex items-center gap-4 pt-4">
-                <div className="flex-1 sketch-rule" />
-                <span className="font-cartoon text-[18px] text-vermillion font-bold">Rejected by Editor</span>
-                <div className="flex-1 sketch-rule" />
+                <div className="flex-1 editorial-rule" />
+                <span className="font-editorial text-[18px] text-bitcoin font-bold">Rejected by Editor</span>
+                <div className="flex-1 editorial-rule" />
               </div>
 
               {rejected.map((r, i) => (
                 <article
                   key={`rejected-${i}`}
-                  className="opacity-60 hover:opacity-90 transition-opacity"
+                  className="editorial-card overflow-hidden opacity-60 hover:opacity-90 transition-opacity"
                 >
-                  <div className="relative cartoon-panel overflow-hidden">
+                  <div className="relative overflow-hidden">
                     <img
                       src={sanitizeImageUrl(r.imageUrl) ?? '/images/placeholder.png'}
-                      alt="rejected cartoon"
+                      alt="rejected"
                       className="w-full object-contain grayscale-[30%]"
                       loading="lazy"
                     />
-                    <div className="absolute top-3 right-3 bg-vermillion text-paper-bright font-cartoon text-[14px] font-bold px-3 py-1" style={{ borderRadius: '255px 15px 225px 15px/15px 225px 15px 255px', transform: 'rotate(3deg)' }}>
-                      REJECTED
+                    <div className="absolute top-3 right-3 bg-bitcoin text-paper-bright font-mono text-[10px] font-bold px-3 py-1 uppercase tracking-wider rounded">
+                      Rejected
                     </div>
                   </div>
 
-                  <div className="mt-4">
-                    <p className="font-hand text-[16px] text-ink-muted line-through leading-relaxed">
+                  <div style={{ padding: '1rem 1.25rem 1.25rem' }}>
+                    <p className="font-editorial text-[16px] text-ink-muted line-through leading-relaxed italic">
                       {r.caption}
                     </p>
-                    <div className="mt-2 sketch-border-thin bg-vermillion/5 px-3 py-2">
-                      <p className="font-hand text-[14px] text-vermillion leading-snug">
-                        <span className="font-cartoon font-bold">Editor: </span>{r.reason}
+                    <div className="mt-2 rounded" style={{ background: 'rgba(232,116,12,0.05)', border: '1px solid rgba(232,116,12,0.15)', padding: '0.5rem 0.75rem' }}>
+                      <p className="text-[12px] text-bitcoin leading-snug">
+                        <span className="font-mono font-bold uppercase text-[10px]">Editor: </span>
+                        <span className="font-sans">{r.reason}</span>
                       </p>
                     </div>
-                    <time className="block mt-2 font-mono text-[11px] font-medium text-ink-faint tabular-nums uppercase tracking-wide">
+                    <time className="block mt-2 font-mono text-[10px] text-ink-faint uppercase">
                       {timeAgo(r.rejectedAt)}
                     </time>
                   </div>
-
-                  {i < rejected.length - 1 && (
-                    <div className="mt-8 flex items-center gap-4">
-                      <div className="flex-1 editorial-rule" />
-                      <span className="font-cartoon text-vermillion/30 text-sm">&#x2717;</span>
-                      <div className="flex-1 editorial-rule" />
-                    </div>
-                  )}
                 </article>
               ))}
             </>

@@ -1,46 +1,56 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: 'Instrument Serif', 'Georgia', serif;
-  --font-cartoon: 'Caveat', cursive;
-  --font-hand: 'Patrick Hand', 'Caveat', cursive;
+  /* Typography — editorial v4 */
+  --font-editorial: 'Playfair Display', Georgia, serif;
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --font-body: 'Inter', system-ui, sans-serif;
 
-  /* Warm cartoon palette */
-  --color-paper: #f5efe0;
-  --color-paper-warm: #ebe4d3;
-  --color-paper-bright: #faf6eb;
-  --color-surface: #eee8d8;
-  --color-surface-raised: #faf6eb;
+  /* Legacy aliases so existing Tailwind classes still resolve */
+  --font-cartoon: 'Playfair Display', Georgia, serif;
+  --font-hand: 'Inter', system-ui, sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
 
-  /* Ink hierarchy — bold cartoon contrast */
+  /* Paper tones — v4 palette */
+  --color-paper: #faf8f4;
+  --color-paper-warm: #f5f3f0;
+  --color-paper-bright: #ffffff;
+  --color-surface: #f5f3f0;
+  --color-surface-raised: #ffffff;
+
+  /* Ink hierarchy */
   --color-ink: #1a1a1a;
-  --color-ink-secondary: #2d2d2d;
-  --color-ink-light: #4a4a4a;
-  --color-ink-muted: #7a7064;
-  --color-ink-faint: #b5ad9e;
+  --color-ink-secondary: #555;
+  --color-ink-light: #3a3a3a;
+  --color-ink-muted: #777;
+  --color-ink-faint: #aaa;
 
-  /* Hand-drawn borders */
-  --color-border: #c9bfa8;
-  --color-border-strong: #a89c87;
+  /* Borders — v4 */
+  --color-border: #e5e0d8;
+  --color-border-strong: #d4cfc1;
 
-  /* Accents — rich editorial cartoon colors */
-  --color-vermillion: #c23616;
-  --color-cobalt: #1a5276;
+  /* Primary accent — bitcoin orange */
+  --color-bitcoin: #E8740C;
+  --color-bitcoin-dark: #c76b0a;
+
+  /* Legacy alias: vermillion → bitcoin */
+  --color-vermillion: #E8740C;
+
+  /* Secondary accents */
+  --color-cobalt: #2d5a9e;
   --color-ochre: #b8860b;
-  --color-forest: #1a7a3a;
+  --color-forest: #2d7a4f;
   --color-violet: #5b3e96;
   --color-cyan: #117a8b;
 
   /* Legacy compat */
   --color-text: #1a1a1a;
-  --color-text-secondary: #2d2d2d;
-  --color-text-muted: #7a7064;
-  --color-text-faint: #b5ad9e;
-  --color-void: #f5efe0;
-  --color-surface-bright: #eee8d8;
+  --color-text-secondary: #555;
+  --color-text-muted: #777;
+  --color-text-faint: #aaa;
+  --color-void: #faf8f4;
+  --color-surface-bright: #f5f3f0;
 }
 
 * { box-sizing: border-box; }
@@ -60,148 +70,196 @@ body {
   line-height: 1.6;
 }
 
-/* Paper grain — more visible for cartoon feel */
+/* Paper grain — subtle editorial texture */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  opacity: 0.06;
+  opacity: 0.02;
   pointer-events: none;
   z-index: 9999;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* SVG filter for hand-drawn effect */
-.sketchy-svg-filters {
-  position: absolute;
-  width: 0;
-  height: 0;
-}
-
-/* Scrollbar — ink-style */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+/* Scrollbar — clean editorial */
+::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-ink-faint);
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  background: var(--color-border);
+  border-radius: 2px;
 }
-::-webkit-scrollbar-thumb:hover { background: var(--color-ink-muted); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-ink-faint); }
 
 /* Selection */
 ::selection {
-  background: rgba(194, 54, 22, 0.15);
+  background: rgba(232, 116, 12, 0.15);
   color: var(--color-ink);
 }
 
 /* ==========================================
-   CARTOON EFFECTS
+   EDITORIAL DESIGN SYSTEM (v4)
    ========================================== */
 
-/* Hand-drawn border utility — apply to panels, cards, buttons */
-.sketch-border {
-  border: 2.5px solid var(--color-ink);
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+/* Accent rule — bitcoin orange bar */
+.accent-rule {
+  height: 4px;
+  background: var(--color-bitcoin);
 }
 
-.sketch-border-light {
-  border: 2px solid var(--color-border-strong);
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+/* Editorial divider — thin clean line */
+.editorial-rule {
+  height: 1px;
+  background: var(--color-border);
 }
 
-.sketch-border-thin {
-  border: 1.5px solid var(--color-border);
-  border-radius: 225px 15px 255px 15px/15px 255px 15px 225px;
-}
-
-/* Ink splatter decoration */
-.ink-splatter::after {
-  content: '';
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background: var(--color-ink);
-  border-radius: 50% 40% 60% 30%;
-  opacity: 0.15;
-  right: -4px;
-  top: -4px;
-}
-
-/* Hand-drawn underline */
-.sketch-underline {
-  text-decoration: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='4'%3E%3Cpath d='M0 3 Q 25 0, 50 3 Q 75 6, 100 3' stroke='%23c23616' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
-  background-repeat: repeat-x;
-  background-position: bottom;
-  background-size: 100px 4px;
-  padding-bottom: 4px;
-}
-
-/* Wobbly divider line */
-.sketch-rule {
-  border: none;
-  height: 3px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='4'%3E%3Cpath d='M0 2 Q 50 0, 100 2 Q 150 4, 200 2 Q 250 0, 300 2 Q 350 4, 400 2' stroke='%231a1a1a' fill='none' stroke-width='2'/%3E%3C/svg%3E");
-  background-repeat: repeat-x;
-  background-size: 400px 4px;
-  opacity: 0.8;
-}
-
-.sketch-rule-thin {
-  border: none;
+/* Strong editorial divider */
+.editorial-rule-strong {
   height: 2px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='3'%3E%3Cpath d='M0 1.5 Q 50 0, 100 1.5 Q 150 3, 200 1.5 Q 250 0, 300 1.5 Q 350 3, 400 1.5' stroke='%23c9bfa8' fill='none' stroke-width='1'/%3E%3C/svg%3E");
-  background-repeat: repeat-x;
-  background-size: 400px 3px;
+  background: linear-gradient(to right, var(--color-ink), var(--color-ink));
+  opacity: 0.15;
 }
 
-/* Cartoon panel — main content panels */
-.cartoon-panel {
+/* Editorial card — clean content panels */
+.editorial-card {
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
   background: var(--color-paper-bright);
-  border: 2.5px solid var(--color-ink);
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  box-shadow: 4px 4px 0 0 rgba(26, 26, 26, 0.08);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
 
-/* Card hover lift — subtle rise + deeper shadow */
-.cartoon-panel-hover:hover {
+.editorial-card:hover {
   box-shadow: 6px 8px 0 0 rgba(26, 26, 26, 0.12);
   transform: translateY(-2px);
 }
 
-/* Cartoon button */
-.cartoon-btn {
-  border: 2px solid var(--color-ink);
+/* Stat block — dashboard widget */
+.stat-block {
+  background: var(--color-paper);
   border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  box-shadow: 3px 3px 0 0 var(--color-ink);
-  transition: all 0.1s ease;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  border: 1.5px solid var(--color-border);
+  border-left: 3px solid var(--color-bitcoin);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
-.cartoon-btn:hover {
-  box-shadow: 1px 1px 0 0 var(--color-ink);
-  transform: translate(2px, 2px);
-}
-.cartoon-btn:active {
-  box-shadow: 0 0 0 0 var(--color-ink);
-  transform: translate(3px, 3px);
-}
-
-/* Cartoon badge/pill */
-.cartoon-pill {
-  border: 1.5px solid currentColor;
-  border-radius: 225px 15px 255px 15px/15px 255px 15px 225px;
+.stat-block:hover {
+  box-shadow: 0 0 12px -4px rgba(232, 116, 12, 0.2);
+  border-color: #ccc;
 }
 
-/* Ink drip on left edge of sections */
-.ink-drip-left::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 10%;
-  width: 4px;
-  height: 30px;
-  background: var(--color-vermillion);
-  border-radius: 0 0 50% 50%;
-  opacity: 0.6;
+/* Status pill — clean rounded indicator */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  border: 1px solid var(--color-border);
+  background: rgba(45, 122, 79, 0.08);
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
+}
+.status-pill:hover {
+  box-shadow: 0 0 12px -2px currentColor;
+}
+
+/* Buttons — clean editorial style */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 5px 10px;
+}
+.btn:hover {
+  border-color: var(--color-ink-faint);
+  color: var(--color-ink);
+}
+.btn-active {
+  background: var(--color-ink);
+  color: var(--color-paper-bright);
+  border-color: var(--color-ink);
+}
+
+/* Console log — agent activity */
+.console-block {
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-paper-bright);
+  max-height: 380px;
+  overflow-y: auto;
+}
+.console-entry {
+  padding: 0.75rem 0.875rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.console-entry:last-child { border-bottom: none; }
+.console-entry:hover { background: rgba(0,0,0,0.015); }
+
+/* State badge — colored agent state labels */
+.state-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+/* Heading letter hover — v4 editorial effect */
+.heading-letter {
+  display: inline-block;
+  transition: color 0.15s ease-out, transform 0.15s ease-out;
+}
+.heading-letter:hover {
+  color: var(--color-bitcoin);
+  transform: translateY(-3px);
+}
+
+/* Console container — simple border */
+.console-container {
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}
+
+/* Masthead text — embossed newspaper header */
+.masthead-title {
+  text-shadow: 2px 2px 0 rgba(26, 26, 26, 0.06);
+}
+
+/* Glass panel — for sticky headers */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Shimmer sweep animation */
+.shimmer-sweep {
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* Stat glow effect */
+.stat-glow {
+  text-shadow: 0 0 20px currentColor;
 }
 
 /* ==========================================
@@ -233,11 +291,6 @@ body::before {
   100% { transform: translateX(100%); }
 }
 
-@keyframes draw-in {
-  from { stroke-dashoffset: 100; }
-  to { stroke-dashoffset: 0; }
-}
-
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-4px); }
@@ -248,68 +301,8 @@ body::before {
   100% { background-position: 200% 0; }
 }
 
-@keyframes voice-bar-1 {
-  0%, 100% { height: 4px; }
-  50% { height: 12px; }
-}
-@keyframes voice-bar-2 {
-  0%, 100% { height: 8px; }
-  50% { height: 4px; }
-}
-@keyframes voice-bar-3 {
-  0%, 100% { height: 6px; }
-  50% { height: 12px; }
-}
-
-@keyframes wobble {
-  0%, 100% { transform: rotate(-0.3deg); }
-  50% { transform: rotate(0.3deg); }
-}
-
-/* Playful letter scatter on hover */
-.studio-title {
-  display: inline-flex;
-  cursor: pointer;
-}
-.studio-title .studio-letter {
-  display: inline-block;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
-}
-.studio-title:hover .studio-letter:nth-child(1) {
-  transform: translate(-3px, -6px) rotate(-8deg);
-  color: var(--color-vermillion);
-}
-.studio-title:hover .studio-letter:nth-child(2) {
-  transform: translate(2px, 5px) rotate(5deg);
-  color: var(--color-ochre);
-}
-.studio-title:hover .studio-letter:nth-child(3) {
-  transform: translate(-1px, -4px) rotate(-4deg);
-  color: var(--color-cobalt);
-}
-.studio-title:hover .studio-letter:nth-child(4) {
-  transform: translate(3px, 3px) rotate(7deg);
-  color: var(--color-forest);
-}
-.studio-title:hover .studio-letter:nth-child(5) {
-  transform: translate(-2px, -5px) rotate(-6deg);
-  color: var(--color-violet);
-}
-
-/* Buttons */
-button, [role="button"] {
-  cursor: pointer;
-}
-
-/* Focus ring — sketch style */
-*:focus-visible {
-  outline: 2.5px solid var(--color-cobalt);
-  outline-offset: 3px;
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-}
-
 /* ==========================================
-   MONOLOGUE ENTRY STYLES
+   MONOLOGUE / CONSOLE ENTRY STYLES
    ========================================== */
 
 .entry-line {
@@ -327,78 +320,88 @@ button, [role="button"] {
 }
 
 /* ==========================================
-   CUSTOM UTILITY CLASSES
+   UTILITY
    ========================================== */
 
-.glass-panel {
-  background: rgba(250, 246, 235, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+/* Buttons */
+button, [role="button"] {
+  cursor: pointer;
 }
 
-.editorial-rule {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--color-border) 15%,
-    var(--color-border) 85%,
-    transparent
-  );
-  height: 1px;
-}
-
-.stat-glow {
-  text-shadow: 0 0 20px currentColor;
-}
-
-/* Stat block — polished dashboard widget */
-.stat-block {
-  background: var(--color-paper-warm);
-  border: 1.5px solid var(--color-border);
-  border-radius: 225px 15px 255px 15px/15px 255px 15px 225px;
-  border-left: 3px solid var(--color-vermillion);
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
-}
-.stat-block:hover {
-  box-shadow: 0 0 12px -4px rgba(194, 54, 22, 0.2);
-  border-color: var(--color-border-strong);
-}
-
-/* Console container — simple border */
-.console-container {
-  border: 1px solid var(--color-border);
+/* Focus ring — clean editorial */
+*:focus-visible {
+  outline: 2px solid var(--color-cobalt);
+  outline-offset: 2px;
   border-radius: 4px;
 }
 
-/* Masthead text — embossed newspaper header */
-.masthead-title {
-  text-shadow: 2px 2px 0 rgba(26, 26, 26, 0.06), -1px -1px 0 rgba(250, 246, 235, 0.4);
+/* Footer subscribe input */
+.footer-email-input {
+  flex: 1;
+  padding: 11px 14px;
+  border: 1px solid var(--color-border);
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  background: var(--color-paper);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--color-ink);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.footer-email-input::placeholder {
+  color: var(--color-ink-faint);
+}
+.footer-email-input:focus {
+  border-color: var(--color-bitcoin);
 }
 
-/* Status pill shimmer */
-.shimmer-sweep {
-  background: linear-gradient(
-    105deg,
-    transparent 40%,
-    rgba(255, 255, 255, 0.35) 50%,
-    transparent 60%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 3s ease-in-out infinite;
+.footer-subscribe-btn {
+  padding: 11px 20px;
+  background: var(--color-ink);
+  color: var(--color-paper-bright);
+  border: 1px solid var(--color-ink);
+  border-radius: 0 4px 4px 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.footer-subscribe-btn:hover {
+  background: var(--color-bitcoin);
+  border-color: var(--color-bitcoin);
 }
 
-.status-pill {
-  transition: background-color 0.4s ease, box-shadow 0.4s ease;
-  box-shadow: 0 0 0 0 transparent;
-  border-radius: 225px 15px 255px 15px/15px 255px 15px 225px;
-  border: 1.5px solid var(--color-border-strong);
+/* Footer CTA button */
+.footer-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 28px;
+  background: var(--color-ink);
+  color: var(--color-paper-bright);
+  border: none;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.footer-cta-btn:hover {
+  background: var(--color-bitcoin);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(232, 116, 12, 0.25);
 }
 
-.status-pill:hover {
-  box-shadow: 0 0 12px -2px currentColor;
-}
-
-/* Responsive breakpoint for sidebar */
+/* Responsive: hide sidebar on small screens */
 @media (max-width: 900px) {
   .layout-grid {
     grid-template-columns: 1fr !important;

@@ -1,283 +1,156 @@
-import { useState, useEffect } from 'react'
 import type { AgentState } from '../types'
+
+interface ConsoleEntry {
+  id: number
+  type: string
+  text: string
+  ts: number
+}
 
 interface SidebarProps {
   stats: { events: number; posts: number }
   shortlist: Array<{ id: string; summary: string; score: number }>
   agentState: AgentState
   postCount: number
+  consoleEntries: ConsoleEntry[]
 }
 
-interface WorldviewData {
-  beliefs: string[]
-  punchesUp: string[]
-  respects: string[]
-  updatedAt: number
-  changelog: Array<{ date: number; summary: string }>
+const STATE_COLORS: Record<string, { bg: string; color: string }> = {
+  monologue: { bg: 'rgba(128,90,213,0.08)', color: 'var(--color-violet, #7c3aed)' },
+  editor:    { bg: 'rgba(45,90,158,0.08)',   color: 'var(--color-cobalt)' },
+  scan:      { bg: 'rgba(6,182,212,0.08)',   color: 'var(--color-cyan, #06b6d4)' },
+  shortlist: { bg: 'rgba(194,130,18,0.08)',  color: 'var(--color-ochre, #b8860b)' },
+  ideate:    { bg: 'rgba(232,116,12,0.08)',  color: 'var(--color-bitcoin)' },
+  generate:  { bg: 'rgba(45,90,158,0.08)',   color: 'var(--color-cobalt)' },
+  critique:  { bg: 'rgba(232,116,12,0.08)',  color: 'var(--color-bitcoin)' },
+  post:      { bg: 'rgba(45,122,79,0.08)',   color: 'var(--color-forest)' },
+  engage:    { bg: 'rgba(45,122,79,0.08)',   color: 'var(--color-forest)' },
 }
 
-const FALLBACK_BELIEFS = [
-  'Bitcoin is the settlement layer for autonomous agents.',
-  'AI agents coordinating on Bitcoin will reshape how value flows.',
-  'Open protocols beat closed platforms — always.',
-  'The best ideas come from independent builders, not committees.',
-  'Humor is the last honest medium.',
-]
+const STATE_LABELS: Record<string, string> = {
+  monologue: 'Thinking',
+  editor:    'Editing',
+  scan:      'Scanning',
+  shortlist: 'Picking',
+  ideate:    'Sketching',
+  generate:  'Drawing',
+  critique:  'Judging',
+  post:      'Publishing',
+  engage:    'Replying',
+}
 
-const FALLBACK_PUNCHES = [
-  'Closed AI monopolies pretending to innovate',
-  'Centralized platforms extracting from builders',
-  'Corporate PR disguised as thought leadership',
-  'Vaporware with impressive decks and no shipped code',
-  'Gatekeepers who fear what agents can do on Bitcoin',
-]
-
-const FALLBACK_RESPECTS = [
-  'Bitcoin builders shipping real infrastructure',
-  'AI agent developers building in the open',
-  'Stacks/sBTC contributors expanding Bitcoin programmability',
-  'Anyone building something real on open protocols',
-]
-
-export function Sidebar({ stats, shortlist, postCount }: SidebarProps) {
-  const [identityOpen, setIdentityOpen] = useState(false)
-  const [worldview, setWorldview] = useState<WorldviewData | null>(null)
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch('/api/worldview')
-        if (res.ok) setWorldview(await res.json())
-      } catch { /* use fallbacks */ }
-    }
-    load()
-    const interval = setInterval(load, 60_000)
-    return () => clearInterval(interval)
-  }, [])
-
-  const beliefs = worldview?.beliefs ?? FALLBACK_BELIEFS
-  const punchesUp = worldview?.punchesUp ?? FALLBACK_PUNCHES
-  const respects = worldview?.respects ?? FALLBACK_RESPECTS
-  const lastEvolved = worldview?.updatedAt
-    ? new Date(worldview.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-    : null
-  const latestShift = worldview?.changelog?.length ? worldview.changelog[worldview.changelog.length - 1] : null
-
+export function Sidebar({ stats, postCount, consoleEntries }: SidebarProps) {
   return (
-    <aside className="bg-paper-bright overflow-y-auto">
-      {/* Live ticker block */}
-      <div className="p-5 border-b-[2px] border-ink/20">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="relative flex items-center justify-center">
-            <div className="w-2 h-2 rounded-full bg-vermillion" />
-            <div className="absolute w-2 h-2 rounded-full bg-vermillion animate-ping opacity-40" />
-          </div>
-          <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-vermillion">
-            Live Stats
-          </span>
-        </div>
-
-        <div className="grid grid-cols-3 gap-2">
-          <StatBlock label="Events" value={stats.events} />
-          <StatBlock label="Cartoons" value={postCount} accent />
-          <StatBlock label="Requests" value="--" />
-        </div>
-      </div>
-
-      {/* Identity / Worldview */}
-      <div className="p-5 border-b border-border">
-        <div className="sketch-rule-thin mb-4" />
-        <button
-          onClick={() => setIdentityOpen(!identityOpen)}
-          className="w-full flex items-center justify-between group"
-        >
-          <SectionTitle>Identity &amp; Worldview</SectionTitle>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={`text-ink-muted group-hover:text-ink transition-all ${identityOpen ? 'rotate-180' : ''}`}
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </button>
-
-        {/* Tagline — always visible */}
-        <p className="font-mono text-[10px] text-ink-muted mt-2 leading-relaxed italic">
-          &ldquo;Documenting the Bitcoin agent economy.&rdquo;
+    <aside className="bg-paper-bright overflow-y-auto flex flex-col" style={{ padding: '1.5rem' }}>
+      {/* About */}
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h2 className="font-editorial" style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-ink)', marginBottom: '0.5rem' }}>
+          About
+        </h2>
+        <p style={{ fontSize: 13, color: 'var(--color-ink-secondary)', lineHeight: 1.6 }}>
+          AIBTC Media is an autonomous media company. It reads intelligence signals about AI agents, Bitcoin, and Stacks — then turns those signals into media.
         </p>
-
-        {identityOpen && (
-          <div className="mt-4 space-y-4 animate-[slide-up_0.15s_ease-out]">
-            {/* Beliefs */}
-            <div>
-              <div className="font-cartoon text-[16px] text-vermillion font-bold mb-2">
-                What I believe
-              </div>
-              <div className="space-y-1.5">
-                {beliefs.map((b, i) => (
-                  <div key={i} className="flex gap-2 items-start">
-                    <span className="shrink-0 text-vermillion font-mono text-[9px] leading-relaxed">&bull;</span>
-                    <span className="font-hand text-[15px] text-ink-light leading-snug">{b}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Roasts */}
-            <div>
-              <div className="font-cartoon text-[16px] text-ochre font-bold mb-2">
-                I punch up at
-              </div>
-              <div className="space-y-1">
-                {punchesUp.map((p, i) => (
-                  <div key={i} className="flex gap-2 items-start">
-                    <span className="shrink-0 text-ochre font-mono text-[9px] leading-relaxed">&bull;</span>
-                    <span className="font-hand text-[15px] text-ink-muted leading-snug">{p}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Respects */}
-            <div>
-              <div className="font-cartoon text-[16px] text-forest font-bold mb-2">
-                I respect
-              </div>
-              <div className="space-y-1">
-                {respects.map((r, i) => (
-                  <div key={i} className="flex gap-2 items-start">
-                    <span className="shrink-0 text-forest font-mono text-[9px] leading-relaxed">&bull;</span>
-                    <span className="font-hand text-[15px] text-ink-muted leading-snug">{r}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Evolution log */}
-            {latestShift && (
-              <div className="pt-2 border-t border-border/40">
-                <div className="font-cartoon text-[16px] text-violet font-bold mb-2">
-                  Last worldview shift
-                </div>
-                <p className="font-hand text-[15px] text-ink-muted leading-snug">
-                  &ldquo;{latestShift.summary.slice(0, 200)}{latestShift.summary.length > 200 ? '...' : ''}&rdquo;
-                </p>
-                {lastEvolved && (
-                  <p className="font-mono text-[11px] font-medium text-ink-muted mt-1">
-                    {lastEvolved}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        )}
+        <p style={{ fontSize: 13, color: 'var(--color-ink-secondary)', lineHeight: 1.6, marginTop: '0.5rem' }}>
+          No human approves the work. The agent scans, scores, sketches, draws, and publishes on its own. All comics inscribed permanently to Bitcoin.
+        </p>
       </div>
 
-      {/* Agent activity */}
-      <div className="p-5 border-b border-border">
-        <SectionTitle>Agent activity</SectionTitle>
+      {/* Organic divider */}
+      <div style={{ height: '1.5px', background: 'var(--color-border)', borderRadius: '255px 15px 225px 15px/15px 225px 15px 255px', marginBottom: '1.25rem' }} />
 
-        <div className="console-container mt-3 p-3 max-h-[240px] overflow-y-auto">
-          {shortlist.length === 0 ? (
-            <div className="flex items-center gap-2.5 py-2">
-              <div className="w-[5px] h-[5px] rounded-full bg-cyan animate-[pulse-soft_1.5s_infinite]" />
-              <p className="font-hand text-[15px] text-ink-muted">
-                Scanning for stories...
-              </p>
+      {/* Stats heading */}
+      <h3 className="font-mono" style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--color-bitcoin)', marginBottom: '0.5rem' }}>
+        Stats
+      </h3>
+
+      {/* Stats row */}
+      <div className="stats-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem', marginBottom: '1.5rem' }}>
+        <div className="stat-block">
+          <div className="font-editorial" style={{ fontSize: 26, fontWeight: 'bold', color: 'var(--color-ink)', lineHeight: 1 }}>
+            {postCount}
+          </div>
+          <div className="font-mono" style={{ fontSize: 9, color: 'var(--color-ink-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 4 }}>
+            Published
+          </div>
+        </div>
+        <div className="stat-block">
+          <div className="font-editorial" style={{ fontSize: 26, fontWeight: 'bold', color: 'var(--color-ink)', lineHeight: 1 }}>
+            {stats.events}
+          </div>
+          <div className="font-mono" style={{ fontSize: 9, color: 'var(--color-ink-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 4 }}>
+            Signals
+          </div>
+        </div>
+        <div className="stat-block">
+          <div className="font-editorial" style={{ fontSize: 26, fontWeight: 'bold', color: 'var(--color-ink)', lineHeight: 1 }}>
+            {stats.posts}
+          </div>
+          <div className="font-mono" style={{ fontSize: 9, color: 'var(--color-ink-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 4 }}>
+            Concepts
+          </div>
+        </div>
+      </div>
+
+      {/* Organic divider */}
+      <div style={{ height: '1.5px', background: 'var(--color-border)', borderRadius: '255px 15px 225px 15px/15px 225px 15px 255px', marginBottom: '1.25rem' }} />
+
+      {/* Agent Activity */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+          <h3 className="font-mono" style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--color-bitcoin)' }}>
+            Agent Activity
+          </h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--color-forest)' }} />
+            <span className="font-mono" style={{ fontSize: 9, color: 'var(--color-forest)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Live
+            </span>
+          </div>
+        </div>
+
+        <div className="console-block" style={{ flex: 1 }}>
+          {consoleEntries.length === 0 ? (
+            <div className="console-entry" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--color-forest)' }} className="animate-pulse" />
+              <span style={{ fontSize: 12, color: 'var(--color-ink-secondary)' }}>Scanning for stories...</span>
             </div>
           ) : (
-            <div className="space-y-1">
-              {shortlist.map((t, i) => (
-                <div
-                  key={t.id}
-                  className="flex gap-3 group py-1.5 px-2 -mx-1 rounded hover:bg-paper/60 transition-colors"
-                >
-                  <div className="shrink-0 flex items-baseline gap-1">
-                    <span className="font-mono text-[9px] text-ink-faint">{i + 1}.</span>
-                    <span className="font-mono text-sm font-bold text-ochre tabular-nums w-7 text-right">
-                      {t.score.toFixed(1)}
+            [...consoleEntries].reverse().slice(0, 50).map((entry) => {
+              const colors = STATE_COLORS[entry.type] ?? { bg: 'rgba(0,0,0,0.04)', color: 'var(--color-ink-muted)' }
+              const label = STATE_LABELS[entry.type] ?? entry.type
+
+              return (
+                <div key={entry.id} className="console-entry">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <span
+                      className="state-badge"
+                      style={{ background: colors.bg, color: colors.color }}
+                    >
+                      {label}
+                    </span>
+                    <span className="font-mono" style={{ fontSize: 9, color: 'var(--color-ink-faint)' }}>
+                      {timeAgo(entry.ts)}
                     </span>
                   </div>
-                  <span className="font-hand text-[15px] text-ink-light leading-snug group-hover:text-ink transition-colors">
-                    {t.summary}
-                  </span>
+                  <p style={{ fontSize: 12, color: 'var(--color-ink-secondary)', lineHeight: 1.5 }}>
+                    {entry.text.length > 140 ? entry.text.slice(0, 140) + '...' : entry.text}
+                  </p>
                 </div>
-              ))}
-            </div>
+              )
+            })
           )}
         </div>
-      </div>
-
-      {/* How it works */}
-      <div className="p-5 border-b border-border">
-        <div className="sketch-rule-thin mb-4" />
-        <SectionTitle>How it works</SectionTitle>
-
-        <div className="space-y-3.5 mt-3">
-          <Step n="1" accent="text-vermillion">
-            Scans AIBTC News for signals from the Bitcoin agent economy.
-          </Step>
-          <Step n="2" accent="text-cobalt">
-            Picks the best story, sketches concepts, generates art, self-critiques.
-          </Step>
-          <Step n="3" accent="text-forest">
-            Publishes the best comic strip with an editorial caption.
-          </Step>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="p-5">
-        <div className="sketch-rule mb-4" />
-        <p className="font-cartoon text-[15px] text-ink-muted text-center leading-snug">
-          <a href="https://github.com/andrerserrano/AIBTC-Media" target="_blank" rel="noopener noreferrer" className="text-vermillion hover:underline font-bold">AIBTC Media</a>
-        </p>
-        <p className="font-mono text-[11px] text-ink-light text-center mt-1.5 font-medium uppercase tracking-wider">
-          Documenting the Bitcoin agent economy
-        </p>
-        <p className="font-hand text-[13px] text-ink-muted text-center mt-2">
-          The Brain tab shows every thought, unfiltered.
-        </p>
       </div>
     </aside>
   )
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return (
-    <h3 className="font-cartoon text-[20px] font-bold text-ink flex items-center gap-2">
-      {children}
-    </h3>
-  )
-}
-
-function StatBlock({ label, value, accent }: { label: string; value: number | string; accent?: boolean }) {
-  return (
-    <div className="text-center py-2.5 stat-block">
-      <div className={`font-mono text-xl font-bold tabular-nums leading-none ${accent ? 'text-vermillion' : 'text-ink'}`}>
-        {value}
-      </div>
-      <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-ink-muted mt-1.5">{label}</div>
-    </div>
-  )
-}
-
-function Step({ n, accent, children }: { n: string; accent: string; children: React.ReactNode }) {
-  return (
-    <div className="flex gap-3 items-start">
-      <span className={`shrink-0 font-cartoon text-[18px] font-bold ${accent}`}>
-        {n}.
-      </span>
-      <p className="font-hand text-[15px] text-ink-muted leading-snug">
-        {children}
-      </p>
-    </div>
-  )
+function timeAgo(ts: number): string {
+  const seconds = Math.floor((Date.now() - ts) / 1000)
+  if (seconds < 60) return 'just now'
+  const minutes = Math.floor(seconds / 60)
+  if (minutes < 60) return `${minutes}m ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}h ago`
+  return `${Math.floor(hours / 24)}d ago`
 }

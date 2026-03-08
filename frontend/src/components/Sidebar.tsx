@@ -115,7 +115,7 @@ export function Sidebar({ stats, postCount, consoleEntries }: SidebarProps) {
               <span style={{ fontSize: 12, color: 'var(--color-ink-secondary)' }}>Scanning for stories...</span>
             </div>
           ) : (
-            [...consoleEntries].reverse().slice(0, 50).map((entry) => {
+            dedupeActivity([...consoleEntries].reverse()).slice(0, 25).map((entry) => {
               const colors = STATE_COLORS[entry.type] ?? { bg: 'rgba(0,0,0,0.04)', color: 'var(--color-ink-muted)' }
               const label = STATE_LABELS[entry.type] ?? entry.type
 
@@ -143,6 +143,52 @@ export function Sidebar({ stats, postCount, consoleEntries }: SidebarProps) {
       </div>
     </aside>
   )
+}
+
+/**
+ * Deduplicate and reduce noise in the activity feed.
+ * - Collapses consecutive scan entries into one summary
+ * - Keeps only the most recent monologue/editor per burst
+ * - Prioritizes high-signal events: shortlist, ideate, generate, critique, post, engage
+ */
+function dedupeActivity(entries: ConsoleEntry[]): ConsoleEntry[] {
+  const result: ConsoleEntry[] = []
+  let lastScanId: number | null = null
+  let scanCount = 0
+
+  for (const entry of entries) {
+    // Collapse consecutive scan entries — keep first, update text with count
+    if (entry.type === 'scan') {
+      if (lastScanId === null) {
+        // First scan in a run — add it
+        result.push({ ...entry })
+        lastScanId = result.length - 1
+        scanCount = 1
+      } else {
+        // Subsequent scan — update the summary
+        scanCount++
+        result[lastScanId] = {
+          ...result[lastScanId],
+          text: `Scanned ${scanCount} sources`,
+          ts: entry.ts, // use latest timestamp
+        }
+      }
+      continue
+    }
+
+    // Non-scan entry breaks the scan streak
+    lastScanId = null
+    scanCount = 0
+
+    // Skip overly verbose monologue entries (keep short ones, they're more interesting)
+    if (entry.type === 'monologue' && entry.text.length > 200) {
+      continue
+    }
+
+    result.push(entry)
+  }
+
+  return result
 }
 
 function timeAgo(ts: number): string {

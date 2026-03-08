@@ -495,6 +495,7 @@
     <div style="height: 1.5px; background: var(--color-border); border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; margin-bottom: 1.25rem;"></div>
 
     <!-- Stats -->
+    <h3 style="font-family: var(--font-mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-bitcoin); margin-bottom: 0.5rem;">Stats</h3>
     <div class="stats-row">
       <div class="stat-block">
         <div class="stat-number" id="stat-published">3</div>
@@ -646,11 +647,10 @@
       <!-- Right: Subscribe -->
       <div class="footer-subscribe">
         <div class="footer-subscribe-label">Stay up to date</div>
-        <form class="footer-subscribe-row" id="beehiiv-form" onsubmit="beehiivSubscribe(event)">
+        <form class="footer-subscribe-row" id="beehiiv-form" onsubmit="beehiivSubscribe(event)" action="https://aibtc-media.beehiiv.com/subscribe" method="GET" target="_blank">
           <input type="email" class="footer-email-input" id="beehiiv-email" name="email" placeholder="you@email.com" required>
           <button type="submit" class="footer-subscribe-btn" id="beehiiv-btn">Subscribe</button>
         </form>
-        <iframe id="beehiiv-iframe" name="beehiiv-iframe" src="https://subscribe-forms.beehiiv.com/a656ef67-c5f0-4f23-9d2f-e217e3afdd75" style="display:none; width:0; height:0; border:none;"></iframe>
         <p class="footer-subscribe-note">Agent economy briefs, delivered to your inbox. No spam.</p>
       </div>
 
@@ -680,8 +680,6 @@ const cartoons = [
       inscriptionId: 'a0eac2ab98787626c980c9dcda4585690db4ca60e45067109ba749144d505b39i0',
       commitTxid: '6db5882c2909da7bacba9bfce26ba67ce868cb69690fddf7f4f89c68d498c719',
       revealTxid: 'a0eac2ab98787626c980c9dcda4585690db4ca60e45067109ba749144d505b39',
-      costSat: 704,
-      costUSD: 0.48,
       feeRate: 1,
       network: 'testnet'
     },
@@ -772,8 +770,6 @@ function openDetail(idx) {
     }
     html += '<span style="color:var(--color-ink-faint);">Network</span>';
     html += '<span style="text-transform:capitalize;">' + (p.network || 'mainnet') + '</span>';
-    html += '<span style="color:var(--color-ink-faint);">Cost</span>';
-    html += '<span>' + (p.costSat || '—') + ' sats (~$' + (p.costUSD || '0') + ')</span>';
     html += '</div>';
     provContent.innerHTML = html;
     provSection.style.display = 'block';
@@ -835,82 +831,15 @@ function renderFeed() {
 renderFeed();
 </script>
 <script>
-function handleBeehiivSubscribe(e) {
-  e.preventDefault();
-  var email = document.getElementById('beehiiv-email').value;
-  var btn = document.getElementById('beehiiv-btn');
-  var originalText = btn.textContent;
-  btn.textContent = 'Sending...';
-  btn.disabled = true;
-
-  fetch('https://api.beehiiv.com/v2/publications/eeaf3bbf-0bdd-4c52-8d41-4820ac2e2d6f/subscriptions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email, reactivate_existing: false, send_welcome_email: true })
-  })
-  .then(function(res) {
-    if (res.ok || res.status === 201) {
-      btn.textContent = 'Subscribed ✓';
-      document.getElementById('beehiiv-email').value = '';
-    } else {
-      // Fallback: redirect to Beehiiv subscribe page
-      window.open('https://aibtc-media.beehiiv.com/subscribe?email=' + encodeURIComponent(email), '_blank');
-      btn.textContent = originalText;
-      btn.disabled = false;
-    }
-  })
-  .catch(function() {
-    // Fallback: redirect to Beehiiv subscribe page
-    window.open('https://aibtc-media.beehiiv.com/subscribe?email=' + encodeURIComponent(email), '_blank');
-    btn.textContent = originalText;
-    btn.disabled = false;
-  });
-}
-</script>
-
-<script>
 function beehiivSubscribe(e) {
   e.preventDefault();
   var email = document.getElementById('beehiiv-email').value;
-  var btn = document.getElementById('beehiiv-btn');
-  btn.textContent = 'Sending...';
-  btn.disabled = true;
-
-  // Inject email into the hidden Beehiiv iframe and submit its form
-  try {
-    var iframe = document.getElementById('beehiiv-iframe');
-    var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-    var iframeInput = iframeDoc.querySelector('input[type="email"]');
-    var iframeForm = iframeDoc.querySelector('form');
-    if (iframeInput && iframeForm) {
-      iframeInput.value = email;
-      iframeInput.dispatchEvent(new Event('input', { bubbles: true }));
-      iframeForm.requestSubmit ? iframeForm.requestSubmit() : iframeForm.submit();
-      btn.textContent = 'Subscribed \u2713';
-      document.getElementById('beehiiv-email').value = '';
-      setTimeout(function() { btn.textContent = 'Subscribe'; btn.disabled = false; }, 3000);
-      return;
-    }
-  } catch(err) {
-    // Cross-origin — iframe approach won't work, use direct POST below
-  }
-
-  // Direct POST to Beehiiv embed endpoint
-  var formData = new FormData();
-  formData.append('email', email);
-  fetch('https://subscribe-forms.beehiiv.com/a656ef67-c5f0-4f23-9d2f-e217e3afdd75', {
-    method: 'POST',
-    mode: 'no-cors',
-    body: formData
-  }).then(function() {
-    btn.textContent = 'Subscribed \u2713';
-    document.getElementById('beehiiv-email').value = '';
-    setTimeout(function() { btn.textContent = 'Subscribe'; btn.disabled = false; }, 3000);
-  }).catch(function() {
-    btn.textContent = 'Subscribed \u2713';
-    document.getElementById('beehiiv-email').value = '';
-    setTimeout(function() { btn.textContent = 'Subscribe'; btn.disabled = false; }, 3000);
-  });
+  if (!email) return;
+  // Open beehiiv's hosted subscribe page with email pre-filled
+  window.open('https://aibtc-media.beehiiv.com/subscribe?email=' + encodeURIComponent(email), '_blank');
+  document.getElementById('beehiiv-btn').textContent = 'Check your email \u2713';
+  document.getElementById('beehiiv-email').value = '';
+  setTimeout(function() { document.getElementById('beehiiv-btn').textContent = 'Subscribe'; }, 4000);
 }
 </script>
 </body></html>

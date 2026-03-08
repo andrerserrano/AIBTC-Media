@@ -217,6 +217,55 @@ async function main() {
     return rejected.sort((a, b) => b.rejectedAt - a.rejectedAt)
   })
 
+  // Newsletter subscription — proxies to Beehiiv API (requires BEEHIIV_API_KEY on Scale plan)
+  // Currently disabled: using beehiiv's hosted subscribe page directly from frontend instead.
+  // Uncomment and add BEEHIIV_API_KEY to .env if you upgrade to beehiiv Scale plan.
+  /*
+  app.post('/api/subscribe', async (request, reply) => {
+    const { email } = request.body as { email?: string }
+    if (!email || !email.includes('@')) {
+      reply.status(400)
+      return { error: 'Valid email required' }
+    }
+
+    const beehiivApiKey = process.env.BEEHIIV_API_KEY
+    const beehiivPubId = process.env.BEEHIIV_PUBLICATION_ID ?? 'eeaf3bbf-0bdd-4c52-8d41-4820ac2e2d6f'
+
+    if (!beehiivApiKey) {
+      reply.status(500)
+      return { error: 'Newsletter service not configured' }
+    }
+
+    try {
+      const res = await fetch(`https://api.beehiiv.com/v2/publications/${beehiivPubId}/subscriptions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${beehiivApiKey}`,
+        },
+        body: JSON.stringify({
+          email,
+          reactivate_existing: true,
+          send_welcome_email: true,
+        }),
+      })
+
+      if (!res.ok) {
+        const err = await res.text()
+        console.error('Beehiiv subscription error:', err)
+        reply.status(res.status)
+        return { error: 'Subscription failed' }
+      }
+
+      return { success: true }
+    } catch (err) {
+      console.error('Beehiiv subscription error:', err)
+      reply.status(500)
+      return { error: 'Subscription failed' }
+    }
+  })
+  */
+
   // Ensure media directories exist before registering static routes
   const imagesDir = join(process.cwd(), config.dataDir, 'images')
   await mkdir(imagesDir, { recursive: true })

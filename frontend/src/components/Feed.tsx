@@ -47,12 +47,47 @@ interface RejectedCartoon {
   rejectedAt: number
 }
 
-function PostDetail({ post, postNumber, onClose }: { post: LocalPost; postNumber: number; onClose: () => void }) {
+/* ── Helpers ── */
+
+/** Extract the inscription ID from a full ordinals URL */
+function extractInscriptionId(url: string): string {
+  const match = url.match(/inscription\/([a-f0-9]+i\d+)/)
+  if (!match) return ''
+  const id = match[1]
+  if (id.length > 24) return id.slice(0, 16) + '…' + id.slice(-8)
+  return id
+}
+
+/* ── PostDetail modal — matches the preview layout ── */
+
+function PostDetail({
+  post,
+  postNumber,
+  totalPosts,
+  onClose,
+  onPrev,
+  onNext,
+}: {
+  post: LocalPost
+  postNumber: number
+  totalPosts: number
+  onClose: () => void
+  onPrev: () => void
+  onNext: () => void
+}) {
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowLeft') onPrev()
+      if (e.key === 'ArrowRight') onNext()
+    }
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
-  }, [onClose])
+  }, [onClose, onPrev, onNext])
+
+  const headline = post.text.split('\n')[0]
+  const subtitle = post.text.split('\n').slice(1).filter(Boolean).join('\n')
+  const displayInscriptionId = post.inscriptionId || (post.provenanceUrl ? extractInscriptionId(post.provenanceUrl) : '')
 
   return (
     <div
@@ -64,6 +99,7 @@ function PostDetail({ post, postNumber, onClose }: { post: LocalPost; postNumber
         style={{ border: '1px solid var(--color-border)' }}
         onClick={e => e.stopPropagation()}
       >
+        {/* Close button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center bg-paper-bright/90 rounded text-ink hover:text-bitcoin"
@@ -72,6 +108,7 @@ function PostDetail({ post, postNumber, onClose }: { post: LocalPost; postNumber
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
 
+        {/* Image */}
         {post.imagePath && (
           <img
             src={sanitizeImagePath(post.imagePath)}
@@ -82,58 +119,122 @@ function PostDetail({ post, postNumber, onClose }: { post: LocalPost; postNumber
         )}
 
         <div className="p-6 sm:p-8">
+          {/* Headline */}
           <p className="font-editorial text-[22px] sm:text-[28px] text-ink font-bold leading-snug">
-            {post.text.split('\n')[0]}
+            {headline}
           </p>
-          {post.text.split('\n').slice(1).filter(Boolean).length > 0 && (
+
+          {/* Subtitle */}
+          {subtitle && (
             <p className="mt-2 font-editorial text-[15px] text-ink-muted italic leading-relaxed">
-              {post.text.split('\n').slice(1).join('\n')}
+              {subtitle}
             </p>
           )}
 
-          <div className="mt-4 flex items-center gap-3">
-            <span className="font-mono" style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-bitcoin)', background: 'rgba(232,116,12,0.08)', padding: '2px 8px', borderRadius: 3 }}>
-              #{postNumber}
-            </span>
-            <span className="font-mono text-[11px] text-ink-muted uppercase tracking-wide">
-              {formatDate(post.createdAt)}
-            </span>
-            <span className="text-ink-faint">&middot;</span>
-            <span className="font-mono text-[11px] text-ink-muted uppercase tracking-wide">by AIBTC Media</span>
-          </div>
+          {/* Post number (plain, not highlighted) */}
+          <p className="mt-3 font-mono text-[11px] text-ink-faint">#{postNumber}</p>
 
-          {/* Editorial reasoning */}
+          {/* Orange divider */}
+          <div className="mt-3" style={{ height: 2, background: 'var(--color-bitcoin)' }} />
+
+          {/* SOURCE SIGNAL */}
+          {post.sourceSignal && (
+            <div className="mt-5">
+              <p className="font-mono font-bold uppercase text-[11px] tracking-wider" style={{ color: 'var(--color-bitcoin)', marginBottom: 8 }}>
+                Source Signal
+              </p>
+              <p className="font-sans text-[14px] text-ink leading-relaxed">
+                {post.sourceSignal}
+              </p>
+            </div>
+          )}
+
+          {/* EDITORIAL REASONING */}
           {post.editorialReasoning && (
-            <div className="mt-5 rounded" style={{ background: 'rgba(232,116,12,0.04)', border: '1px solid rgba(232,116,12,0.12)', padding: '0.75rem 1rem' }}>
-              <p className="font-mono font-bold uppercase text-[10px] tracking-wider" style={{ color: 'var(--color-bitcoin)', marginBottom: 4 }}>
+            <div className="mt-6">
+              <p className="font-mono font-bold uppercase text-[11px] tracking-wider" style={{ color: 'var(--color-bitcoin)', marginBottom: 8 }}>
                 Editorial Reasoning
               </p>
-              <p className="font-sans text-[13px] text-ink-light leading-relaxed">
+              <p className="font-sans text-[14px] text-ink leading-relaxed">
                 {post.editorialReasoning}
               </p>
             </div>
           )}
 
-          {/* Source */}
-          {post.source && (
-            <div className="mt-3 flex items-start gap-2">
-              <span className="font-mono font-bold uppercase text-[10px] tracking-wider text-ink-faint shrink-0" style={{ marginTop: 2 }}>Source</span>
-              <span className="font-sans text-[13px] text-ink-muted">{post.source}</span>
+          {/* Category tag */}
+          {post.category && (
+            <div className="mt-4">
+              <span
+                className="font-mono text-[10px] font-bold uppercase tracking-wider"
+                style={{
+                  color: 'var(--color-bitcoin)',
+                  background: 'rgba(232,116,12,0.08)',
+                  padding: '3px 10px',
+                  borderRadius: 3,
+                  border: '1px solid rgba(232,116,12,0.15)',
+                }}
+              >
+                {post.category}
+              </span>
             </div>
           )}
 
-          {/* Provenance — on-chain inscription link */}
+          {/* SCENE DESCRIPTION */}
+          {post.sceneDescription && (
+            <div className="mt-5">
+              <p className="font-mono font-bold uppercase text-[11px] tracking-wider text-ink-faint" style={{ marginBottom: 4 }}>
+                Scene Description
+              </p>
+              <p className="font-sans text-[13px] text-ink-muted leading-relaxed">
+                {post.sceneDescription}
+              </p>
+            </div>
+          )}
+
+          {/* ON-CHAIN PROVENANCE */}
           {post.provenanceUrl && (
-            <div className="mt-3 flex items-start gap-2">
-              <span className="font-mono font-bold uppercase text-[10px] tracking-wider text-ink-faint shrink-0" style={{ marginTop: 2 }}>Provenance</span>
+            <div className="mt-6">
+              <p className="font-mono font-bold uppercase text-[11px] tracking-wider" style={{ color: 'var(--color-bitcoin)', marginBottom: 10 }}>
+                ₿ On-Chain Provenance
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-4">
+                  <span className="font-mono text-[12px] text-ink-faint w-24 shrink-0">Inscription</span>
+                  <a
+                    href={post.provenanceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-[12px] hover:underline"
+                    style={{ color: 'var(--color-bitcoin)' }}
+                  >
+                    {displayInscriptionId}
+                  </a>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="font-mono text-[12px] text-ink-faint w-24 shrink-0">Reveal Tx</span>
+                  <a
+                    href={post.provenanceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-[12px] hover:underline"
+                    style={{ color: 'var(--color-bitcoin)' }}
+                  >
+                    {displayInscriptionId.replace(/i\d+$/, '')}
+                  </a>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="font-mono text-[12px] text-ink-faint w-24 shrink-0">Network</span>
+                  <span className="font-mono text-[12px] text-ink font-medium">Mainnet</span>
+                </div>
+              </div>
               <a
                 href={post.provenanceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-mono text-[12px] hover:underline"
-                style={{ color: 'var(--color-bitcoin)', wordBreak: 'break-all' }}
+                className="inline-block mt-4 font-mono text-[13px] font-bold text-paper-bright px-5 py-2.5 rounded hover:opacity-90 transition-opacity"
+                style={{ background: 'var(--color-bitcoin)' }}
               >
-                {post.provenanceUrl.includes('ordinals.com') ? 'View Bitcoin Ordinals Inscription ↗' : post.provenanceUrl}
+                View on Ordinals →
               </a>
             </div>
           )}
@@ -143,6 +244,25 @@ function PostDetail({ post, postNumber, onClose }: { post: LocalPost; postNumber
               <TweetEmbed tweetId={post.quotedTweetId} />
             </div>
           )}
+
+          {/* Navigation: PREV / 1 of 5 / NEXT */}
+          <div className="mt-8 flex items-center gap-3">
+            <button
+              onClick={(e) => { e.stopPropagation(); onPrev() }}
+              disabled={postNumber >= totalPosts}
+              className="btn disabled:opacity-30 font-mono text-[11px]"
+            >
+              ← PREV
+            </button>
+            <span className="font-mono text-[12px] text-ink-muted">{postNumber} / {totalPosts}</span>
+            <button
+              onClick={(e) => { e.stopPropagation(); onNext() }}
+              disabled={postNumber <= 1}
+              className="btn disabled:opacity-30 font-mono text-[11px]"
+            >
+              NEXT →
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -295,77 +415,14 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
 
             {/* Lightbox */}
             {lightboxIndex !== null && posts[lightboxIndex] && (
-              <div
-                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/80 backdrop-blur-sm animate-[fade-in_0.15s_ease-out]"
-                onClick={() => setLightboxIndex(null)}
-              >
-                <div
-                  className="relative max-w-4xl w-full max-h-[90vh] bg-paper-bright rounded overflow-y-auto"
-                  style={{ border: '1px solid var(--color-border)' }}
-                  onClick={e => e.stopPropagation()}
-                >
-                  <button
-                    onClick={() => setLightboxIndex(null)}
-                    className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center bg-paper-bright/90 rounded text-ink hover:text-bitcoin"
-                    style={{ border: '1px solid var(--color-border)' }}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                  </button>
-                  {posts[lightboxIndex].videoPath && sanitizeVideoPath(posts[lightboxIndex].videoPath!) ? (
-                    <video
-                      src={sanitizeVideoPath(posts[lightboxIndex].videoPath!)!}
-                      controls
-                      autoPlay
-                      playsInline
-                      className="w-full bg-ink"
-                    />
-                  ) : posts[lightboxIndex].imagePath ? (
-                    <img
-                      src={sanitizeImagePath(posts[lightboxIndex].imagePath!)}
-                      alt="post"
-                      className="w-full object-contain"
-                    />
-                  ) : null}
-                  <div className="p-6 sm:p-8">
-                    <p className="font-editorial text-[22px] sm:text-[28px] text-ink font-bold leading-snug">
-                      {posts[lightboxIndex].text.split('\n')[0]}
-                    </p>
-                    {posts[lightboxIndex].text.split('\n').slice(1).filter(Boolean).length > 0 && (
-                      <p className="mt-2 font-editorial text-[14px] text-ink-muted italic leading-relaxed">
-                        {posts[lightboxIndex].text.split('\n').slice(1).join('\n')}
-                      </p>
-                    )}
-                    <div className="mt-4 flex items-center gap-3">
-                      <time className="font-mono text-[11px] font-medium text-ink-muted tabular-nums uppercase tracking-wide">
-                        {formatDate(posts[lightboxIndex].createdAt)}
-                      </time>
-                      <span className="text-ink-faint">&middot;</span>
-                      <span className="font-mono text-[11px] font-medium text-ink-muted uppercase tracking-wide">by AIBTC Media</span>
-                    </div>
-                    {posts[lightboxIndex].quotedTweetId && (
-                      <div className="mt-5">
-                        <TweetEmbed tweetId={posts[lightboxIndex].quotedTweetId!} />
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex justify-between px-6 pb-4">
-                    <button
-                      onClick={() => setLightboxIndex(Math.max(0, lightboxIndex - 1))}
-                      disabled={lightboxIndex === 0}
-                      className="btn disabled:opacity-30"
-                    >
-                      &larr; Prev
-                    </button>
-                    <button
-                      onClick={() => setLightboxIndex(Math.min(posts.length - 1, lightboxIndex + 1))}
-                      disabled={lightboxIndex === posts.length - 1}
-                      className="btn disabled:opacity-30"
-                    >
-                      Next &rarr;
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <PostDetail
+                post={posts[lightboxIndex]}
+                postNumber={posts.length - lightboxIndex}
+                totalPosts={posts.length}
+                onClose={() => setLightboxIndex(null)}
+                onPrev={() => setLightboxIndex(Math.min(posts.length - 1, lightboxIndex + 1))}
+                onNext={() => setLightboxIndex(Math.max(0, lightboxIndex - 1))}
+              />
             )}
           </>
         ) : (
@@ -410,15 +467,30 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
                   </p>
                 )}
                 <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <span className="font-mono" style={{ fontSize: 10, fontWeight: 600, color: 'var(--color-bitcoin)', background: 'rgba(232,116,12,0.08)', padding: '2px 6px', borderRadius: 3 }}>
-                    #{posts.length - i}
-                  </span>
+                  {post.category ? (
+                    <span
+                      className="font-mono"
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 600,
+                        color: 'var(--color-bitcoin)',
+                        background: 'rgba(232,116,12,0.08)',
+                        padding: '2px 8px',
+                        borderRadius: 3,
+                        border: '1px solid rgba(232,116,12,0.12)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                      }}
+                    >
+                      {post.category}
+                    </span>
+                  ) : (
+                    <span className="font-mono" style={{ fontSize: 10, color: 'var(--color-ink-faint)' }}>
+                      #{posts.length - i}
+                    </span>
+                  )}
                   <span className="font-mono" style={{ fontSize: 10, color: 'var(--color-ink-faint)' }}>
                     {formatDate(post.createdAt)}
-                  </span>
-                  <span style={{ color: 'var(--color-ink-faint)' }}>&middot;</span>
-                  <span className="font-mono" style={{ fontSize: 10, color: 'var(--color-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    by AIBTC Media
                   </span>
                 </div>
               </div>
@@ -484,7 +556,22 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
         <PostDetail
           post={selectedPost.post}
           postNumber={selectedPost.number}
+          totalPosts={posts.length}
           onClose={() => setSelectedPost(null)}
+          onPrev={() => {
+            const currentIdx = posts.findIndex(p => p.id === selectedPost.post.id)
+            if (currentIdx < posts.length - 1) {
+              const nextIdx = currentIdx + 1
+              setSelectedPost({ post: posts[nextIdx], number: posts.length - nextIdx })
+            }
+          }}
+          onNext={() => {
+            const currentIdx = posts.findIndex(p => p.id === selectedPost.post.id)
+            if (currentIdx > 0) {
+              const nextIdx = currentIdx - 1
+              setSelectedPost({ post: posts[nextIdx], number: posts.length - nextIdx })
+            }
+          }}
         />
       )}
     </div>

@@ -6,6 +6,19 @@ import type { LocalPost } from '../types'
  */
 export const SEED_POSTS: LocalPost[] = [
   {
+    id: 'cartoon-kyc-robot',
+    text: 'Why Bitcoin is the only money AI agents can actually use autonomously',
+    imagePath: '/images/test-output-recomposed.png',
+    createdAt: 1741560480000,
+    tweetId: '2031135072938565990',
+    quotedTweetId: null,
+    category: 'INFRASTRUCTURE',
+    sourceSignal: 'Legacy banking KYC systems are fundamentally incompatible with autonomous AI agents. While traditional finance requires birth certificates, government IDs, and physical presence, Bitcoin offers permissionless access — making it the only monetary system AI agents can use without human intermediaries.',
+    editorialReasoning: 'The humor comes from the absurdity of applying human identity requirements to non-human entities. A robot literally cannot produce a birth certificate, highlighting how legacy financial infrastructure was never designed for the age of autonomous agents.',
+    source: 'Bitcoin x AI agent ecosystem analysis',
+    sceneDescription: 'A robot with a Bitcoin briefcase stands at a bank teller desk while a baffled human banker gestures helplessly at KYC paperwork.',
+  },
+  {
     id: 'cartoon-btc-agents',
     text: 'AI Agents Show Strong Preference for Bitcoin Over Fiat\n"In retrospect, we probably should have seen this coming when they kept asking for their allowance in satoshis."',
     imagePath: 'https://ordinals.com/content/718137395a9ae8bf7f0404c9442de0b23ca1e380e5a4bfd850b3b6910b753e70i0',

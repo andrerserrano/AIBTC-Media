@@ -40,7 +40,7 @@ export interface InscriptionResult {
  * Build the Ordinals inscription script.
  * Envelope format: OP_FALSE OP_IF OP_PUSH "ord" OP_PUSH 1 OP_PUSH <content-type> OP_0 OP_PUSH <data> OP_ENDIF
  */
-function buildInscriptionScript(contentType: string, data: Uint8Array): Uint8Array {
+function buildInscriptionScript(contentType: string, data: Uint8Array, pubKey: Uint8Array): Uint8Array {
   const encoder = new TextEncoder()
   const ordTag = encoder.encode('ord')
   const ctBytes = encoder.encode(contentType)
@@ -50,6 +50,7 @@ function buildInscriptionScript(contentType: string, data: Uint8Array): Uint8Arr
   const OP_IF = 0x63
   const OP_ENDIF = 0x68
   const OP_1 = 0x51            // Ordinals tag: content-type follows
+  const OP_CHECKSIG = 0xac
 
   // Helper: push data with proper length prefix
   function pushData(d: Uint8Array): number[] {
@@ -60,8 +61,15 @@ function buildInscriptionScript(contentType: string, data: Uint8Array): Uint8Arr
     return [0x4e, len & 0xff, (len >> 8) & 0xff, (len >> 16) & 0xff, (len >> 24) & 0xff, ...d]
   }
 
-  // Ordinals envelope: OP_FALSE OP_IF OP_PUSH "ord" OP_1 OP_PUSH <ct> OP_0 OP_PUSH <data> OP_ENDIF
+  // Standard Ordinals inscription script:
+  //   <pubkey> OP_CHECKSIG OP_FALSE OP_IF OP_PUSH "ord" OP_1 OP_PUSH <ct> OP_0 OP_PUSH <data> OP_ENDIF
+  //
+  // The <pubkey> OP_CHECKSIG prefix makes the script spendable — the signer
+  // proves ownership with a schnorr signature. The OP_FALSE OP_IF...OP_ENDIF
+  // envelope is a no-op that carries the inscription data in the witness.
   const script = [
+    ...pushData(pubKey),        // <pubkey> (x-only, 32 bytes)
+    OP_CHECKSIG,                // spending condition
     OP_FALSE,
     OP_IF,
     ...pushData(ordTag),        // "ord"
@@ -149,8 +157,14 @@ export async function inscribe(params: InscriptionParams): Promise<InscriptionRe
   const addresses = wallet.getAddresses()
   const data = readFileSync(params.filePath)
 
-  // Build inscription script
-  const inscriptionScript = buildInscriptionScript(params.contentType, new Uint8Array(data))
+  // Get the x-only public key (32 bytes) from the wallet's taproot payment.
+  // This key is embedded in the inscription script as: <pubkey> OP_CHECKSIG
+  // so that @scure/btc-signer can match it during script-path signing.
+  const taprootPayment = wallet.getTaprootPayment()
+  const xOnlyPubKey = taprootPayment.tapInternalKey
+
+  // Build inscription script with the public key for signing
+  const inscriptionScript = buildInscriptionScript(params.contentType, new Uint8Array(data), xOnlyPubKey)
 
   // Create P2TR address with inscription in the script tree
   const inscriptionPayment = btc.p2tr(
@@ -232,6 +246,7 @@ export async function inscribe(params: InscriptionParams): Promise<InscriptionRe
   // Spend the commit output, revealing the inscription
   const revealTx = new btc.Transaction({
     allowUnknownOutputs: true,
+    allowUnknownInputs: true,  // Required for custom inscription tapLeafScript
   })
 
   revealTx.addInput({

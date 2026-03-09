@@ -258,8 +258,6 @@ function PostDetail({
 }
 
 export function Feed({ posts, streamMode = false, onAbout }: { posts: LocalPost[]; streamMode?: boolean; onAbout?: () => void }) {
-  const [rejected, setRejected] = useState<RejectedCartoon[]>([])
-  const [showRejected, setShowRejected] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('feed')
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [videoSrc, setVideoSrc] = useState<string | null>(null)
@@ -275,19 +273,7 @@ export function Feed({ posts, streamMode = false, onAbout }: { posts: LocalPost[
     }
   }, [streamMode])
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch('/api/feed/rejected')
-        if (res.ok) setRejected(await res.json())
-      } catch {}
-    }
-    load()
-    const interval = setInterval(load, 30_000)
-    return () => clearInterval(interval)
-  }, [])
-
-  if (posts.length === 0 && rejected.length === 0) {
+  if (posts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full bg-paper gap-6 px-8">
         <svg width="72" height="72" viewBox="0 0 72 72" fill="none" className="text-ink-faint animate-[float_3s_ease-in-out_infinite]">
@@ -354,15 +340,6 @@ export function Feed({ posts, streamMode = false, onAbout }: { posts: LocalPost[
                 style={{ display: 'none' }}
               >
                 About
-              </button>
-            )}
-            {rejected.length > 0 && (
-              <button
-                onClick={() => setShowRejected(!showRejected)}
-                className={`btn ${showRejected ? 'btn-active' : ''}`}
-                style={{ marginLeft: 4 }}
-              >
-                {showRejected ? 'Hide Rejected' : `${rejected.length} Rejected`}
               </button>
             )}
           </div>
@@ -500,50 +477,6 @@ export function Feed({ posts, streamMode = false, onAbout }: { posts: LocalPost[
             </article>
           ))}
 
-          {/* Rejected cartoons */}
-          {showRejected && rejected.length > 0 && (
-            <>
-              <div className="flex items-center gap-4 pt-4">
-                <div className="flex-1 editorial-rule" />
-                <span className="font-editorial text-[18px] text-bitcoin font-bold">Rejected by Editor</span>
-                <div className="flex-1 editorial-rule" />
-              </div>
-
-              {rejected.map((r, i) => (
-                <article
-                  key={`rejected-${i}`}
-                  className="editorial-card overflow-hidden opacity-60 hover:opacity-90 transition-opacity"
-                >
-                  <div className="relative overflow-hidden">
-                    <img
-                      src={sanitizeImageUrl(r.imageUrl) ?? '/images/placeholder.png'}
-                      alt="rejected"
-                      className="w-full object-contain grayscale-[30%]"
-                      loading="lazy"
-                    />
-                    <div className="absolute top-3 right-3 bg-bitcoin text-paper-bright font-mono text-[10px] font-bold px-3 py-1 uppercase tracking-wider rounded">
-                      Rejected
-                    </div>
-                  </div>
-
-                  <div style={{ padding: '1rem 1.25rem 1.25rem' }}>
-                    <p className="font-editorial text-[16px] text-ink-muted line-through leading-relaxed italic">
-                      {r.caption}
-                    </p>
-                    <div className="mt-2 rounded" style={{ background: 'rgba(232,116,12,0.05)', border: '1px solid rgba(232,116,12,0.15)', padding: '0.5rem 0.75rem' }}>
-                      <p className="text-[12px] text-bitcoin leading-snug">
-                        <span className="font-mono font-bold uppercase text-[10px]">Editor: </span>
-                        <span className="font-sans">{r.reason}</span>
-                      </p>
-                    </div>
-                    <time className="block mt-2 font-mono text-[10px] text-ink-faint uppercase">
-                      {formatDate(r.rejectedAt)}
-                    </time>
-                  </div>
-                </article>
-              ))}
-            </>
-          )}
         </div>
         )}
       </div>

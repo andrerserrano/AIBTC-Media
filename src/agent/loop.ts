@@ -110,6 +110,23 @@ export class AgentLoop {
     this.events.monologue('Shutting down. The agent economy keeps going, but I need to rest.')
   }
 
+  /** Manually trigger a flagship posting cycle (called from admin API) */
+  async triggerFlagship(): Promise<{ success: boolean; reason: string }> {
+    this.events.monologue('Manual trigger received — scanning for signals and starting flagship cycle...')
+    try {
+      const signals = await this.scanner.scan()
+      if (signals.length === 0) {
+        return { success: false, reason: 'No signals available. Try again later.' }
+      }
+      await this.doFlagship(signals)
+      return { success: true, reason: 'Flagship cycle completed.' }
+    } catch (err) {
+      const msg = (err as Error).message
+      this.events.monologue(`Manual trigger failed: ${msg}`)
+      return { success: false, reason: msg }
+    }
+  }
+
   private async tick(): Promise<void> {
     const signals = await this.scanner.scan()
     if (signals.length === 0) {

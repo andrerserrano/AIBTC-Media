@@ -323,6 +323,18 @@ async function main() {
   })
   */
 
+  // Admin: manually trigger a flagship posting cycle
+  app.post('/api/admin/trigger', async (request, reply) => {
+    const adminKey = process.env.ADMIN_KEY
+    const auth = request.headers.authorization
+    if (!adminKey || auth !== `Bearer ${adminKey}`) {
+      reply.status(401)
+      return { error: 'Unauthorized' }
+    }
+    const result = await agent.triggerFlagship()
+    return result
+  })
+
   // Ensure media directories exist before registering static routes
   const imagesDir = join(process.cwd(), config.dataDir, 'images')
   await mkdir(imagesDir, { recursive: true })

@@ -34,6 +34,11 @@ export class Scorer {
     private evalCache: Cache,
   ) {}
 
+  /** Clear the evaluation cache so topics are re-scored fresh */
+  clearCache(): void {
+    this.evalCache.clear()
+  }
+
   async scoreAndFilter(
     signals: Signal[],
     recentTopicSummaries: string[],

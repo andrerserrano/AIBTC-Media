@@ -112,8 +112,16 @@ export class AgentLoop {
 
   /** Manually trigger a flagship posting cycle (called from admin API) */
   async triggerFlagship(): Promise<{ success: boolean; reason: string }> {
-    this.events.monologue('Manual trigger received — scanning for signals and starting flagship cycle...')
+    this.events.monologue('Manual trigger received — clearing caches and starting fresh flagship cycle...')
     try {
+      // Clear eval cache so topics are re-scored fresh
+      this.scorer.clearCache()
+      // Clear shortlist so it doesn't use stale data
+      this.shortlist = null
+      // Clear rejected topics blacklist so previously rejected topics can be retried
+      await this.rejectedTopics.write([])
+      this.events.monologue('Caches cleared. Scanning for signals...')
+
       const signals = await this.scanner.scan()
       if (signals.length === 0) {
         return { success: false, reason: 'No signals available. Try again later.' }

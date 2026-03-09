@@ -3,9 +3,9 @@ export function Footer() {
     <footer style={{ background: 'var(--color-paper-bright)', borderTop: '2px solid var(--color-ink)' }}>
       <div className="footer-wrapper" style={{ maxWidth: 1280, margin: '0 auto', padding: '3rem 2rem 2rem' }}>
         {/* Top: CTA + Subscribe */}
-        <div className="footer-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '2rem' }}>
+        <div className="footer-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '2rem' }}>
           {/* Left: CTA */}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', paddingTop: '1rem' }}>
             <a
               href="https://aibtc.com/"
               target="_blank"
@@ -29,8 +29,8 @@ export function Footer() {
               frameBorder="0"
               scrolling="no"
               style={{
-                width: 400,
-                height: 80,
+                width: 480,
+                height: 200,
                 margin: 0,
                 borderRadius: 0,
                 backgroundColor: 'transparent',

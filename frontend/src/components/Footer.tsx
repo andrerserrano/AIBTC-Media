@@ -1,29 +1,4 @@
-import { useState, useRef } from 'react'
-
 export function Footer() {
-  const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
-  const iframeRef = useRef<HTMLIFrameElement>(null)
-  const formRef = useRef<HTMLFormElement>(null)
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email || !email.includes('@')) return
-
-    setStatus('submitting')
-
-    // Submit via hidden iframe so user stays on page
-    if (formRef.current) {
-      formRef.current.submit()
-    }
-
-    // Show success after a brief delay (iframe submit is fire-and-forget)
-    setTimeout(() => {
-      setStatus('success')
-      setEmail('')
-    }, 1500)
-  }
-
   return (
     <footer style={{ background: 'var(--color-paper-bright)', borderTop: '2px solid var(--color-ink)' }}>
       <div className="footer-wrapper" style={{ maxWidth: 1280, margin: '0 auto', padding: '3rem 2rem 2rem' }}>
@@ -41,46 +16,31 @@ export function Footer() {
             </a>
           </div>
 
-          {/* Right: Subscribe */}
+          {/* Right: Subscribe via Beehiiv embed */}
           <div className="footer-subscribe-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-            <div className="font-mono" style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--color-ink-muted)', marginBottom: '0.75rem' }}>
+            <div className="font-mono" style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--color-ink-muted)', marginBottom: '0.5rem' }}>
               Stay up to date
             </div>
 
-            {status === 'success' ? (
-              <div className="font-mono" style={{ fontSize: 12, color: 'var(--color-bitcoin)', fontWeight: 600, padding: '11px 0' }}>
-                You're subscribed! Check your inbox.
-              </div>
-            ) : (
-              <form
-                ref={formRef}
-                action="https://aibtcmedia.beehiiv.com/subscribe"
-                method="POST"
-                target="beehiiv-iframe"
-                onSubmit={handleSubscribe}
-                style={{ display: 'flex' }}
-              >
-                <input
-                  type="email"
-                  name="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="footer-email-input"
-                  required
-                  disabled={status === 'submitting'}
-                />
-                <button
-                  type="submit"
-                  className="footer-subscribe-btn"
-                  disabled={status === 'submitting'}
-                >
-                  {status === 'submitting' ? 'Subscribing...' : 'Subscribe'}
-                </button>
-              </form>
-            )}
+            <iframe
+              src="https://subscribe-forms.beehiiv.com/a656ef67-c5f0-4f23-9d2f-e217e3afdd75"
+              className="beehiiv-embed"
+              data-test-id="beehiiv-embed"
+              frameBorder="0"
+              scrolling="no"
+              style={{
+                width: 400,
+                height: 80,
+                margin: 0,
+                borderRadius: 0,
+                backgroundColor: 'transparent',
+                boxShadow: 'none',
+                maxWidth: '100%',
+                border: 'none',
+              }}
+            />
 
-            <p className="font-mono" style={{ fontSize: 10, color: 'var(--color-ink-faint)', marginTop: '0.5rem', letterSpacing: '0.02em' }}>
+            <p className="font-mono" style={{ fontSize: 10, color: 'var(--color-ink-faint)', marginTop: '0.25rem', letterSpacing: '0.02em' }}>
               Agent economy briefs, delivered to your inbox. No spam.
             </p>
           </div>
@@ -126,14 +86,6 @@ export function Footer() {
           </div>
         </div>
       </div>
-
-      {/* Hidden iframe for form submission */}
-      <iframe
-        ref={iframeRef}
-        name="beehiiv-iframe"
-        title="subscribe"
-        style={{ display: 'none' }}
-      />
     </footer>
   )
 }

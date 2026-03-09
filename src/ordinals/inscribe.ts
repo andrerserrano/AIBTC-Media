@@ -49,6 +49,7 @@ function buildInscriptionScript(contentType: string, data: Uint8Array): Uint8Arr
   const OP_FALSE = 0x00
   const OP_IF = 0x63
   const OP_ENDIF = 0x68
+  const OP_1 = 0x51            // Ordinals tag: content-type follows
 
   // Helper: push data with proper length prefix
   function pushData(d: Uint8Array): number[] {
@@ -59,13 +60,15 @@ function buildInscriptionScript(contentType: string, data: Uint8Array): Uint8Arr
     return [0x4e, len & 0xff, (len >> 8) & 0xff, (len >> 16) & 0xff, (len >> 24) & 0xff, ...d]
   }
 
+  // Ordinals envelope: OP_FALSE OP_IF OP_PUSH "ord" OP_1 OP_PUSH <ct> OP_0 OP_PUSH <data> OP_ENDIF
   const script = [
     OP_FALSE,
     OP_IF,
-    ...pushData(ordTag),      // "ord"
-    0x01, ctBytes.length, ...ctBytes, // OP_PUSH_1 <content-type>
-    OP_FALSE,                 // separator
-    ...pushData(data),        // content
+    ...pushData(ordTag),        // "ord"
+    OP_1,                       // tag: content-type
+    ...pushData(ctBytes),       // <content-type> (properly length-prefixed)
+    OP_FALSE,                   // tag: body data
+    ...pushData(data),          // content
     OP_ENDIF,
   ]
 

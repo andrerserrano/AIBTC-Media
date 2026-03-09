@@ -419,7 +419,10 @@ export class AgentLoop {
       provenance,
     }
 
-    const tweetId = await this.twitter.postCartoon({ text: caption, imagePath: composedPath })
+    // Build tweet text that adds context to the image (the caption/punchline is
+    // already baked into the composed image, so the tweet should frame the story).
+    const tweetText = `${topic.summary.length > 220 ? topic.summary.slice(0, 220) + '…' : topic.summary}`
+    const tweetId = await this.twitter.postCartoon({ text: tweetText, imagePath: composedPath })
 
     // Derive metadata for the frontend detail card
     const primarySignal = signals.find(s => topic.signals.includes(s.id))
@@ -559,7 +562,9 @@ export class AgentLoop {
       provenance,
     }
 
-    const tweetId = await this.twitter.postCartoon({ text: caption, imagePath: composedPath })
+    // Build tweet text that adds context (caption/punchline is on the image)
+    const qhTweetText = `${topic.summary.length > 220 ? topic.summary.slice(0, 220) + '…' : topic.summary}`
+    const tweetId = await this.twitter.postCartoon({ text: qhTweetText, imagePath: composedPath })
 
     // Derive metadata for the frontend detail card
     const qhSignal = signals.find(s => topic.signals.includes(s.id))

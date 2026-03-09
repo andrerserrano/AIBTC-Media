@@ -419,7 +419,7 @@ export class AgentLoop {
       provenance,
     }
 
-    const tweetId = await this.twitter.postCartoon({ text: best.headline, imagePath: composedPath })
+    const tweetId = await this.twitter.postCartoon({ text: caption, imagePath: composedPath })
 
     // Derive metadata for the frontend detail card
     const primarySignal = signals.find(s => topic.signals.includes(s.id))
@@ -559,7 +559,7 @@ export class AgentLoop {
       provenance,
     }
 
-    const tweetId = await this.twitter.postCartoon({ text: concept.headline, imagePath: composedPath })
+    const tweetId = await this.twitter.postCartoon({ text: caption, imagePath: composedPath })
 
     // Derive metadata for the frontend detail card
     const qhSignal = signals.find(s => topic.signals.includes(s.id))

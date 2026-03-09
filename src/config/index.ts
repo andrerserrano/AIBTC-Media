@@ -19,6 +19,13 @@ export const config = {
     accessSecret: process.env.TWITTER_ACCESS_SECRET!,
     twitterApiIoKey: process.env.TWITTERAPI_IO_KEY ?? '',
     username: process.env.TWITTER_USERNAME ?? '',
+    searchEnabled: process.env.TWITTER_SEARCH_ENABLED !== 'false',
+    searchQueries: (process.env.TWITTER_SEARCH_QUERIES
+      ?? 'Bitcoin AI agents -is:retweet lang:en,BTC AI -is:retweet lang:en'
+    ).split(',').map(q => q.trim()).filter(Boolean),
+    searchMinLikes: Number(process.env.TWITTER_SEARCH_MIN_LIKES ?? 50),
+    searchMinFollowers: Number(process.env.TWITTER_SEARCH_MIN_FOLLOWERS ?? 100),
+    searchMaxResults: Number(process.env.TWITTER_SEARCH_MAX_RESULTS ?? 30),
   },
 
   // AIBTC.news API

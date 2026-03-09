@@ -14,6 +14,7 @@ import { JsonStore } from './store/json-store.js'
 import { AIBTCScanner } from './pipeline/aibtc-scanner.js'
 import { BTCMagScanner } from './pipeline/btcmag-scanner.js'
 import { RSSScanner } from './pipeline/rss-scanner.js'
+import { TwitterScanner } from './pipeline/twitter-scanner.js'
 import { Scorer } from './pipeline/scorer.js'
 import { Ideator } from './pipeline/ideator.js'
 import { Generator } from './pipeline/generator.js'
@@ -96,6 +97,15 @@ async function main() {
     console.log(`[scanners] ${rssScanners.length} additional RSS feeds enabled: ${config.rssFeeds.filter(f => f.enabled).map(f => f.name).join(', ')}`)
   }
 
+  // Twitter search scanner (X as signal source)
+  const twitterScanner = config.twitter.searchEnabled && readProvider
+    ? new TwitterScanner(events, signalCache, readProvider)
+    : null
+
+  if (twitterScanner) {
+    console.log(`[scanners] Twitter search enabled with ${config.twitter.searchQueries.length} queries`)
+  }
+
   // Combined scanner that merges signals from all sources
   const scanner = {
     async scan(): Promise<Signal[]> {
@@ -103,6 +113,7 @@ async function main() {
         aibtcScanner.scan(),
         btcMagScanner ? btcMagScanner.scan() : Promise.resolve([]),
         ...rssScanners.map((s) => s.scan()),
+        twitterScanner ? twitterScanner.scan() : Promise.resolve([]),
       ])
 
       const signals: Signal[] = []
@@ -118,7 +129,8 @@ async function main() {
       return (
         aibtcScanner.bufferSize +
         (btcMagScanner?.bufferSize ?? 0) +
-        rssScanners.reduce((sum, s) => sum + s.bufferSize, 0)
+        rssScanners.reduce((sum, s) => sum + s.bufferSize, 0) +
+        (twitterScanner?.bufferSize ?? 0)
       )
     },
   }

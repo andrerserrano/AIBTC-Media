@@ -239,7 +239,7 @@ export class TwitterClient {
       }))
     } catch (err) {
       console.error('[twitter] getMentions failed:', (err as Error).message)
-      this.events.emit({ type: 'error', message: `getMentions failed: ${(err as Error).message}`, ts: Date.now() })
+      this.events.monologue(`getMentions failed: ${(err as Error).message}`)
       return []
     }
   }

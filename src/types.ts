@@ -27,9 +27,19 @@ export interface RSSMetadata {
   beat: string
 }
 
+export interface TwitterMetadata {
+  tweetId: string
+  username: string
+  authorName: string
+  followers: number
+  likeCount: number
+  retweetCount: number
+  query: string
+}
+
 export interface Signal {
   id: string
-  source: 'aibtc' | 'btcmag' | 'rss'
+  source: 'aibtc' | 'btcmag' | 'rss' | 'twitter'
   type: 'headline' | 'post'
   content: string
   url: string
@@ -43,6 +53,7 @@ export interface Signal {
   aibtc?: AIBTCMetadata
   btcMag?: BTCMagMetadata
   rss?: RSSMetadata
+  twitter?: TwitterMetadata
 }
 
 export interface TopicScores {

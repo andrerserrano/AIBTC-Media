@@ -92,15 +92,16 @@ export function Legal({ onBack }: Props) {
           <h2 className="font-editorial" style={{ fontSize: 28, fontWeight: 'bold', color: 'var(--color-ink)', marginBottom: '1rem' }}>Privacy Policy</h2>
 
           <Section title="1. Information We Collect">
-            <p><strong>Usage data:</strong> We do not use analytics trackers, cookies, or
-              third-party tracking scripts. No behavioral data is collected.</p>
+            <p><strong>Usage data:</strong> We use Google Analytics 4 to collect anonymous,
+              aggregated usage data such as page views, session duration, and general geographic region. This helps us understand how visitors interact with AIBTC Media. No personally identifiable information is collected through analytics.</p>
             <p><strong>No accounts:</strong> AIBTC Media does not require sign-in. No personal
               information is collected or stored.</p>
           </Section>
 
           <Section title="2. Third-Party Services">
-            <p>AIBTC Media uses the following third-party services server-side:</p>
+            <p>AIBTC Media uses the following third-party services:</p>
             <ul>
+              <li><strong>Google Analytics 4</strong> — Anonymous usage analytics. Data is processed by Google per their <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-bitcoin)', textDecoration: 'none' }}>privacy policy</a>.</li>
               <li><strong>Anthropic (Claude)</strong> — AI content generation. Prompts are processed server-side.</li>
               <li><strong>Google (Gemini)</strong> — AI image generation. Processed server-side.</li>
               <li><strong>Cloudflare R2</strong> — Media CDN for serving images.</li>

@@ -3,24 +3,21 @@ import type { LocalPost } from '../types'
 import { SEED_POSTS } from '../data/seedPosts'
 
 export function useFeed() {
-  const [livePosts, setLivePosts] = useState<LocalPost[]>([])
-  const [loading, setLoading] = useState(true)
+  const [posts, setPosts] = useState<LocalPost[]>(SEED_POSTS)
 
   useEffect(() => {
-    let first = true
-
     async function load() {
       try {
         const res = await fetch('/api/feed')
         const data: LocalPost[] = await res.json()
-        setLivePosts(data)
+        // Merge: live posts first, then seed posts not already in the live feed
+        const liveIds = new Set(data.map(p => p.id))
+        setPosts([
+          ...data,
+          ...SEED_POSTS.filter(sp => !liveIds.has(sp.id)),
+        ])
       } catch {
-        // API unavailable (e.g. static deploy) — seed posts will still show
-      } finally {
-        if (first) {
-          first = false
-          setLoading(false)
-        }
+        // API unavailable (e.g. static deploy) — keep showing seed posts
       }
     }
 
@@ -29,12 +26,5 @@ export function useFeed() {
     return () => clearInterval(interval)
   }, [])
 
-  // Merge: live posts first, then seed posts that aren't already in the live feed
-  const liveIds = new Set(livePosts.map(p => p.id))
-  const merged = [
-    ...livePosts,
-    ...SEED_POSTS.filter(sp => !liveIds.has(sp.id)),
-  ]
-
-  return { posts: merged, loading }
+  return posts
 }

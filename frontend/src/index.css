@@ -301,6 +301,18 @@ body::before {
   100% { background-position: 200% 0; }
 }
 
+/* Feed reveal: stay invisible while API data loads, then fade in.
+   This prevents the "content flash" where seed-post images briefly
+   appear before live data replaces them. */
+@keyframes reveal-feed {
+  0%   { opacity: 0; }
+  66%  { opacity: 0; }   /* invisible for ~400ms */
+  100% { opacity: 1; }   /* fade in over ~200ms */
+}
+.feed-reveal {
+  animation: reveal-feed 600ms ease-out forwards;
+}
+
 /* ==========================================
    MONOLOGUE / CONSOLE ENTRY STYLES
    ========================================== */

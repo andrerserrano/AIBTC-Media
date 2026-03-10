@@ -9,7 +9,7 @@ import { Footer } from './components/Footer'
 
 export default function App() {
   const { entries, agentState, connected, shortlist, stats } = useConsoleStream({})
-  const { posts, loading: feedLoading } = useFeed()
+  const posts = useFeed()
   const params = new URLSearchParams(window.location.search)
   const viewEverything = params.get('view_everything') === 'true'
   const [showAbout, setShowAbout] = useState(false)
@@ -35,7 +35,7 @@ export default function App() {
 
           {/* Gallery */}
           <div className="min-h-0 overflow-hidden border-r border-border">
-            <Feed posts={posts} streamMode loading={feedLoading} />
+            <Feed posts={posts} streamMode />
           </div>
 
           {/* Sidebar */}
@@ -56,7 +56,7 @@ export default function App() {
       <div className="flex-1 layout-grid grid grid-cols-[1fr_380px] min-h-0" style={{ maxWidth: 1280, margin: '0 auto', width: '100%' }}>
         {/* Left: Feed — with mobile About button */}
         <main className="min-h-0 overflow-y-auto feed-main" style={{ borderRight: '1px solid var(--color-border)' }}>
-          <Feed posts={posts} onAbout={() => setShowAbout(true)} loading={feedLoading} />
+          <Feed posts={posts} onAbout={() => setShowAbout(true)} />
         </main>
 
         {/* Right: Sidebar (hidden on mobile, replaced by About overlay) */}

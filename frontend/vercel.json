@@ -20,6 +20,7 @@
     { "source": "/voice/:path*", "destination": "https://aibtc-media-production.up.railway.app/voice/:path*" },
     { "source": "/bid-images/:path*", "destination": "https://aibtc-media-production.up.railway.app/bid-images/:path*" },
     { "source": "/videos/:path*", "destination": "https://aibtc-media-production.up.railway.app/videos/:path*" },
+    { "source": "/rss.xml", "destination": "https://aibtc-media-production.up.railway.app/rss.xml" },
     { "source": "/legal", "destination": "/index.html" }
   ]
 }

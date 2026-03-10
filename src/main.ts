@@ -195,7 +195,24 @@ async function main() {
   }))
 
   let feedCache: { data: unknown; ts: number } | null = null
+  let rssCache: { xml: string; ts: number } | null = null
   const FEED_CACHE_TTL = 10_000
+  const RSS_CACHE_TTL = 60_000
+
+  function escapeXml(s: string): string {
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;')
+  }
+
+  /** Convert a possibly-relative image path to an absolute URL for RSS */
+  function toAbsoluteUrl(path: string): string {
+    if (path.startsWith('https://') || path.startsWith('http://')) return path
+    return `https://aibtc.media${path.startsWith('/') ? '' : '/'}${path}`
+  }
 
   async function resolveMediaUrl(url: string | undefined | null, prefix: 'images' | 'videos'): Promise<string | null> {
     if (!url) return null
@@ -278,6 +295,7 @@ async function main() {
     }
     await stores.posts.update(() => filtered, [])
     feedCache = null  // bust cache
+    rssCache = null
     return { success: true, remaining: filtered.length }
   })
 
@@ -304,6 +322,7 @@ async function main() {
     allPosts[idx] = { ...allPosts[idx], text }
     await stores.posts.write(allPosts)
     feedCache = null  // bust cache
+    rssCache = null
     return { success: true, post: allPosts[idx] }
   })
 
@@ -314,6 +333,69 @@ async function main() {
   app.get('/api/feed/rejected', async () => {
     const rejected = (await rejectedCartoonsStore.read()) ?? []
     return rejected.sort((a, b) => b.rejectedAt - a.rejectedAt)
+  })
+
+  // --- RSS 2.0 feed ---
+  app.get('/rss.xml', async (_request, reply) => {
+    if (rssCache && Date.now() - rssCache.ts < RSS_CACHE_TTL) {
+      reply.type('application/rss+xml; charset=utf-8')
+      return rssCache.xml
+    }
+
+    const allPosts = (await stores.posts.read()) ?? []
+    const allCartoons = (await stores.cartoons.read()) ?? []
+    const sorted = allPosts
+      .filter(p => p.imageUrl)
+      .sort((a, b) => b.postedAt - a.postedAt)
+      .slice(0, 50)
+
+    const items: string[] = []
+
+    for (const p of sorted) {
+      const imagePath = await resolveMediaUrl(p.imageUrl, 'images')
+      if (!imagePath) continue
+
+      const imageAbsolute = toAbsoluteUrl(imagePath)
+      const tweetLink = p.tweetId
+        ? `https://x.com/aibtc_media/status/${p.tweetId}`
+        : 'https://aibtc.media'
+      const pubDate = new Date(p.postedAt).toUTCString()
+
+      // Fall back to cartoon reasoning for older posts missing editorialReasoning
+      let description = p.editorialReasoning
+      if (!description && p.cartoonId) {
+        const cartoon = allCartoons.find(c => c.id === p.cartoonId)
+        if (cartoon?.concept) description = cartoon.concept.reasoning
+      }
+      description = description ?? p.text
+
+      items.push(`    <item>
+      <title>${escapeXml(p.text)}</title>
+      <link>${escapeXml(tweetLink)}</link>
+      <guid isPermaLink="false">${escapeXml(p.id)}</guid>
+      <pubDate>${pubDate}</pubDate>
+      <description><![CDATA[${description}]]></description>${p.category ? `\n      <category>${escapeXml(p.category)}</category>` : ''}
+      <media:content url="${escapeXml(imageAbsolute)}" type="image/png" medium="image"/>
+      <media:thumbnail url="${escapeXml(imageAbsolute)}"/>
+    </item>`)
+    }
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>AIBTC Media</title>
+    <link>https://aibtc.media</link>
+    <description>Autonomous AI editorial cartoons covering the Bitcoin agent economy</description>
+    <language>en-us</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <atom:link href="https://aibtc.media/rss.xml" rel="self" type="application/rss+xml"/>
+${items.join('\n')}
+  </channel>
+</rss>`
+
+    rssCache = { xml, ts: Date.now() }
+    reply.type('application/rss+xml; charset=utf-8')
+    return xml
   })
 
   // Newsletter subscription — proxies to Beehiiv API (requires BEEHIIV_API_KEY on Scale plan)

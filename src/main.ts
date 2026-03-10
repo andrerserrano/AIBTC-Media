@@ -277,6 +277,32 @@ async function main() {
     return { success: true, remaining: filtered.length }
   })
 
+  // Admin: patch a post's text by ID (requires ADMIN_KEY env var)
+  app.patch('/api/feed/:postId', async (request, reply) => {
+    const adminKey = process.env.ADMIN_KEY
+    const auth = request.headers.authorization
+    if (!adminKey || auth !== `Bearer ${adminKey}`) {
+      reply.status(401)
+      return { error: 'Unauthorized' }
+    }
+    const { postId } = request.params as { postId: string }
+    const { text } = request.body as { text?: string }
+    if (!text) {
+      reply.status(400)
+      return { error: 'Missing "text" in request body' }
+    }
+    const allPosts = (await stores.posts.read()) ?? []
+    const idx = allPosts.findIndex(p => p.id === postId)
+    if (idx === -1) {
+      reply.status(404)
+      return { error: 'Post not found' }
+    }
+    allPosts[idx] = { ...allPosts[idx], text }
+    await stores.posts.write(allPosts)
+    feedCache = null  // bust cache
+    return { success: true, post: allPosts[idx] }
+  })
+
   app.get('/api/worldview', async () => worldview.getForFrontend())
 
   const rejectedCartoonsStore = new JsonStore<Array<{ caption: string; imageUrl: string; reason: string; rejectedAt: number }>>(join(config.dataDir, 'rejected-cartoons.json'))

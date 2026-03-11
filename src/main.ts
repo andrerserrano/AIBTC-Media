@@ -107,20 +107,28 @@ async function main() {
     console.log(`[scanners] Twitter search enabled with ${config.twitter.searchQueries.length} queries`)
   }
 
-  // Combined scanner that merges signals from all sources
-  // Each scanner has its own timeout so a single hung API can't block the tick
+  // Combined scanner that merges signals from all sources.
+  // Each scanner is individually wrapped with SCAN_TIMEOUT_MS so a single
+  // hung scanner can't block the tick — and scanners that finish in time
+  // still contribute their signals even if another one times out.
   const scanner = {
     async scan(): Promise<Signal[]> {
-      const results = await withTimeout(
-        Promise.allSettled([
-          aibtcScanner.scan(),
+      const results = await Promise.allSettled([
+        withTimeout(aibtcScanner.scan(), SCAN_TIMEOUT_MS, 'AIBTC scanner'),
+        withTimeout(
           btcMagScanner ? btcMagScanner.scan() : Promise.resolve([]),
-          ...rssScanners.map((s) => s.scan()),
+          SCAN_TIMEOUT_MS,
+          'BTC Mag scanner',
+        ),
+        ...rssScanners.map((s) =>
+          withTimeout(s.scan(), SCAN_TIMEOUT_MS, `${s.constructor.name} scanner`),
+        ),
+        withTimeout(
           twitterScanner ? twitterScanner.scan() : Promise.resolve([]),
-        ]),
-        SCAN_TIMEOUT_MS,
-        'Combined scanner',
-      )
+          SCAN_TIMEOUT_MS,
+          'Twitter scanner',
+        ),
+      ])
 
       const signals: Signal[] = []
       for (const result of results) {

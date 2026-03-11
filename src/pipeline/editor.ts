@@ -61,11 +61,13 @@ Your job:
    - Dense halftone dots covering entire robot bodies = reject. Light halftone in shadows only is fine.
    - The overall image should feel CLEAN and BRIGHT, not grey or murky
 
-   BRAND & STYLE CHECK (instant reject if any fail):
-   - Background is WHITE or very light cream — NEVER grey or dark. If the background looks grey, reject.
-   - NO real-world brand logos anywhere — especially no Apple logo on laptop backs
-   - Laptops must have completely plain, flat backs — no logos, symbols, or decorations
-   - All devices (laptops, monitors, phones) must be generic and unbranded
+   BRAND & STYLE CHECK:
+   - Background is WHITE or very light cream — NEVER grey or dark. If the background looks grey, REJECT (instant).
+   - Small incidental logos on devices (e.g. an Apple-like logo on a laptop back) are ACCEPTABLE —
+     these are just how AI image generators draw laptops and do not imply endorsement.
+   - Only reject branding if a real-world brand is PROMINENTLY FEATURED as the subject of the image
+     or if branding text/slogans are clearly readable and central to the composition.
+   - Devices should look reasonably generic but minor logo shapes on device backs are fine.
 
    ORANGE ACCENT CHECK (reject if excessive):
    - Orange (#E8740C) should appear ONLY on robot eyes + at most 1-2 small props

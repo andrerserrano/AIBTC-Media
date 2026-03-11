@@ -6,6 +6,8 @@ import { getOrdinalConfig } from './utils.js'
 
 export interface InscriptionLogEntry {
   imageHash: string
+  /** Cartoon/card UUID — links full-image inscription to its content hash inscription */
+  cardId?: string
   inscriptionId: string
   commitTxid: string
   revealTxid: string
@@ -109,11 +111,17 @@ export function findHashByCardId(cardId: string): HashInscriptionLogEntry | unde
 
 /**
  * Get all cards that have a content hash inscription but no full-image inscription.
- * Useful for identifying candidates for batch inscription.
+ * Matches by cardId (the natural linking key between the two inscription types).
+ *
+ * Note: we do NOT match by hash because contentHash is computed from the
+ * canonical PNG while imageHash is computed from the compressed WebP thumbnail —
+ * they are hashes of different data and will never match.
  */
 export function getPendingFullInscriptions(): HashInscriptionLogEntry[] {
   const hashEntries = readHashLog()
   const imageEntries = readLog()
-  const inscribedHashes = new Set(imageEntries.map(e => e.imageHash))
-  return hashEntries.filter(h => !inscribedHashes.has(h.contentHash))
+  const fullyInscribedCardIds = new Set(
+    imageEntries.filter(e => e.cardId).map(e => e.cardId!)
+  )
+  return hashEntries.filter(h => !fullyInscribedCardIds.has(h.cardId))
 }

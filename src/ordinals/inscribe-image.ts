@@ -44,6 +44,8 @@ export interface InscribeImageOptions {
   contentType?: string
   /** WalletProvider for secure signing (required) */
   walletProvider: WalletProvider
+  /** Cartoon/card UUID — links this full-image inscription to its content hash inscription */
+  cardId?: string
 }
 
 /**
@@ -118,6 +120,7 @@ export async function inscribeImage(
   // Step 5: Log the inscription
   const logEntry: InscriptionLogEntry = {
     imageHash,
+    cardId: options.cardId,
     inscriptionId: result.inscriptionId,
     commitTxid: result.commitTxid,
     revealTxid: result.revealTxid,

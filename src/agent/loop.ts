@@ -15,6 +15,7 @@ import { TwitterClient } from '../twitter/client.js'
 import { EngagementLoop } from '../twitter/engagement.js'
 import { Editor } from '../pipeline/editor.js'
 import { Composer } from '../pipeline/composer.js'
+import { TweetTextWriter } from '../pipeline/tweet-text-writer.js'
 import { Inscriber } from '../pipeline/inscriber.js'
 import { JsonStore } from '../store/json-store.js'
 import { toCdnUrl } from '../cdn/r2.js'
@@ -66,6 +67,7 @@ export class AgentLoop {
     private ideator: Ideator,
     private generator: Generator,
     private captioner: Captioner,
+    private tweetTextWriter: TweetTextWriter,
     private twitter: TwitterClient,
     private engagement: EngagementLoop,
     private editor: Editor,
@@ -421,9 +423,8 @@ export class AgentLoop {
       contentHashProvenance,
     }
 
-    // Build tweet text: a short headline that frames the story. The caption/punchline
-    // is already baked into the composed image, so the tweet should set the stage.
-    const tweetText = `${topic.summary.length > 100 ? topic.summary.slice(0, 100) + '…' : topic.summary}`
+    // Generate tweet text that sets up the joke (caption is the punchline on the image)
+    const tweetText = await this.tweetTextWriter.generate(topic.summary, caption, best.jokeType)
     const tweetId = await this.twitter.postCartoon({ text: tweetText, imagePath: composedPath })
 
     // Derive metadata for the frontend detail card
@@ -566,8 +567,8 @@ export class AgentLoop {
       contentHashProvenance,
     }
 
-    // Build tweet text: short headline to frame the story (caption is on the image)
-    const qhTweetText = `${topic.summary.length > 100 ? topic.summary.slice(0, 100) + '…' : topic.summary}`
+    // Generate tweet text that sets up the joke (caption is the punchline on the image)
+    const qhTweetText = await this.tweetTextWriter.generate(topic.summary, caption, concept.jokeType)
     const tweetId = await this.twitter.postCartoon({ text: qhTweetText, imagePath: composedPath })
 
     // Derive metadata for the frontend detail card

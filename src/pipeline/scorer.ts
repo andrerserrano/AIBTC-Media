@@ -110,11 +110,11 @@ export class Scorer {
       }
 
       const composite =
-        scored.virality * 0.20 +
-        scored.visualPotential * 0.15 +
+        scored.virality * 0.15 +
+        scored.visualPotential * 0.10 +
         scored.audienceBreadth * 0.10 +
         scored.timeliness * 0.10 +
-        scored.humor * 0.15 +
+        scored.humor * 0.25 +
         worldview * 0.30
 
       const isDuplicate = recentTopicSummaries.some(

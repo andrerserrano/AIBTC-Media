@@ -27,6 +27,7 @@ import { EngagementLoop } from './twitter/engagement.js'
 import { Editor } from './pipeline/editor.js'
 import { Composer } from './pipeline/composer.js'
 import { Inscriber } from './pipeline/inscriber.js'
+import { QuoteTweetResolver } from './pipeline/quote-tweet-resolver.js'
 import { createWalletProvider, type WalletProvider } from './crypto/wallet-provider.js'
 import { ContentSigner } from './crypto/content-signer.js'
 import { AgentLoop } from './agent/loop.js'
@@ -196,10 +197,13 @@ async function main() {
   const engagement = new EngagementLoop(events, twitter, stores.posts)
   await engagement.init()
 
+  // --- Quote-tweet resolver ---
+  const quoteTweetResolver = new QuoteTweetResolver(twitter, events)
+
   // --- Agent loop ---
   const agent = new AgentLoop(
     events, scanner, scorer, ideator, generator, captioner, tweetTextWriter,
-    twitter, engagement, editor, composer, inscriber, stores, worldview,
+    twitter, engagement, editor, composer, inscriber, quoteTweetResolver, stores, worldview,
   )
 
   // --- HTTP server ---

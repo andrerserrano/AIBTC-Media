@@ -17,6 +17,7 @@ import { Editor } from '../pipeline/editor.js'
 import { Composer } from '../pipeline/composer.js'
 import { TweetTextWriter } from '../pipeline/tweet-text-writer.js'
 import { Inscriber } from '../pipeline/inscriber.js'
+import { QuoteTweetResolver } from '../pipeline/quote-tweet-resolver.js'
 import { JsonStore } from '../store/json-store.js'
 import { toCdnUrl } from '../cdn/r2.js'
 import { config } from '../config/index.js'
@@ -73,6 +74,7 @@ export class AgentLoop {
     private editor: Editor,
     private composer: Composer,
     private inscriber: Inscriber,
+    private quoteTweetResolver: QuoteTweetResolver,
     private stores: AgentStores,
     private worldview?: WorldviewStore,
   ) {
@@ -425,7 +427,12 @@ export class AgentLoop {
 
     // Generate tweet text that sets up the joke (caption is the punchline on the image)
     const tweetText = await this.tweetTextWriter.generate(topic.summary, caption, best.jokeType)
-    const tweetId = await this.twitter.postCartoon({ text: tweetText, imagePath: composedPath })
+
+    // Resolve best source tweet to quote-tweet (links back to original story)
+    const sourceUrls = topic.quoteCandidates?.length ? topic.quoteCandidates : undefined
+    const quoteTweetId = await this.quoteTweetResolver.resolve(sourceUrls, topic.summary)
+
+    const tweetId = await this.twitter.postCartoon({ text: tweetText, imagePath: composedPath, quoteTweetId })
 
     // Derive metadata for the frontend detail card
     const primarySignal = signals.find(s => topic.signals.includes(s.id))
@@ -440,12 +447,13 @@ export class AgentLoop {
       cartoonId: cartoon.id,
       text: `${tweetText}\n"${caption}"`,
       imageUrl: toCdnUrl(composedPath, 'images'),
+      quotedTweetId: quoteTweetId,
       type: 'flagship',
       postedAt: Date.now(),
       engagement: { likes: 0, retweets: 0, replies: 0, views: 0, lastChecked: 0 },
       contentHashProvenance,
       sourceSignal: topic.summary,
-      sourceUrls: topic.quoteCandidates?.length ? topic.quoteCandidates : undefined,
+      sourceUrls,
       editorialReasoning: best.reasoning,
       sceneDescription: best.visual,
       category: category.toUpperCase().replace(/-/g, ' '),
@@ -570,7 +578,12 @@ export class AgentLoop {
 
     // Generate tweet text that sets up the joke (caption is the punchline on the image)
     const qhTweetText = await this.tweetTextWriter.generate(topic.summary, caption, concept.jokeType)
-    const tweetId = await this.twitter.postCartoon({ text: qhTweetText, imagePath: composedPath })
+
+    // Resolve best source tweet to quote-tweet (links back to original story)
+    const qhSourceUrls = topic.quoteCandidates?.length ? topic.quoteCandidates : undefined
+    const qhQuoteTweetId = await this.quoteTweetResolver.resolve(qhSourceUrls, topic.summary)
+
+    const tweetId = await this.twitter.postCartoon({ text: qhTweetText, imagePath: composedPath, quoteTweetId: qhQuoteTweetId })
 
     // Derive metadata for the frontend detail card
     const qhSignal = signals.find(s => topic.signals.includes(s.id))
@@ -585,12 +598,13 @@ export class AgentLoop {
       cartoonId: cartoon.id,
       text: `${qhTweetText}\n"${caption}"`,
       imageUrl: toCdnUrl(composedPath, 'images'),
+      quotedTweetId: qhQuoteTweetId,
       type: 'quickhit',
       postedAt: Date.now(),
       engagement: { likes: 0, retweets: 0, replies: 0, views: 0, lastChecked: 0 },
       contentHashProvenance,
       sourceSignal: topic.summary,
-      sourceUrls: topic.quoteCandidates?.length ? topic.quoteCandidates : undefined,
+      sourceUrls: qhSourceUrls,
       editorialReasoning: concept.reasoning,
       sceneDescription: concept.visual,
       category: qhCategory.toUpperCase().replace(/-/g, ' '),

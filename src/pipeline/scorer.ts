@@ -15,7 +15,7 @@ const batchScoreSchema = z.object({
   topics: z.array(
     z.object({
       signalIndices: z.array(z.number()).describe('Which signal indices (0-based) this topic covers'),
-      summary: z.string().describe('Short newspaper-style headline for the topic — punchy, under 80 characters, no filler details. Write like a NYT or Bloomberg editor: "Block Lays Off Nearly Half Its Staff, Citing AI Automation" NOT "Block company announces layoffs of approximately 45% of workforce due to AI automation with expected 3-5% cost savings expected"'),
+      summary: z.string().describe('Short punchy headline — under 80 characters, no filler. This becomes the tweet text accompanying a cartoon. For serious news, write like a NYT editor: "Block Lays Off Nearly Half Its Staff, Citing AI Automation" NOT "Block company announces layoffs of approximately 45% of workforce due to AI automation with expected 3-5% cost savings expected". For humorous or wild stories, lean into intrigue: "Satoshi Was AI From the Future" NOT "Binance Founder CZ: Satoshi Was AI From the Future". Drop the "Person Says:" prefix unless the WHO is the story — the standalone claim is punchier.'),
       safe: z.boolean().describe('Is this topic safe to cartoon about?'),
       safetyReason: z.string().optional().describe('If unsafe, why'),
       virality: z.number().describe('Score 0-10'),

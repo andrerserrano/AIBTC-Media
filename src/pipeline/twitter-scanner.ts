@@ -144,21 +144,8 @@ export class TwitterScanner {
     return results.slice(0, config.twitter.searchMaxResults)
   }
 
-  /**
-   * Use LLM to identify which tweets are at the Bitcoin × AI intersection.
-   * Same pattern as RSSScanner.filterForRelevance().
-   */
-  private async filterForRelevance(
-    items: Array<{ tweet: Tweet; query: string }>
-  ): Promise<Array<{ tweet: Tweet; query: string; beat?: string }>> {
-    const tweetList = items
-      .map((item, i) => `[${i}] @${item.tweet.author.userName} (${item.tweet.author.followers} followers, ${item.tweet.likeCount} likes)\n    "${item.tweet.text}"`)
-      .join('\n\n')
-
-    const { object } = await withTimeout(generateObject({
-      model: anthropic(config.textModel),
-      schema: relevanceSchema,
-      system: `You are a signal filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
+  /** System prompt shared across all relevance-filter batches. */
+  private static readonly RELEVANCE_SYSTEM = `You are a signal filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
 
 Your job: identify which Twitter/X posts are worth covering. The core beat is Bitcoin × AI, but you also watch for major stories that can be told through that lens.
 
@@ -181,16 +168,77 @@ NOT RELEVANT — exclude these:
 - Mundane AI news with no possible Bitcoin/decentralization angle (e.g., minor ChatGPT UI updates, routine model releases without autonomy implications)
 - Mining, hash rate, or energy topics (unless AI-related)
 
-Be selective but not narrow. A major AI story that can be reframed through a Bitcoin/decentralization lens IS relevant — the downstream editorial process will decide whether to develop it. But low-signal noise should still be filtered out.`,
-      prompt: `Which of these tweets are relevant to the Bitcoin × AI intersection?\n\n${tweetList}`,
-    }), LLM_TIMEOUT_MS, 'Twitter relevance filter')
+Be selective but not narrow. A major AI story that can be reframed through a Bitcoin/decentralization lens IS relevant — the downstream editorial process will decide whether to develop it. But low-signal noise should still be filtered out.`
 
-    return object.tweets
-      .filter((t) => t.relevant && t.index >= 0 && t.index < items.length)
-      .map((t) => ({
-        ...items[t.index],
-        beat: t.beat,
-      }))
+  /** Max tweets per LLM call — keeps structured output reliable. */
+  private static readonly BATCH_SIZE = 20
+
+  /**
+   * Use LLM to identify which tweets are at the Bitcoin × AI intersection.
+   * Processes tweets in batches to avoid overwhelming the structured output.
+   */
+  private async filterForRelevance(
+    items: Array<{ tweet: Tweet; query: string }>
+  ): Promise<Array<{ tweet: Tweet; query: string; beat?: string }>> {
+    const results: Array<{ tweet: Tweet; query: string; beat?: string }> = []
+
+    // Process in batches to keep structured output reliable
+    for (let start = 0; start < items.length; start += TwitterScanner.BATCH_SIZE) {
+      const batch = items.slice(start, start + TwitterScanner.BATCH_SIZE)
+      const batchResults = await this.filterBatch(batch)
+      results.push(...batchResults)
+    }
+
+    return results
+  }
+
+  /**
+   * Run LLM relevance filter on a single batch of tweets.
+   * Retries once with a halved batch on schema failure.
+   */
+  private async filterBatch(
+    batch: Array<{ tweet: Tweet; query: string }>
+  ): Promise<Array<{ tweet: Tweet; query: string; beat?: string }>> {
+    const tweetList = batch
+      .map((item, i) => `[${i}] @${item.tweet.author.userName} (${item.tweet.author.followers} followers, ${item.tweet.likeCount} likes)\n    "${item.tweet.text}"`)
+      .join('\n\n')
+
+    try {
+      const { object } = await withTimeout(generateObject({
+        model: anthropic(config.textModel),
+        schema: relevanceSchema,
+        system: TwitterScanner.RELEVANCE_SYSTEM,
+        prompt: `Which of these tweets are relevant to the Bitcoin × AI intersection?\n\n${tweetList}`,
+      }), LLM_TIMEOUT_MS, 'Twitter relevance filter')
+
+      return object.tweets
+        .filter((t) => t.relevant && t.index >= 0 && t.index < batch.length)
+        .map((t) => ({
+          ...batch[t.index],
+          beat: t.beat,
+        }))
+    } catch (err) {
+      // If schema fails on this batch, retry with smaller halves
+      if (batch.length > 5) {
+        this.events.monologue(
+          `Twitter relevance batch (${batch.length} tweets) failed, retrying in halves: ${(err as Error).message}`
+        )
+        const mid = Math.ceil(batch.length / 2)
+        const [firstHalf, secondHalf] = await Promise.allSettled([
+          this.filterBatch(batch.slice(0, mid)),
+          this.filterBatch(batch.slice(mid)),
+        ])
+        return [
+          ...(firstHalf.status === 'fulfilled' ? firstHalf.value : []),
+          ...(secondHalf.status === 'fulfilled' ? secondHalf.value : []),
+        ]
+      }
+      // Small batch still failing — skip it
+      this.events.monologue(
+        `Twitter relevance batch (${batch.length} tweets) failed, skipping: ${(err as Error).message}`
+      )
+      return []
+    }
   }
 
   private convertToSignal(tweet: Tweet, query: string, beat?: string): Signal {

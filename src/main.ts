@@ -19,6 +19,7 @@ import { Scorer } from './pipeline/scorer.js'
 import { Ideator } from './pipeline/ideator.js'
 import { Generator } from './pipeline/generator.js'
 import { Captioner } from './pipeline/captioner.js'
+import { TweetTextWriter } from './pipeline/tweet-text-writer.js'
 import { TwitterClient } from './twitter/client.js'
 import { TwitterV2Reader } from './twitter/twitterapi-v2.js'
 import type { TwitterReadProvider } from './twitter/provider.js'
@@ -162,6 +163,7 @@ async function main() {
   const generator = new Generator(events, imageCache, readProvider ?? undefined)
   await generator.init()
   const captioner = new Captioner(events)
+  const tweetTextWriter = new TweetTextWriter(events)
   const editor = new Editor(events)
   const composer = new Composer(events, generator)
 
@@ -196,7 +198,7 @@ async function main() {
 
   // --- Agent loop ---
   const agent = new AgentLoop(
-    events, scanner, scorer, ideator, generator, captioner,
+    events, scanner, scorer, ideator, generator, captioner, tweetTextWriter,
     twitter, engagement, editor, composer, inscriber, stores, worldview,
   )
 

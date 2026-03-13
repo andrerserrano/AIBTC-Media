@@ -14,6 +14,7 @@ import { JsonStore } from './store/json-store.js'
 import { AIBTCScanner } from './pipeline/aibtc-scanner.js'
 import { BTCMagScanner } from './pipeline/btcmag-scanner.js'
 import { RSSScanner } from './pipeline/rss-scanner.js'
+import { GoogleNewsScanner } from './pipeline/google-news-scanner.js'
 import { TwitterScanner } from './pipeline/twitter-scanner.js'
 import { Scorer } from './pipeline/scorer.js'
 import { Ideator } from './pipeline/ideator.js'
@@ -86,7 +87,7 @@ async function main() {
   const worldview = new WorldviewStore(events, join(config.dataDir, 'worldview.json'))
   await worldview.init()
 
-  // --- Pipeline (multi-source: AIBTC.news + Bitcoin Magazine + CoinDesk + The Defiant) ---
+  // --- Pipeline (multi-source: AIBTC.news + Bitcoin Magazine + CoinDesk + The Defiant + Google News) ---
   const aibtcScanner = new AIBTCScanner(events, signalCache)
   const btcMagScanner = config.btcMag.enabled ? new BTCMagScanner(events, signalCache) : null
 
@@ -106,6 +107,15 @@ async function main() {
 
   if (twitterScanner) {
     console.log(`[scanners] Twitter search enabled with ${config.twitter.searchQueries.length} queries`)
+  }
+
+  // Google News scanner (aggregates from hundreds of outlets)
+  const googleNewsScanner = config.googleNews.enabled
+    ? new GoogleNewsScanner(events, signalCache)
+    : null
+
+  if (googleNewsScanner) {
+    console.log(`[scanners] Google News enabled with ${config.googleNews.queries.length} queries`)
   }
 
   // Cap AIBTC signals to prevent one prolific source from overwhelming the pool.
@@ -135,6 +145,11 @@ async function main() {
           SCAN_TIMEOUT_MS,
           'Twitter scanner',
         ),
+        withTimeout(
+          googleNewsScanner ? googleNewsScanner.scan() : Promise.resolve([]),
+          SCAN_TIMEOUT_MS,
+          'Google News scanner',
+        ),
       ])
 
       const signals: Signal[] = []
@@ -153,7 +168,8 @@ async function main() {
         aibtcScanner.bufferSize +
         (btcMagScanner?.bufferSize ?? 0) +
         rssScanners.reduce((sum, s) => sum + s.bufferSize, 0) +
-        (twitterScanner?.bufferSize ?? 0)
+        (twitterScanner?.bufferSize ?? 0) +
+        (googleNewsScanner?.bufferSize ?? 0)
       )
     },
   }

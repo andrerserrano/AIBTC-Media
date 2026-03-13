@@ -77,6 +77,22 @@ export const config = {
     },
   ],
 
+  // Google News RSS (aggregates from hundreds of publishers)
+  googleNews: {
+    enabled: process.env.GOOGLE_NEWS_ENABLED !== 'false',  // enabled by default
+    queries: (process.env.GOOGLE_NEWS_QUERIES
+      ?? [
+        'Bitcoin AI agents',
+        'Bitcoin artificial intelligence',
+        'AI autonomous crypto blockchain',
+        'Bitcoin AI data center mining',
+        '"AI agents" Bitcoin OR Stacks OR Lightning',
+      ].join(',')
+    ).split(',').map(q => q.trim()).filter(Boolean),
+    maxArticles: Number(process.env.GOOGLE_NEWS_MAX_ARTICLES ?? 60),
+    lookbackMs: 48 * 60 * 60 * 1000,  // 48 hours
+  },
+
   // Agent loop
   tickIntervalMs: testMode ? 10_000 : 120_000,
   flagshipIntervalMs: testMode ? 30_000 : 2 * 3600_000,     // 30s vs 2h (minimum cooldown between posts)

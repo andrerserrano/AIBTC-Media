@@ -424,6 +424,10 @@
   }
 
   @media (max-width: 768px) {
+    .main-layout { grid-template-columns: 1fr; }
+    .feed-panel { padding: 1rem; border-right: none; }
+    .sidebar-panel { position: static; height: auto; padding: 1rem; border-top: 1px solid var(--color-border); }
+    .header-inner { padding: 1rem; }
     .footer-top { grid-template-columns: 1fr; gap: 2rem; }
     .footer-bottom { flex-direction: column; align-items: flex-start; }
   }

@@ -423,6 +423,13 @@
     letter-spacing: 0.03em;
   }
 
+  /* Mid-range: narrower sidebar before full collapse */
+  @media (max-width: 960px) {
+    .main-layout { grid-template-columns: 1fr 260px; }
+    .sidebar-panel { padding: 1rem; }
+  }
+
+  /* Mobile: single column stack */
   @media (max-width: 768px) {
     .main-layout { grid-template-columns: 1fr; }
     .feed-panel { padding: 1rem; border-right: none; }

@@ -90,7 +90,7 @@ export class GoogleNewsScanner {
 
       // Dedup against previously seen (by normalized title)
       const newSignals = signals.filter((s) => {
-        const titleKey = this.normalizeTitle(s.content.split('\n')[0])
+        const titleKey = this.normalizeTitle(s.rss?.title ?? s.content.split('\n')[0])
         if (this.seenTitles.has(titleKey)) return false
         this.seenTitles.add(titleKey)
         this.buffer.set(s.id, s)
@@ -332,6 +332,7 @@ Be selective. Google News returns many articles — it's better to return 0 rele
   private normalizeTitle(title: string): string {
     return title
       .toLowerCase()
+      .replace(/\s*\(via\s+[^)]+\)\s*$/, '')   // Remove "(via Publisher)" suffix
       .replace(/\s*[-–—|]\s*[^-–—|]+$/, '')  // Remove " - Publisher Name" suffix
       .replace(/[^a-z0-9\s]/g, '')
       .replace(/\s+/g, ' ')

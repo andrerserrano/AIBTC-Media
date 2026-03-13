@@ -38,6 +38,11 @@ frontend/.playwright-cli/
 # Lock files (non-root)
 frontend/bun.lock
 
+# Development mockups (large HTML files with embedded base64 images)
+public/homepage-v3-mockup.html
+public/homepage-v4-mockup.html
+homepage-v4-preview.html
+
 # Private docs
 ARTICLE.md
 VIDEO_SCRIPT.md

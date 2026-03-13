@@ -212,6 +212,12 @@ async function main() {
   await app.register(import('@fastify/static'), {
     root: join(process.cwd(), 'public'),
     prefix: '/',
+    setHeaders: (res, path) => {
+      // Cache images aggressively — cartoon content never changes once published
+      if (/\.(png|webp|jpg|jpeg|gif|svg|ico)$/i.test(path)) {
+        res.setHeader('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400')
+      }
+    },
   })
 
   registerConsoleRoutes(app, events)
@@ -497,6 +503,10 @@ ${items.join('\n')}
     root: imagesDir,
     prefix: '/images/',
     decorateReply: false,
+    setHeaders: (res) => {
+      // Cartoons are content-addressed and immutable once generated
+      res.setHeader('Cache-Control', 'public, max-age=2592000, immutable')
+    },
   })
 
   // Start

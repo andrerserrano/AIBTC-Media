@@ -162,6 +162,29 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #222; border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: #333; }
+
+    /* Mid-range: narrower sidebar before full collapse */
+    @media (max-width: 960px) {
+      body { grid-template-columns: 1fr 260px; }
+      #sidebar { padding: 12px; }
+    }
+
+    /* Mobile: single column stack */
+    @media (max-width: 768px) {
+      body {
+        grid-template-columns: 1fr;
+        grid-template-rows: 48px 1fr auto 40px;
+        height: auto;
+        min-height: 100vh;
+      }
+      #sidebar {
+        border-left: none;
+        border-top: 1px solid #1a1a1a;
+      }
+      header { padding: 0 12px; }
+      #monologue { padding: 12px; }
+      footer { padding: 0 12px; }
+    }
   </style>
 </head>
 <body>

@@ -121,8 +121,9 @@ async function main() {
 
   // Cap AIBTC signals to prevent one prolific source from overwhelming the pool.
   // AIBTC.news fetches 5 beats in parallel, each returning up to 20 items — that's
-  // up to 100 signals per scan. Cap to a sane default so other sources get a fair shake.
-  const aibtcSignalCap = Number(process.env.AIBTC_SIGNAL_CAP ?? 10) || 10
+  // up to 100 signals per scan. Cap at 5 so Twitter/RSS/Google News signals get
+  // proportional weight in the scorer instead of being drowned out 10-to-2.
+  const aibtcSignalCap = Number(process.env.AIBTC_SIGNAL_CAP ?? 5) || 5
 
   // Combined scanner that merges signals from all sources.
   // Each scanner is individually wrapped with SCAN_TIMEOUT_MS so a single
@@ -153,12 +154,24 @@ async function main() {
         ),
       ])
 
-      const signals: Signal[] = []
+      // Collect signals grouped by source so we can interleave them.
+      // This prevents AIBTC signals from clustering first in the scorer's
+      // input, which biases the LLM's topic grouping toward AIBTC content.
+      const buckets: Signal[][] = []
       for (const result of results) {
-        if (result.status === 'fulfilled') {
-          signals.push(...result.value)
-        } else {
+        if (result.status === 'fulfilled' && result.value.length > 0) {
+          buckets.push(result.value)
+        } else if (result.status === 'rejected') {
           console.error(`[scanner] Scanner failed: ${result.reason}`)
+        }
+      }
+
+      // Round-robin interleave: pick one signal from each source in turn
+      const signals: Signal[] = []
+      const maxLen = Math.max(0, ...buckets.map(b => b.length))
+      for (let i = 0; i < maxLen; i++) {
+        for (const bucket of buckets) {
+          if (i < bucket.length) signals.push(bucket[i])
         }
       }
 

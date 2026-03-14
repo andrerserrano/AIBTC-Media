@@ -125,7 +125,7 @@ export const config = {
 
   // Caching
   cache: {
-    topicEvalTtlMs: testMode ? 60_000 : 3600_000,
+    topicEvalTtlMs: testMode ? 60_000 : 15 * 60_000,
     engagementEvalTtlMs: testMode ? 60_000 : 30 * 60_000,
     imagePromptTtlMs: testMode ? 60_000 : 24 * 3600_000,
     llmResponseTtlMs: testMode ? 60_000 : 3600_000,

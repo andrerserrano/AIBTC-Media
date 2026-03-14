@@ -1,7 +1,7 @@
 import { generateObject } from 'ai'
 import { anthropic } from '../ai.js'
 import { z } from 'zod'
-import { randomUUID } from 'crypto'
+import { randomUUID, createHash } from 'crypto'
 import type { Signal, Topic } from '../types.js'
 import { Cache } from '../cache/cache.js'
 import { EventBus } from '../console/events.js'
@@ -51,8 +51,15 @@ export class Scorer {
       return []
     }
 
-    // Check cache — if we've evaluated this exact batch recently, reuse it
-    const batchKey = Cache.key(`batch-eval:${signals.map(s => s.content.slice(0, 50)).join('|').slice(0, 500)}`)
+    // Check cache — hash ALL signal IDs so every source (Twitter, RSS, etc.)
+    // contributes to the key. The old approach truncated to 500 chars of content,
+    // which meant only the first ~10 signals (usually all AIBTC) affected the key
+    // and new Twitter/RSS signals were invisible to the cache.
+    const idHash = createHash('sha256')
+      .update(signals.map(s => s.id).sort().join('|'))
+      .digest('hex')
+      .slice(0, 16)
+    const batchKey = Cache.key(`batch-eval:${signals.length}:${idHash}`)
     const cached = this.evalCache.get(batchKey) as Topic[] | null
     if (cached) {
       this.events.monologue(`Using cached evaluation for ${cached.length} topics.`)

@@ -222,7 +222,7 @@ export class RSSScanner {
       schema: relevanceSchema,
       system: `You are a signal pre-filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
 
-Your job: identify which ${this.feedConfig.name} articles are potentially relevant to the intersection of Bitcoin and AI/autonomous agents. This is a pre-filter — the downstream scoring pipeline handles final editorial decisions.
+Your job: identify which ${this.feedConfig.name} articles are relevant to the intersection of Bitcoin and AI/autonomous agents. This is a pre-filter — the downstream scoring pipeline handles final editorial decisions.
 
 RELEVANT — include these:
 - AI companies making moves that affect Bitcoin (e.g., "Block lays off 4,000 due to AI")
@@ -234,7 +234,7 @@ RELEVANT — include these:
 - DeFi protocols incorporating AI agents or autonomous trading
 - AI agent economies, autonomous finance, or machine-to-machine payments
 - Major AI industry stories coverable from a Bitcoin/decentralization angle
-- Viral or significant AI autonomy stories (even without explicit Bitcoin mention)
+- Viral or significant AI autonomy stories — but only with genuine news value, not just keyword overlap
 
 NOT RELEVANT — exclude these:
 - Pure Bitcoin price discussion, market analysis, or price predictions
@@ -244,6 +244,7 @@ NOT RELEVANT — exclude these:
 - NFTs, ordinals, or inscriptions (unless connected to AI agents)
 - Exchange listings, ETF updates, or institutional buying (unless AI-driven)
 - Token price speculation or presale promotions
+- Generic ecosystem stats without a clear AI agent angle
 
 Be selective but not narrow. A major AI story that can be reframed through a Bitcoin/decentralization lens IS relevant — but low-signal noise should still be filtered out.`,
       prompt: `Which of these ${this.feedConfig.name} articles are relevant to the Bitcoin × AI intersection?\n\n${articleList}`,

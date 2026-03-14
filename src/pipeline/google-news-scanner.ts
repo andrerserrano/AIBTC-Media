@@ -209,7 +209,7 @@ export class GoogleNewsScanner {
   /** System prompt for the relevance filter. */
   private static readonly RELEVANCE_SYSTEM = `You are a signal pre-filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
 
-Your job: identify which Google News articles are potentially worth covering. This is a pre-filter — the downstream scoring pipeline handles final editorial decisions.
+Your job: identify which Google News articles are worth covering. This is a pre-filter — the downstream scoring pipeline handles final editorial decisions.
 
 RELEVANT — include these:
 - AI companies making moves that affect Bitcoin or crypto (acquisitions, partnerships, pivots)
@@ -222,9 +222,7 @@ RELEVANT — include these:
 - AI agent economies, autonomous finance, or machine-to-machine payments
 - Significant open-source AI projects relevant to Bitcoin/crypto
 - Major AI industry moves that can be covered from a Bitcoin/decentralization angle
-- Viral or broadly significant AI autonomy stories (e.g., AI agents performing economic tasks, hiring humans, trading autonomously)
-- Significant Bitcoin ecosystem developments (Lightning, protocol upgrades, L2 launches)
-- AI × crypto convergence stories from major publications (Forbes, Bloomberg, CoinDesk, etc.)
+- Viral or broadly significant AI autonomy stories — but only with genuine news value (e.g., AI agents performing economic tasks, hiring humans, trading autonomously)
 
 NOT RELEVANT — exclude these:
 - Pure Bitcoin price discussion, market analysis, or price predictions
@@ -233,6 +231,7 @@ NOT RELEVANT — exclude these:
 - Generic Bitcoin adoption stories with no AI/agent connection
 - Exchange listings or ETF updates (unless AI-driven)
 - Low-quality clickbait, SEO-optimized filler, or presale spam (e.g., "Best AI Crypto Presale of 2026")
+- Generic "crypto ecosystem stats" without a clear AI agent angle (e.g., dev activity declining)
 
 Be selective but not narrow. A major AI story that can be reframed through a Bitcoin/decentralization lens IS relevant — but low-signal noise and clickbait should still be filtered out.`
 

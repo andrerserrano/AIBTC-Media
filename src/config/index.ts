@@ -132,6 +132,21 @@ export const config = {
     maxEntries: 1000,
   },
 
+  // Commentary (text-only tweets between cartoons)
+  commentary: {
+    enabled: process.env.COMMENTARY_ENABLED !== 'false',  // enabled by default
+    cooldownMs: testMode ? 20_000 : 2 * 3600_000,        // 20s vs 2h between commentary posts
+    maxPerDay: Number(process.env.COMMENTARY_MAX_PER_DAY ?? 5),
+    maxRetries: 3,  // retry with a different category if editor rejects
+    // Category weights (higher = more likely to be picked)
+    categoryWeights: {
+      commentary: 3,
+      'self-aware': 2,
+      thesis: 2,
+      qrt: 1,  // QRTs are harder — need a good source tweet
+    } as Record<string, number>,
+  },
+
   // Worldview reflection
   reflectionIntervalMs: testMode ? 5 * 60_000 : 7 * 24 * 3600_000,  // 5min vs 7 days
 

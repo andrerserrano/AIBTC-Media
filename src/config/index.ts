@@ -101,10 +101,10 @@ export const config = {
   // Scheduled posting: target specific hours of the day (24h format)
   schedule: {
     enabled: !testMode,
-    postingHours: (process.env.POSTING_HOURS ?? '8,10,12,14,17,20').split(',').map(Number),
+    postingHours: (process.env.POSTING_HOURS ?? '8,14,20').split(',').map(Number),  // 8am, 2pm, 8pm ET
     timezone: process.env.POSTING_TIMEZONE ?? 'America/New_York',
     windowMinutes: 30,   // Fire within ±30 min of target hour
-    minCooldownMs: testMode ? 30_000 : 90 * 60_000,  // 90 min between posts (supports 6/day schedule)
+    minCooldownMs: testMode ? 30_000 : 4 * 3600_000,  // Minimum 4h between posts (supports 3/day schedule)
   },
 
   // Adaptive posting: starts fast, slows exponentially per post

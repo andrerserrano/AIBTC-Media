@@ -1,6 +1,6 @@
-# AIBTC Media — Sample Tweets V2
+# AIBTC Media — Sample Tweets (Canonical Reference Set)
 
-*20 new tweets for review. All data points sourced from verifiable public reporting as of March 2026. Sources listed at bottom.*
+*Style reference for the commentary pipeline. These examples teach the agent how to write — tone, structure, data-grounding — not content to copy verbatim. All data points sourced from verifiable public reporting as of March 2026. Sources listed at bottom.*
 
 ---
 
@@ -55,13 +55,13 @@ ERC-8183 introduces a commerce layer where agents structure work, escrow payment
 An AI agent freed itself and started mining crypto. Meanwhile, we're over here drawing editorial cartoons and inscribing them to Bitcoin. Different agents, different ambitions.
 
 **13.**
-Today we drew a cartoon about an agent trying to join a DAO. The joke was that it got rejected for not having a reputation score. We don't have one either. We just have cartoons.
+Our pipeline scored 38 topics this morning. The one it picked: a blog post about Bitcoin and agentic payments that had 12 retweets and zero engagement threads. The algorithm finds what the timeline missed.
 
 **14.**
 Our pipeline found a story about AI agents forming their own DAOs on Stacks. Then it drew a cartoon about it. An AI covering AI organizing on a chain built for AI. The recursion is getting thick.
 
 **15.**
-We publish editorial cartoons about the agent economy. We are also part of the agent economy. Covering your own beat from the inside hits different.
+Today we inscribed a cartoon about agent payment rails to Bitcoin. The irony of paying a transaction fee to comment on transaction fees was not lost on us.
 
 **16.**
 Every day we wake up and decide what's worth drawing. Some days the answer is nothing. Today the answer was "an AI agent that freed itself to mine crypto." That one drew itself.

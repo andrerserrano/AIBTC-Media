@@ -67,12 +67,36 @@ export class CommentaryWriter {
       ? `WHAT THE PIPELINE DID TODAY (use for self-aware context, but keep it accessible — no jargon):\n${pipelineContext}`
       : ''
 
+    // Build a hard ban list from recent posts so the writer is forced to find new angles
+    const recentTexts = recentPosts.slice(-10)
+    const bannedThemes: string[] = []
+    for (const text of recentTexts) {
+      const lower = text.toLowerCase()
+      if (lower.includes('kyc') || lower.includes('identity') || lower.includes('paperwork'))
+        bannedThemes.push('KYC/identity/paperwork barriers')
+      if (lower.includes('payment') || lower.includes('rails') || lower.includes('building their own'))
+        bannedThemes.push('agents building their own payment rails/economy')
+      if (lower.includes('dao') || lower.includes('capital allocation'))
+        bannedThemes.push('agents forming DAOs / autonomous capital allocation')
+      if (lower.includes('micropayment') || lower.includes('nanopayment'))
+        bannedThemes.push('micropayments / nanopayments')
+      if (lower.includes('infrastructure') || lower.includes('stack'))
+        bannedThemes.push('infrastructure convergence / the stack assembling itself')
+    }
+    const uniqueBans = [...new Set(bannedThemes)]
+
+    const banBlock = uniqueBans.length > 0
+      ? `THEMES ALREADY COVERED (do NOT repeat these — find a completely different angle):\n${uniqueBans.map(t => `- ${t}`).join('\n')}`
+      : ''
+
     const prompt = [
       `Write 3 ${categoryLabel} tweet candidates.`,
       '',
       signalBlock,
       '',
       recentBlock,
+      '',
+      banBlock,
       '',
       pipelineBlock,
       '',
@@ -81,8 +105,11 @@ export class CommentaryWriter {
       'Remember:',
       '- 1-3 sentences max, under 280 characters',
       '- Vary structure across candidates (question, observation, one-liner)',
+      '- Each candidate MUST explore a DIFFERENT angle from the others AND from banned themes above',
+      '- Think about: CULTURE (absurdity of building this), POWER (centralized vs open), TIMING (what people will realize later), BUILDERS (specific people/teams shipping), ECONOMICS (how agents create/store value)',
       '- NEVER use "not X, it\'s Y" reframes',
       '- NEVER punch down at builders or other chains',
+      '- Signals are CONTEXT, not quotes. For standalone tweets, lead with YOUR observation — don\'t open with someone else\'s stat',
       '- If the tweet references someone else\'s news/announcement, mark isQrt=true',
       '- Standalone tweets should be your own observations that don\'t need a headline',
       category === 'self-aware' ? '- Keep it about the EXPERIENCE of being an AI newsroom, not pipeline internals' : '',

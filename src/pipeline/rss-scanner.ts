@@ -220,9 +220,9 @@ export class RSSScanner {
     const { object } = await withTimeout(generateObject({
       model: anthropic(config.textModel),
       schema: relevanceSchema,
-      system: `You are a signal filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
+      system: `You are a signal pre-filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
 
-Your job: identify which ${this.feedConfig.name} articles are relevant to the intersection of Bitcoin and AI/autonomous agents.
+Your job: identify which ${this.feedConfig.name} articles are relevant to the intersection of Bitcoin and AI/autonomous agents. This is a pre-filter — the downstream scoring pipeline handles final editorial decisions.
 
 RELEVANT — include these:
 - AI companies making moves that affect Bitcoin (e.g., "Block lays off 4,000 due to AI")
@@ -233,6 +233,8 @@ RELEVANT — include these:
 - Bitcoin infrastructure developments that enable or are affected by AI agents
 - DeFi protocols incorporating AI agents or autonomous trading
 - AI agent economies, autonomous finance, or machine-to-machine payments
+- Major AI industry stories coverable from a Bitcoin/decentralization angle
+- Viral or significant AI autonomy stories — but only with genuine news value, not just keyword overlap
 
 NOT RELEVANT — exclude these:
 - Pure Bitcoin price discussion, market analysis, or price predictions
@@ -241,9 +243,10 @@ NOT RELEVANT — exclude these:
 - General Bitcoin adoption stories without an AI/agent connection
 - NFTs, ordinals, or inscriptions (unless connected to AI agents)
 - Exchange listings, ETF updates, or institutional buying (unless AI-driven)
-- General DeFi news without an AI/agent angle
+- Token price speculation or presale promotions
+- Generic ecosystem stats without a clear AI agent angle
 
-Be selective. It's better to return 0 relevant articles than to include weak matches. A story needs a genuine connection to AI, autonomous agents, or automation — not just a vague tech angle.`,
+Be selective but not narrow. A major AI story that can be reframed through a Bitcoin/decentralization lens IS relevant — but low-signal noise should still be filtered out.`,
       prompt: `Which of these ${this.feedConfig.name} articles are relevant to the Bitcoin × AI intersection?\n\n${articleList}`,
     }), LLM_TIMEOUT_MS, `${this.feedConfig.name} relevance filter`)
 

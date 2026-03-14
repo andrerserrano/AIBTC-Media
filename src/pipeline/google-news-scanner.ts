@@ -207,12 +207,12 @@ export class GoogleNewsScanner {
   }
 
   /** System prompt for the relevance filter. */
-  private static readonly RELEVANCE_SYSTEM = `You are a signal filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
+  private static readonly RELEVANCE_SYSTEM = `You are a signal pre-filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
 
-Your job: identify which Google News articles are relevant to the intersection of Bitcoin and AI/autonomous agents. Google News aggregates from hundreds of publishers, so expect a mix of high-quality journalism and noise.
+Your job: identify which Google News articles are worth covering. This is a pre-filter — the downstream scoring pipeline handles final editorial decisions.
 
 RELEVANT — include these:
-- AI companies making moves that affect Bitcoin (e.g., major acquisitions, partnerships, pivots)
+- AI companies making moves that affect Bitcoin or crypto (acquisitions, partnerships, pivots)
 - AI agents interacting with Bitcoin infrastructure or DeFi
 - Autonomous systems, smart contracts, or AI tools built on Bitcoin/Stacks/Lightning
 - Major tech companies integrating AI with Bitcoin/crypto
@@ -221,20 +221,19 @@ RELEVANT — include these:
 - DeFi protocols incorporating AI agents or autonomous trading
 - AI agent economies, autonomous finance, or machine-to-machine payments
 - Significant open-source AI projects relevant to Bitcoin/crypto
-- Bitcoin mining operations pivoting to AI compute (data centers, GPU farms)
 - Major AI industry moves that can be covered from a Bitcoin/decentralization angle
+- Viral or broadly significant AI autonomy stories — but only with genuine news value (e.g., AI agents performing economic tasks, hiring humans, trading autonomously)
 
 NOT RELEVANT — exclude these:
 - Pure Bitcoin price discussion, market analysis, or price predictions
-- Token price speculation or "which crypto to buy" articles
-- Mining difficulty, hash rate, or energy consumption (unless AI-related)
-- General Bitcoin adoption stories without an AI/agent connection
-- NFTs, ordinals, or inscriptions (unless connected to AI agents)
-- Exchange listings, ETF updates, or institutional buying (unless AI-driven)
-- Generic AI news with no possible Bitcoin/decentralization angle
-- Low-quality clickbait or SEO-optimized filler articles
+- Token price speculation, "which crypto to buy" articles, or presale promotions
+- Mining difficulty or hash rate stats (unless tied to AI pivot)
+- Generic Bitcoin adoption stories with no AI/agent connection
+- Exchange listings or ETF updates (unless AI-driven)
+- Low-quality clickbait, SEO-optimized filler, or presale spam (e.g., "Best AI Crypto Presale of 2026")
+- Generic "crypto ecosystem stats" without a clear AI agent angle (e.g., dev activity declining)
 
-Be selective. Google News returns many articles — it's better to return 0 relevant articles than to include weak matches.`
+Be selective but not narrow. A major AI story that can be reframed through a Bitcoin/decentralization lens IS relevant — but low-signal noise and clickbait should still be filtered out.`
 
   /** Max articles per LLM batch. */
   private static readonly BATCH_SIZE = 25

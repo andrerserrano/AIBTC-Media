@@ -115,7 +115,7 @@ export class AgentLoop {
   }
 
   /** Manually trigger a flagship posting cycle (called from admin API) */
-  async triggerFlagship(): Promise<{ success: boolean; reason: string }> {
+  async triggerFlagship(seedSignals?: Signal[]): Promise<{ success: boolean; reason: string }> {
     this.events.monologue('Manual trigger received — clearing caches and starting fresh flagship cycle...')
     try {
       // Clear eval cache so topics are re-scored fresh
@@ -124,9 +124,19 @@ export class AgentLoop {
       this.shortlist = null
       // Clear rejected topics blacklist so previously rejected topics can be retried
       await this.rejectedTopics.write([])
-      this.events.monologue('Caches cleared. Scanning for signals...')
 
-      const signals = await this.scanner.scan()
+      let signals: Signal[]
+      if (seedSignals && seedSignals.length > 0) {
+        // Use seed signals as the primary input, supplemented by a fresh scan
+        this.events.monologue(`Seed signal provided: "${seedSignals[0].content.slice(0, 80)}..." — scanning for additional context...`)
+        const scanned = await this.scanner.scan()
+        // Put seed signals first so they're prioritized by the scorer
+        signals = [...seedSignals, ...scanned]
+      } else {
+        this.events.monologue('Caches cleared. Scanning for signals...')
+        signals = await this.scanner.scan()
+      }
+
       if (signals.length === 0) {
         return { success: false, reason: 'No signals available. Try again later.' }
       }

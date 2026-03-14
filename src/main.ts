@@ -509,6 +509,8 @@ ${items.join('\n')}
   */
 
   // Admin: manually trigger a flagship posting cycle
+  // Optionally pass { tweetUrl: "https://x.com/user/status/123" } to seed the pipeline
+  // with a specific tweet so the cartoon is built around that story.
   app.post('/api/admin/trigger', async (request, reply) => {
     const adminKey = process.env.ADMIN_KEY
     const auth = request.headers.authorization
@@ -516,7 +518,65 @@ ${items.join('\n')}
       reply.status(401)
       return { error: 'Unauthorized' }
     }
-    const result = await agent.triggerFlagship()
+
+    const body = request.body as { tweetUrl?: string } | undefined
+    let seedSignals: Signal[] | undefined
+
+    if (body?.tweetUrl) {
+      // Extract tweet ID from URL (supports x.com and twitter.com)
+      const tweetIdMatch = body.tweetUrl.match(/\/status\/(\d+)/)
+      if (!tweetIdMatch) {
+        reply.status(400)
+        return { error: 'Invalid tweet URL. Expected format: https://x.com/user/status/123456' }
+      }
+      const tweetId = tweetIdMatch[1]
+
+      if (!readProvider) {
+        reply.status(503)
+        return { error: 'Twitter read provider not available. Check TWITTER_BEARER_TOKEN.' }
+      }
+
+      try {
+        const tweet = await readProvider.getTweetById(tweetId)
+        if (!tweet) {
+          reply.status(404)
+          return { error: `Tweet ${tweetId} not found or not accessible.` }
+        }
+
+        // Convert tweet to Signal (same shape as TwitterScanner.convertToSignal)
+        const signal: Signal = {
+          id: `twitter-${tweet.id}`,
+          source: 'twitter',
+          type: 'post',
+          content: tweet.text,
+          url: `https://x.com/${tweet.author.userName}/status/${tweet.id}`,
+          author: `@${tweet.author.userName}`,
+          mediaUrls: tweet.media?.photos?.map((p) => p.url),
+          metrics: {
+            score: tweet.likeCount + tweet.retweetCount * 2,
+          },
+          ingestedAt: Date.now(),
+          expiresAt: Date.now() + config.scan.newsTtlMs,
+          twitter: {
+            tweetId: tweet.id,
+            username: tweet.author.userName,
+            authorName: tweet.author.name,
+            followers: tweet.author.followers,
+            likeCount: tweet.likeCount,
+            retweetCount: tweet.retweetCount,
+            query: 'manual-seed',
+          },
+        }
+
+        seedSignals = [signal]
+        events.monologue(`Seed signal loaded: @${tweet.author.userName} — "${tweet.text.slice(0, 80)}..."`)
+      } catch (err) {
+        reply.status(502)
+        return { error: `Failed to fetch tweet: ${(err as Error).message}` }
+      }
+    }
+
+    const result = await agent.triggerFlagship(seedSignals)
     return result
   })
 

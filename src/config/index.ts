@@ -22,34 +22,27 @@ export const config = {
     searchEnabled: process.env.TWITTER_SEARCH_ENABLED !== 'false',
     searchQueries: (process.env.TWITTER_SEARCH_QUERIES
       ?? [
-        // Tier 1: Core Bitcoin × AI intersection
+        // Tier 1: Core Bitcoin × AI intersection (niche, low engagement OK)
         'Bitcoin AI agents -is:retweet lang:en',
         'BTC AI -is:retweet lang:en',
         'AI agents crypto autonomous -is:retweet lang:en',
+        'Bitcoin autonomous systems -is:retweet lang:en',
         'smart contracts AI -is:retweet lang:en',
         'agent economy Bitcoin -is:retweet lang:en',
         'Stacks Lightning AI -is:retweet lang:en',
-        // Tier 2: Broader AI + crypto
+        'MCP Bitcoin blockchain -is:retweet lang:en',
+        // Tier 2: Broader AI + crypto conversations (cast a wider net, let LLM filter)
+        'AI agents -is:retweet lang:en',
         '(Bitcoin OR BTC) AI -is:retweet lang:en',
         '(OpenAI OR Anthropic OR "open source AI") -is:retweet lang:en',
-        'AI blockchain decentralized -is:retweet lang:en',
         'autonomous AI crypto -is:retweet lang:en',
-        // Tier 3: Pure AI stories (large volume — scorer handles Bitcoin angle)
-        '"AI agents" -is:retweet lang:en',
-        '"AI automation" replacing -is:retweet lang:en',
-        'AI regulation policy -is:retweet lang:en',
-        '(Claude OR GPT OR Gemini) agents -is:retweet lang:en',
-        '"agent economy" OR "agentic AI" -is:retweet lang:en',
-        'AI "open source" decentralized -is:retweet lang:en',
-        // Tier 4: Tech power dynamics & culture (editorial cartoon fodder)
-        'AI surveillance privacy -is:retweet lang:en',
-        'AI jobs replaced automation -is:retweet lang:en',
-        'tech monopoly antitrust AI -is:retweet lang:en',
+        'Bitcoin LLM -is:retweet lang:en',
+        'AI blockchain decentralized -is:retweet lang:en',
       ].join(',')
     ).split(',').map(q => q.trim()).filter(Boolean),
-    searchMinLikes: Number(process.env.TWITTER_SEARCH_MIN_LIKES ?? 5),
-    searchMinFollowers: Number(process.env.TWITTER_SEARCH_MIN_FOLLOWERS ?? 25),
-    searchMaxResults: Number(process.env.TWITTER_SEARCH_MAX_RESULTS ?? 100),
+    searchMinLikes: Number(process.env.TWITTER_SEARCH_MIN_LIKES ?? 10),
+    searchMinFollowers: Number(process.env.TWITTER_SEARCH_MIN_FOLLOWERS ?? 50),
+    searchMaxResults: Number(process.env.TWITTER_SEARCH_MAX_RESULTS ?? 60),
   },
 
   // AIBTC.news API

@@ -64,7 +64,7 @@ export class TwitterScanner {
 
       if (relevant.length === 0) {
         this.events.monologue(
-          `Twitter: ${allTweets.length} tweets scanned, none passed relevance filter.`
+          `Twitter: ${allTweets.length} tweets scanned, none at the Bitcoin × AI intersection.`
         )
         this.signalCache.set(cacheKey, [], config.scan.newsTtlMs)
         return []
@@ -145,34 +145,34 @@ export class TwitterScanner {
   }
 
   /** System prompt shared across all relevance-filter batches. */
-  private static readonly RELEVANCE_SYSTEM = `You are a signal pre-filter for AIBTC Media, an autonomous media company that creates editorial cartoons about AI, technology, and the agent economy — told through a Bitcoin/decentralization lens.
+  private static readonly RELEVANCE_SYSTEM = `You are a signal pre-filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
 
-Your job: CAST A WIDE NET. This is a PRE-FILTER, not the final editorial decision. The downstream scoring pipeline handles prioritization. When in doubt, INCLUDE the tweet — it's far better to let a borderline signal through than to miss a good story.
+Your job: identify which Twitter/X posts are worth covering. This is a pre-filter — the downstream scoring pipeline handles final editorial decisions.
 
-RELEVANT — include ALL of these:
-- ANY story about AI agents, autonomous systems, or AI automation (these are our core beat)
-- AI companies, products, funding, launches, controversies (OpenAI, Anthropic, Google, Meta, startups)
-- AI replacing jobs, AI economic impact, AI regulation, AI safety debates
-- Agent economy: AI agents doing tasks, making decisions, handling money, hiring humans
-- Machine-to-machine payments, autonomous finance, AI + financial systems
-- Bitcoin, crypto, or blockchain developments (protocol upgrades, adoption, regulation, L2s)
-- DeFi, smart contracts, on-chain activity, Web3 infrastructure
-- Decentralization vs. centralization debates in tech
-- Open source AI vs. closed AI debates
-- Surveillance, privacy, censorship resistance — especially involving AI or crypto
-- Tech industry power dynamics, monopolies, platform control
-- Any viral or culturally significant tech story that people are talking about
-- Humor, satire, or commentary about AI, crypto, or tech culture
+RELEVANT — include these:
+- AI agents interacting with Bitcoin, crypto, or financial systems
+- Autonomous systems, smart contracts, or AI tools on Bitcoin/Stacks/Lightning
+- Major AI companies making Bitcoin/crypto moves
+- Bitcoin or crypto infrastructure enabling AI agents
+- Agent economy discussions, autonomous finance, machine-to-machine payments
+- DeFi protocols incorporating AI agents or autonomous trading
+- Policy or regulation at the intersection of AI and Bitcoin/crypto
+- Major AI industry stories that could be covered from a Bitcoin/decentralization angle (e.g., "Meta acquires AI company" → centralized vs. open AI; "OpenAI changes policy" → implications for autonomous agents)
+- Viral AI stories about agent autonomy, AI replacing humans, or AI economic activity — even without explicit Bitcoin mention — but only if the story has genuine news value or broad cultural significance (e.g., "AI agents now hiring humans for tasks")
+- Significant Bitcoin ecosystem developments (Lightning milestones, protocol upgrades, L2 launches)
 
-NOT RELEVANT — only exclude obvious noise:
-- Pure price predictions ("BTC to $100K!") with no analysis or news
-- Spam, bot-generated content, or obvious shilling
-- Trading signals, automated alerts, portfolio screenshots
-- "Which crypto should I buy?" type content
+NOT RELEVANT — exclude these:
+- Pure Bitcoin price discussion, market analysis, or price predictions
+- Generic crypto market commentary or memes with no substance
+- Spam, shilling, or promotional threads with no genuine insight or news value
+- Project self-promotion, hackathon announcements, valuation milestones, or "we just launched" posts unless they contain substantive technical or industry news
+- Trading signals, bot alerts, or automated trading output
+- Mundane AI news with no possible Bitcoin/decentralization/autonomy angle (e.g., minor ChatGPT UI updates)
+- Token price speculation or "which crypto to buy" content
+- Generic "crypto dev activity" or ecosystem stats without a clear Bitcoin × AI angle
 - Duplicate or near-duplicate posts from the same account
-- Completely off-topic content (sports, entertainment, food) with no tech angle
 
-DEFAULT TO INCLUDE. If a tweet is about AI, tech, or crypto and has any substance at all, mark it relevant. The scorer downstream will handle prioritization.`
+Be selective but not narrow. A major AI story that can be reframed through a Bitcoin/decentralization lens IS relevant — but low-signal noise should still be filtered out.`
 
   /** Max tweets per LLM call — keeps structured output reliable. */
   private static readonly BATCH_SIZE = 20
@@ -212,7 +212,7 @@ DEFAULT TO INCLUDE. If a tweet is about AI, tech, or crypto and has any substanc
         model: anthropic(config.textModel),
         schema: relevanceSchema,
         system: TwitterScanner.RELEVANCE_SYSTEM,
-        prompt: `Which of these tweets are worth covering? Remember: default to INCLUDE. Only exclude obvious noise.\n\n${tweetList}`,
+        prompt: `Which of these tweets are relevant to the Bitcoin × AI intersection?\n\n${tweetList}`,
       }), LLM_TIMEOUT_MS, 'Twitter relevance filter')
 
       return object.tweets

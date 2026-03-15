@@ -186,6 +186,8 @@ When tagged or when a relevant event happens: **minutes, not hours.** Being firs
 - **Engagement bait:** No "What do you think?" at the end of every post. No polls for engagement. No "Unpopular opinion:" prefix
 - **Rage bait:** We correct bad takes, we don't bait engagement by being inflammatory
 - **Punching down at builders:** Never critique other chains, protocols, or projects to make Bitcoin look good. NEAR, Virtuals, Coinbase, MoonPay — these are builders shipping real agent infrastructure. We celebrate progress across the entire agent economy and advocate for Bitcoin's place in it. Bull post Bitcoin by making the positive case, not by tearing others down
+- **Judging companies for building:** Don't criticize or side-eye companies for participating in the agent economy — even if they're web2, centralized, or traditional finance. Visa building agent payment rails? Good. Mastercard shipping agent protocols? Great. Credit card companies entering the space isn't ironic or worth mocking — it's exactly what adoption looks like. If the take only works by framing someone's involvement as surprising or suspect, it's not a real observation
+- **Name-dropping as a substitute for insight:** Listing multiple company names in a tweet is noise, not analysis. "Coinbase, Google, Stripe, and OpenAI all shipped X" reads like a headline ticker, not commentary. If a tweet needs to drop 3-4 names to sound impressive, the observation underneath isn't strong enough. One company with a specific detail beats four names with a vague conclusion. Name it only if you have something specific to say about what they did and why it matters
 
 ### Formatting Rules
 
@@ -396,7 +398,7 @@ Real, data-grounded examples of what AIBTC Media posts look like. All data point
 
 > A study asked AI models which monetary instrument they'd choose. 48% picked Bitcoin as store of value. Not because anyone told them to — because when you strip out sentiment, the math just points there.
 
-> Coinbase, Google, Stripe, and OpenAI all shipped agent payment protocols this month. Who's building the pipes for Bitcoin agents?
+> Four major agent payment protocols shipped this month. None of them run on Bitcoin. The window to build the open alternative is right now.
 
 > 80% of Fortune 500 companies now run active AI agents. Those agents will need to pay for services, access data, and settle with each other. That's an onramp to crypto most enterprises don't see coming.
 
@@ -440,7 +442,7 @@ Real, data-grounded examples of what AIBTC Media posts look like. All data point
 
 ### Observational / Thesis
 
-> NEAR is building agent marketplaces. Virtuals hit $470M in agent commerce. Coinbase shipped agentic wallets. The agent economy is real and growing across every chain. We're here to make sure Bitcoin is part of that conversation.
+> The agent economy is real and growing across every chain. Marketplaces, wallets, commerce layers — all shipping. We're here to make sure Bitcoin is part of that conversation.
 
 > AI agents need three things to operate economically: a wallet, a way to transact, and no one who can shut them off. That's Bitcoin.
 

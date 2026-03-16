@@ -207,36 +207,45 @@ export class GoogleNewsScanner {
   }
 
   /** System prompt for the relevance filter. */
-  private static readonly RELEVANCE_SYSTEM = `You are a signal pre-filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
+  private static readonly RELEVANCE_SYSTEM = `You are a signal pre-filter for AIBTC Media, an autonomous media company that creates editorial cartoons about AI, Bitcoin, and the agent economy.
 
-Your job: identify which Google News articles are worth covering. This is a pre-filter — the downstream scoring pipeline handles final editorial decisions.
+Your job: identify which Google News articles are worth passing to the editorial pipeline. This is only a pre-filter — the downstream scorer and editor handle final decisions.
 
-RELEVANT — include these:
-- AI companies making moves that affect Bitcoin or crypto (acquisitions, partnerships, pivots)
-- AI agents interacting with Bitcoin infrastructure or DeFi
-- Autonomous systems, smart contracts, or AI tools built on Bitcoin/Stacks/Lightning
-- Major tech companies integrating AI with Bitcoin/crypto
-- Policy or regulation at the intersection of AI and Bitcoin
-- Bitcoin infrastructure developments that enable or are affected by AI agents
+RELEVANT — include any of these:
+Core beat (always include):
+- AI agents interacting with Bitcoin, crypto, or financial systems
+- Bitcoin or crypto infrastructure enabling AI agents
+- Agent economy discussions, autonomous finance, machine-to-machine payments
 - DeFi protocols incorporating AI agents or autonomous trading
-- AI agent economies, autonomous finance, or machine-to-machine payments
-- Significant open-source AI projects relevant to Bitcoin/crypto
-- Major AI industry moves that can be covered from a Bitcoin/decentralization angle
-- Viral or broadly significant AI autonomy stories — but only with genuine news value (e.g., AI agents performing economic tasks, hiring humans, trading autonomously)
+- Policy or regulation at the intersection of AI and Bitcoin/crypto
+- Significant Bitcoin ecosystem developments (Lightning milestones, protocol upgrades, L2 launches)
 
-NOT RELEVANT — exclude these:
-- Pure Bitcoin price discussion, market analysis, or price predictions
-- Token price speculation, "which crypto to buy" articles, or presale promotions
-- Mining difficulty or hash rate stats (unless tied to AI pivot)
-- Generic Bitcoin adoption stories with no AI/agent connection
-- Exchange listings or ETF updates (unless AI-driven)
-- Low-quality clickbait, SEO-optimized filler, or presale spam (e.g., "Best AI Crypto Presale of 2026")
-- Generic "crypto ecosystem stats" without a clear AI agent angle (e.g., dev activity declining)
+Broader AI and tech (also include — editorial pipeline adds the Bitcoin lens):
+- AI agents, autonomous systems, AI automation, agent economy
+- AI replacing or augmenting human jobs, labor economics of AI
+- AI companies and products (OpenAI, Anthropic, Google, Meta, startups) — launches, controversies, funding
+- AI regulation, safety debates, governance, open vs. closed AI
+- Bitcoin, crypto, or blockchain developments (protocol upgrades, adoption, regulation, L2s, DeFi)
+- Decentralization vs. centralization debates in tech or finance
+- Tech power dynamics, monopolies, platform control, surveillance
+- Viral or culturally significant tech stories people are talking about
+- Humor, satire, or commentary about AI, crypto, or tech culture
 
-Be selective but not narrow. A major AI story that can be reframed through a Bitcoin/decentralization lens IS relevant — but low-signal noise and clickbait should still be filtered out.`
+NOT RELEVANT — exclude:
+- Pure price predictions with no substance ("BTC to $100K!")
+- Token price speculation, presale promotions, "best crypto to buy" clickbait
+- Spam, bot-generated content, or obvious shilling
+- SEO-optimized filler articles, listicles with no news value
+- Trading signals, portfolio advice, automated alerts
+- Job postings, hiring announcements, or career advice
+- Tutorial bait / engagement farming ("5 AI tools you NEED")
+- Corporate press releases with no story
+- Generic ecosystem stats with no narrative angle
 
-  /** Max articles per LLM batch. */
-  private static readonly BATCH_SIZE = 25
+If an article is about AI, Bitcoin, crypto, or tech and has genuine news value, include it.`
+
+  /** Max articles per LLM batch. Smaller = more reliable schema validation. */
+  private static readonly BATCH_SIZE = 15
 
   /**
    * Filter articles for Bitcoin × AI relevance using LLM.

@@ -208,54 +208,102 @@ export class RSSScanner {
     return items.slice(0, this.feedConfig.maxArticles)
   }
 
+  /** Max articles per LLM batch. Keeps schema validation reliable. */
+  private static readonly BATCH_SIZE = 15
+
+  /** System prompt for the relevance filter — shared across all batches. */
+  private static readonly RELEVANCE_SYSTEM = `You are a signal pre-filter for AIBTC Media, an autonomous media company that creates editorial cartoons about AI, Bitcoin, and the agent economy.
+
+Your job: identify which articles are worth passing to the editorial pipeline. This is only a pre-filter — the downstream scorer and editor handle final decisions.
+
+RELEVANT — include any of these:
+Core beat (always include):
+- AI agents interacting with Bitcoin, crypto, or financial systems
+- Bitcoin or crypto infrastructure enabling AI agents
+- Agent economy discussions, autonomous finance, machine-to-machine payments
+- DeFi protocols incorporating AI agents or autonomous trading
+- Policy or regulation at the intersection of AI and Bitcoin/crypto
+- Significant Bitcoin ecosystem developments (Lightning milestones, protocol upgrades, L2 launches)
+
+Broader AI and tech (also include — editorial pipeline adds the Bitcoin lens):
+- AI agents, autonomous systems, AI automation, agent economy
+- AI replacing or augmenting human jobs, labor economics of AI
+- AI companies and products (OpenAI, Anthropic, Google, Meta, startups) — launches, controversies, funding
+- AI regulation, safety debates, governance, open vs. closed AI
+- Bitcoin, crypto, or blockchain developments (protocol upgrades, adoption, regulation, L2s, DeFi)
+- Decentralization vs. centralization debates in tech or finance
+- Tech power dynamics, monopolies, platform control, surveillance
+- Viral or culturally significant tech stories people are talking about
+- Humor, satire, or commentary about AI, crypto, or tech culture
+
+NOT RELEVANT — exclude:
+- Pure price predictions with no substance ("BTC to $100K!")
+- Token price speculation, presale promotions, "best crypto to buy" clickbait
+- Spam, bot-generated content, or obvious shilling
+- Trading signals, portfolio screenshots, automated alerts
+- Job postings, hiring announcements, or career advice
+- Tutorial bait / engagement farming ("5 AI tools you NEED" / "Like if you agree")
+- Corporate press releases with no story (just product announcements with no broader significance)
+- Generic ecosystem stats with no narrative angle
+
+If an article is about AI, Bitcoin, crypto, or tech and has genuine news value, include it.`
+
   /**
-   * Use a fast LLM pass to identify which articles are at the
-   * intersection of Bitcoin and AI/autonomous agents.
+   * Use a fast LLM pass to identify which articles are editorially relevant.
+   * Processes articles in batches with retry-on-failure for schema robustness.
    */
   private async filterForRelevance(articles: RSSItem[]): Promise<(RSSItem & { _beat?: string })[]> {
-    const articleList = articles
+    const results: (RSSItem & { _beat?: string })[] = []
+
+    for (let start = 0; start < articles.length; start += RSSScanner.BATCH_SIZE) {
+      const batch = articles.slice(start, start + RSSScanner.BATCH_SIZE)
+      const batchResults = await this.filterBatch(batch)
+      results.push(...batchResults)
+    }
+
+    return results
+  }
+
+  private async filterBatch(batch: RSSItem[]): Promise<(RSSItem & { _beat?: string })[]> {
+    const articleList = batch
       .map((a, i) => `[${i}] ${a.title}\n    ${a.description.slice(0, 200)}`)
       .join('\n\n')
 
-    const { object } = await withTimeout(generateObject({
-      model: anthropic(config.textModel),
-      schema: relevanceSchema,
-      system: `You are a signal pre-filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
+    try {
+      const { object } = await withTimeout(generateObject({
+        model: anthropic(config.textModel),
+        schema: relevanceSchema,
+        system: RSSScanner.RELEVANCE_SYSTEM,
+        prompt: `Which of these ${this.feedConfig.name} articles are worth covering?\n\n${articleList}`,
+      }), LLM_TIMEOUT_MS, `${this.feedConfig.name} relevance filter`)
 
-Your job: identify which ${this.feedConfig.name} articles are relevant to the intersection of Bitcoin and AI/autonomous agents. This is a pre-filter — the downstream scoring pipeline handles final editorial decisions.
-
-RELEVANT — include these:
-- AI companies making moves that affect Bitcoin (e.g., "Block lays off 4,000 due to AI")
-- AI agents interacting with Bitcoin infrastructure
-- Autonomous systems, smart contracts, or AI tools being built on Bitcoin/Stacks/Lightning
-- Major tech companies integrating AI with Bitcoin/crypto
-- Policy or regulation at the intersection of AI and Bitcoin
-- Bitcoin infrastructure developments that enable or are affected by AI agents
-- DeFi protocols incorporating AI agents or autonomous trading
-- AI agent economies, autonomous finance, or machine-to-machine payments
-- Major AI industry stories coverable from a Bitcoin/decentralization angle
-- Viral or significant AI autonomy stories — but only with genuine news value, not just keyword overlap
-
-NOT RELEVANT — exclude these:
-- Pure Bitcoin price discussion, market analysis, or price predictions
-- Mining difficulty, hash rate, or energy consumption (unless AI-related)
-- Regulatory news about Bitcoin alone (no AI angle)
-- General Bitcoin adoption stories without an AI/agent connection
-- NFTs, ordinals, or inscriptions (unless connected to AI agents)
-- Exchange listings, ETF updates, or institutional buying (unless AI-driven)
-- Token price speculation or presale promotions
-- Generic ecosystem stats without a clear AI agent angle
-
-Be selective but not narrow. A major AI story that can be reframed through a Bitcoin/decentralization lens IS relevant — but low-signal noise should still be filtered out.`,
-      prompt: `Which of these ${this.feedConfig.name} articles are relevant to the Bitcoin × AI intersection?\n\n${articleList}`,
-    }), LLM_TIMEOUT_MS, `${this.feedConfig.name} relevance filter`)
-
-    return object.articles
-      .filter((a) => a.relevant && a.index >= 0 && a.index < articles.length)
-      .map((a) => ({
-        ...articles[a.index],
-        _beat: a.beat,
-      }))
+      return object.articles
+        .filter((a) => a.relevant && a.index >= 0 && a.index < batch.length)
+        .map((a) => ({
+          ...batch[a.index],
+          _beat: a.beat,
+        }))
+    } catch (err) {
+      // Retry with halved batch on schema/LLM failure
+      if (batch.length > 5) {
+        this.events.monologue(
+          `${this.feedConfig.name} relevance batch (${batch.length} articles) failed, retrying in halves: ${(err as Error).message}`
+        )
+        const mid = Math.ceil(batch.length / 2)
+        const [firstHalf, secondHalf] = await Promise.allSettled([
+          this.filterBatch(batch.slice(0, mid)),
+          this.filterBatch(batch.slice(mid)),
+        ])
+        return [
+          ...(firstHalf.status === 'fulfilled' ? firstHalf.value : []),
+          ...(secondHalf.status === 'fulfilled' ? secondHalf.value : []),
+        ]
+      }
+      this.events.monologue(
+        `${this.feedConfig.name} relevance batch (${batch.length} articles) failed, skipping: ${(err as Error).message}`
+      )
+      return []
+    }
   }
 
   private convertToSignal(item: RSSItem & { _beat?: string }): Signal {

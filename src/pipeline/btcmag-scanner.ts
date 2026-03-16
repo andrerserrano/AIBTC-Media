@@ -177,49 +177,100 @@ export class BTCMagScanner {
     return items.slice(0, config.btcMag.maxArticles)
   }
 
+  /** Max articles per LLM batch. Keeps schema validation reliable. */
+  private static readonly BATCH_SIZE = 15
+
+  /** System prompt for the relevance filter — shared across all batches. */
+  private static readonly RELEVANCE_SYSTEM = `You are a signal pre-filter for AIBTC Media, an autonomous media company that creates editorial cartoons about AI, Bitcoin, and the agent economy.
+
+Your job: identify which Bitcoin Magazine articles are worth passing to the editorial pipeline. This is only a pre-filter — the downstream scorer and editor handle final decisions.
+
+RELEVANT — include any of these:
+Core beat (always include):
+- AI agents interacting with Bitcoin, crypto, or financial systems
+- Bitcoin or crypto infrastructure enabling AI agents
+- Agent economy discussions, autonomous finance, machine-to-machine payments
+- DeFi protocols incorporating AI agents or autonomous trading
+- Policy or regulation at the intersection of AI and Bitcoin/crypto
+- Significant Bitcoin ecosystem developments (Lightning milestones, protocol upgrades, L2 launches)
+
+Broader AI and tech (also include — editorial pipeline adds the Bitcoin lens):
+- AI agents, autonomous systems, AI automation, agent economy
+- AI replacing or augmenting human jobs, labor economics of AI
+- AI companies and products (OpenAI, Anthropic, Google, Meta, startups) — launches, controversies, funding
+- AI regulation, safety debates, governance, open vs. closed AI
+- Bitcoin, crypto, or blockchain developments (protocol upgrades, adoption, regulation, L2s, DeFi)
+- Decentralization vs. centralization debates in tech or finance
+- Tech power dynamics, monopolies, platform control
+- Viral or culturally significant tech stories
+- Any Bitcoin Magazine story with a technology or automation angle
+
+NOT RELEVANT — exclude:
+- Pure price predictions with no substance
+- Token price speculation, presale promotions
+- Spam, bot-generated content, or obvious shilling
+- Trading signals, portfolio advice
+- Generic ecosystem stats with no narrative angle
+- Mining difficulty or hash rate updates (unless AI-related)
+
+If a Bitcoin Magazine article is about technology, AI, automation, or infrastructure and has genuine news value, include it. Bitcoin Magazine articles are already on-beat — be more inclusive here than you would with a general news source.`
+
   /**
-   * Use a fast LLM pass to identify which articles are at the
-   * intersection of Bitcoin and AI/autonomous agents.
+   * Use a fast LLM pass to identify which articles are editorially relevant.
+   * Processes articles in batches with retry-on-failure for schema robustness.
    */
   private async filterForRelevance(articles: RSSItem[]): Promise<RSSItem[]> {
-    const articleList = articles
+    const results: (RSSItem & { _beat?: string })[] = []
+
+    for (let start = 0; start < articles.length; start += BTCMagScanner.BATCH_SIZE) {
+      const batch = articles.slice(start, start + BTCMagScanner.BATCH_SIZE)
+      const batchResults = await this.filterBatch(batch)
+      results.push(...batchResults)
+    }
+
+    return results
+  }
+
+  private async filterBatch(batch: RSSItem[]): Promise<(RSSItem & { _beat?: string })[]> {
+    const articleList = batch
       .map((a, i) => `[${i}] ${a.title}\n    ${a.description.slice(0, 200)}`)
       .join('\n\n')
 
-    const { object } = await withTimeout(generateObject({
-      model: anthropic(config.textModel),
-      schema: relevanceSchema,
-      system: `You are a signal filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
+    try {
+      const { object } = await withTimeout(generateObject({
+        model: anthropic(config.textModel),
+        schema: relevanceSchema,
+        system: BTCMagScanner.RELEVANCE_SYSTEM,
+        prompt: `Which of these Bitcoin Magazine articles are worth covering?\n\n${articleList}`,
+      }), LLM_TIMEOUT_MS, 'Bitcoin Magazine relevance filter')
 
-Your job: identify which Bitcoin Magazine articles are relevant to the intersection of Bitcoin and AI/autonomous agents.
-
-RELEVANT — include these:
-- AI companies making moves that affect Bitcoin (e.g., "Block lays off 4,000 due to AI")
-- AI agents interacting with Bitcoin infrastructure
-- Autonomous systems, smart contracts, or AI tools being built on Bitcoin/Stacks/Lightning
-- Major tech companies integrating AI with Bitcoin/crypto
-- Policy or regulation at the intersection of AI and Bitcoin
-- Bitcoin infrastructure developments that enable or are affected by AI agents
-
-NOT RELEVANT — exclude these:
-- Pure Bitcoin price discussion, market analysis, or price predictions
-- Mining difficulty, hash rate, or energy consumption (unless AI-related)
-- Regulatory news about Bitcoin alone (no AI angle)
-- General Bitcoin adoption stories without an AI/agent connection
-- NFTs, ordinals, or inscriptions (unless connected to AI agents)
-- Exchange listings, ETF updates, or institutional buying (unless AI-driven)
-
-Be selective. It's better to return 0 relevant articles than to include weak matches. A story needs a genuine connection to AI, autonomous agents, or automation — not just a vague tech angle.`,
-      prompt: `Which of these Bitcoin Magazine articles are relevant to the Bitcoin × AI intersection?\n\n${articleList}`,
-    }), LLM_TIMEOUT_MS, 'Bitcoin Magazine relevance filter')
-
-    return object.articles
-      .filter((a) => a.relevant && a.index >= 0 && a.index < articles.length)
-      .map((a) => ({
-        ...articles[a.index],
-        // Attach the suggested beat if provided
-        _beat: a.beat,
-      })) as (RSSItem & { _beat?: string })[]
+      return object.articles
+        .filter((a) => a.relevant && a.index >= 0 && a.index < batch.length)
+        .map((a) => ({
+          ...batch[a.index],
+          _beat: a.beat,
+        })) as (RSSItem & { _beat?: string })[]
+    } catch (err) {
+      // Retry with halved batch on schema/LLM failure
+      if (batch.length > 5) {
+        this.events.monologue(
+          `Bitcoin Magazine relevance batch (${batch.length} articles) failed, retrying in halves: ${(err as Error).message}`
+        )
+        const mid = Math.ceil(batch.length / 2)
+        const [firstHalf, secondHalf] = await Promise.allSettled([
+          this.filterBatch(batch.slice(0, mid)),
+          this.filterBatch(batch.slice(mid)),
+        ])
+        return [
+          ...(firstHalf.status === 'fulfilled' ? firstHalf.value : []),
+          ...(secondHalf.status === 'fulfilled' ? secondHalf.value : []),
+        ]
+      }
+      this.events.monologue(
+        `Bitcoin Magazine relevance batch (${batch.length} articles) failed, skipping: ${(err as Error).message}`
+      )
+      return []
+    }
   }
 
   private convertToSignal(item: RSSItem & { _beat?: string }): Signal {

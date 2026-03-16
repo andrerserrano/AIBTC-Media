@@ -34,6 +34,7 @@ import { ContentSigner } from './crypto/content-signer.js'
 import { AgentLoop } from './agent/loop.js'
 import { WorldviewStore } from './agent/worldview.js'
 import { BackupStore } from './store/backup.js'
+import { runCleanup } from './store/cleanup.js'
 import { toCdnUrl, uploadBufferToR2, migratePostsToCdn } from './cdn/r2.js'
 import type { Cartoon, Post, Signal } from './types.js'
 import { withTimeout, SCAN_TIMEOUT_MS } from './utils/timeout.js'
@@ -563,6 +564,23 @@ ${items.join('\n')}
 
     process.on('beforeExit', () => clearInterval(backupInterval))
   }
+
+  // Periodic cleanup of local media files already safely in R2 (every 30 min)
+  const cleanupInterval = setInterval(async () => {
+    try {
+      const result = await runCleanup()
+      if (!result.includes('Nothing')) console.log(`[cleanup] ${result}`)
+    } catch (err) {
+      console.error('[cleanup] Failed:', (err as Error).message)
+    }
+  }, 30 * 60_000)
+
+  // Run cleanup once on startup to immediately free space
+  runCleanup().then(result => {
+    if (!result.includes('Nothing')) console.log(`[cleanup] Startup: ${result}`)
+  }).catch(() => {})
+
+  process.on('beforeExit', () => clearInterval(cleanupInterval))
 
   const shutdown = async () => {
     console.log('Shutting down...')

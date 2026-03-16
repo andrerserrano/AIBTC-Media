@@ -1,4 +1,4 @@
-import { readdir, unlink, stat, readFile, writeFile } from 'fs/promises'
+import { readdir, unlink, stat, readFile, writeFile, rename } from 'fs/promises'
 import { join, extname } from 'path'
 import { S3Client, HeadObjectCommand } from '@aws-sdk/client-s3'
 import { config } from '../config/index.js'
@@ -108,7 +108,9 @@ export async function trimEventLog(): Promise<{ trimmed: boolean; linesBefore: n
     }
 
     const kept = lines.slice(-MAX_EVENT_LINES)
-    await writeFile(logPath, kept.join('\n') + '\n')
+    const tmpPath = logPath + '.tmp'
+    await writeFile(tmpPath, kept.join('\n') + '\n')
+    await rename(tmpPath, logPath)
 
     return { trimmed: true, linesBefore: lines.length, linesAfter: kept.length }
   } catch {

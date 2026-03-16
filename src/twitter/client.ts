@@ -48,6 +48,51 @@ export class TwitterClient {
     return this.readProvider
   }
 
+  /**
+   * Post a text-only tweet (no image). Used for commentary, thesis posts, and QRTs.
+   */
+  async postText(opts: {
+    text: string
+    quoteTweetId?: string
+  }): Promise<string> {
+    this.events.transition('posting')
+
+    if (!config.twitter.postingEnabled) {
+      const localId = randomUUID()
+      this.events.emit({
+        type: 'post',
+        tweetId: `local-${localId}`,
+        text: opts.text,
+        ts: Date.now(),
+      })
+      this.events.monologue(`[DRY RUN] Would post text: "${opts.text.slice(0, 80)}..."`)
+      return `local-${localId}`
+    }
+
+    if (!this.writer) throw new Error('Twitter writer not initialized — set API credentials')
+
+    const tweetData: Parameters<TwitterApi['v2']['tweet']>[0] = {
+      text: opts.text,
+    }
+
+    if (opts.quoteTweetId) {
+      tweetData.quote_tweet_id = opts.quoteTweetId
+    }
+
+    const result = await this.writer.v2.tweet(tweetData)
+    const tweetId = result.data.id
+
+    this.events.emit({
+      type: 'post',
+      tweetId,
+      text: opts.text,
+      ts: Date.now(),
+    })
+
+    this.events.monologue(`Commentary posted. Tweet ID: ${tweetId}.`)
+    return tweetId
+  }
+
   async postCartoon(opts: {
     text: string
     imagePath: string

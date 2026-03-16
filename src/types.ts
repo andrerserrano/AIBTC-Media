@@ -221,6 +221,20 @@ export interface Cartoon {
   contentHashProvenance?: ContentHashProvenance
 }
 
+// --- Commentary Types ---
+
+export type CommentaryCategory = 'commentary' | 'self-aware' | 'thesis' | 'qrt'
+
+export interface CommentaryDraft {
+  text: string
+  category: CommentaryCategory
+  tone: string
+  isQrt: boolean
+  qrtReason?: string
+}
+
+// --- Post (union of cartoon + commentary) ---
+
 export interface Post {
   id: string
   tweetId: string
@@ -229,7 +243,7 @@ export interface Post {
   text: string
   imageUrl?: string
   quotedTweetId?: string
-  type: 'flagship' | 'quickhit' | 'engagement'
+  type: 'flagship' | 'quickhit' | 'engagement' | 'commentary'
   postedAt: number
   engagement: {
     likes: number
@@ -250,4 +264,10 @@ export interface Post {
   editorialReasoning?: string
   sceneDescription?: string
   category?: string
+
+  // Commentary-specific metadata
+  commentaryCategory?: CommentaryCategory
+  commentaryTone?: string
+  commentaryQualityScore?: number
+  commentaryEditorReason?: string
 }

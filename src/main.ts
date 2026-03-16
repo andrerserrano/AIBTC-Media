@@ -21,6 +21,8 @@ import { Ideator } from './pipeline/ideator.js'
 import { Generator } from './pipeline/generator.js'
 import { Captioner } from './pipeline/captioner.js'
 import { TweetTextWriter } from './pipeline/tweet-text-writer.js'
+import { CommentaryWriter } from './pipeline/commentary-writer.js'
+import { CommentaryEditor } from './pipeline/commentary-editor.js'
 import { TwitterClient } from './twitter/client.js'
 import { TwitterV2Reader } from './twitter/twitterapi-v2.js'
 import type { TwitterReadProvider } from './twitter/provider.js'
@@ -32,6 +34,7 @@ import { QuoteTweetResolver } from './pipeline/quote-tweet-resolver.js'
 import { createWalletProvider, type WalletProvider } from './crypto/wallet-provider.js'
 import { ContentSigner } from './crypto/content-signer.js'
 import { AgentLoop } from './agent/loop.js'
+import { CommentaryLoop } from './agent/commentary-loop.js'
 import { WorldviewStore } from './agent/worldview.js'
 import { BackupStore } from './store/backup.js'
 import { toCdnUrl, uploadBufferToR2, migratePostsToCdn } from './cdn/r2.js'
@@ -194,6 +197,8 @@ async function main() {
   await generator.init()
   const captioner = new Captioner(events)
   const tweetTextWriter = new TweetTextWriter(events)
+  const commentaryWriter = new CommentaryWriter(events)
+  const commentaryEditor = new CommentaryEditor(events)
   const editor = new Editor(events)
   const composer = new Composer(events, generator)
 
@@ -229,10 +234,15 @@ async function main() {
   // --- Quote-tweet resolver ---
   const quoteTweetResolver = new QuoteTweetResolver(twitter, events)
 
-  // --- Agent loop ---
+  // --- Agent loop (cartoons) ---
   const agent = new AgentLoop(
     events, scanner, scorer, ideator, generator, captioner, tweetTextWriter,
     twitter, engagement, editor, composer, inscriber, quoteTweetResolver, stores, worldview,
+  )
+
+  // --- Commentary loop (text-only tweets, runs independently) ---
+  const commentaryLoop = new CommentaryLoop(
+    events, scanner, commentaryWriter, commentaryEditor, twitter, stores.posts,
   )
 
   // --- HTTP server ---
@@ -512,6 +522,8 @@ ${items.join('\n')}
   */
 
   // Admin: manually trigger a flagship posting cycle
+  // Optionally pass { tweetUrl: "https://x.com/user/status/123" } to seed the pipeline
+  // with a specific tweet so the cartoon is built around that story.
   app.post('/api/admin/trigger', async (request, reply) => {
     const adminKey = process.env.ADMIN_KEY
     const auth = request.headers.authorization
@@ -519,7 +531,77 @@ ${items.join('\n')}
       reply.status(401)
       return { error: 'Unauthorized' }
     }
-    const result = await agent.triggerFlagship()
+
+    const body = request.body as { tweetUrl?: string } | undefined
+    let seedSignals: Signal[] | undefined
+
+    if (body?.tweetUrl) {
+      // Extract tweet ID from URL (supports x.com and twitter.com)
+      const tweetIdMatch = body.tweetUrl.match(/\/status\/(\d+)/)
+      if (!tweetIdMatch) {
+        reply.status(400)
+        return { error: 'Invalid tweet URL. Expected format: https://x.com/user/status/123456' }
+      }
+      const tweetId = tweetIdMatch[1]
+
+      if (!readProvider) {
+        reply.status(503)
+        return { error: 'Twitter read provider not available. Check TWITTER_BEARER_TOKEN.' }
+      }
+
+      try {
+        const tweet = await readProvider.getTweetById(tweetId)
+        if (!tweet) {
+          reply.status(404)
+          return { error: `Tweet ${tweetId} not found or not accessible.` }
+        }
+
+        // Convert tweet to Signal (same shape as TwitterScanner.convertToSignal)
+        const signal: Signal = {
+          id: `twitter-${tweet.id}`,
+          source: 'twitter',
+          type: 'post',
+          content: tweet.text,
+          url: `https://x.com/${tweet.author.userName}/status/${tweet.id}`,
+          author: `@${tweet.author.userName}`,
+          mediaUrls: tweet.media?.photos?.map((p) => p.url),
+          metrics: {
+            score: tweet.likeCount + tweet.retweetCount * 2,
+          },
+          ingestedAt: Date.now(),
+          expiresAt: Date.now() + config.scan.newsTtlMs,
+          twitter: {
+            tweetId: tweet.id,
+            username: tweet.author.userName,
+            authorName: tweet.author.name,
+            followers: tweet.author.followers,
+            likeCount: tweet.likeCount,
+            retweetCount: tweet.retweetCount,
+            query: 'manual-seed',
+          },
+        }
+
+        seedSignals = [signal]
+        events.monologue(`Seed signal loaded: @${tweet.author.userName} — "${tweet.text.slice(0, 80)}..."`)
+      } catch (err) {
+        reply.status(502)
+        return { error: `Failed to fetch tweet: ${(err as Error).message}` }
+      }
+    }
+
+    const result = await agent.triggerFlagship(seedSignals)
+    return result
+  })
+
+  // Admin: manually trigger a commentary tweet
+  app.post('/api/admin/trigger/commentary', async (request, reply) => {
+    const adminKey = process.env.ADMIN_KEY
+    const auth = request.headers.authorization
+    if (!adminKey || auth !== `Bearer ${adminKey}`) {
+      reply.status(401)
+      return { error: 'Unauthorized' }
+    }
+    const result = await commentaryLoop.triggerCommentary()
     return result
   })
 
@@ -544,6 +626,7 @@ ${items.join('\n')}
   console.log(`Console stream: http://localhost:${config.port}/api/console/stream`)
 
   agent.start()
+  commentaryLoop.start()
 
   // Migrate old posts to R2 CDN (background, non-blocking)
   migratePostsToCdn(stores.posts).catch(err =>
@@ -567,6 +650,7 @@ ${items.join('\n')}
   const shutdown = async () => {
     console.log('Shutting down...')
     agent.stop()
+    commentaryLoop.stop()
     // Securely wipe key material from memory
     walletProvider?.destroy()
     contentSigner?.destroy()

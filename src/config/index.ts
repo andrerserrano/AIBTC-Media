@@ -22,26 +22,16 @@ export const config = {
     searchEnabled: process.env.TWITTER_SEARCH_ENABLED !== 'false',
     searchQueries: (process.env.TWITTER_SEARCH_QUERIES
       ?? [
-        // Tier 1: Core Bitcoin × AI intersection
-        'Bitcoin AI -is:retweet lang:en',
-        'Bitcoin AI agents -is:retweet lang:en',
-        'BTC AI -is:retweet lang:en',
-        'AI agents crypto autonomous -is:retweet lang:en',
-        'smart contracts AI -is:retweet lang:en',
-        'agent economy Bitcoin -is:retweet lang:en',
-        // Tier 2: Broader AI + crypto
-        '(Bitcoin OR BTC) AI -is:retweet lang:en',
-        '(OpenAI OR Anthropic OR "open source AI") -is:retweet lang:en',
-        'AI blockchain decentralized -is:retweet lang:en',
-        'autonomous AI crypto -is:retweet lang:en',
-        // Tier 3: Pure AI stories (scorer handles Bitcoin angle downstream)
-        '"AI agents" -is:retweet lang:en',
-        'AI regulation policy -is:retweet lang:en',
-        '(Claude OR GPT OR Gemini) agents -is:retweet lang:en',
-        '"agent economy" OR "agentic AI" -is:retweet lang:en',
-        'AI "open source" decentralized -is:retweet lang:en',
+        // Core intersection — consolidated with OR operators to reduce API calls
+        '"Bitcoin AI" OR "BTC AI" OR "Bitcoin agents" -is:retweet lang:en',
+        '"agent economy" (Bitcoin OR crypto OR blockchain) -is:retweet lang:en',
+        '(Stacks OR Lightning) AI agents -is:retweet lang:en',
+        // Broader net — let LLM relevance filter handle precision
+        '(OpenAI OR Anthropic OR "Claude" OR "GPT") Bitcoin -is:retweet lang:en',
+        '"AI agents" (crypto OR blockchain OR decentralized) -is:retweet lang:en',
       ].join(',')
     ).split(',').map(q => q.trim()).filter(Boolean),
+    searchCacheTtlMs: Number(process.env.TWITTER_SEARCH_CACHE_TTL ?? 30 * 60_000), // 30 min
     searchMinLikes: Number(process.env.TWITTER_SEARCH_MIN_LIKES ?? 10),
     searchMinFollowers: Number(process.env.TWITTER_SEARCH_MIN_FOLLOWERS ?? 50),
     searchMaxResults: Number(process.env.TWITTER_SEARCH_MAX_RESULTS ?? 60),
@@ -96,7 +86,7 @@ export const config = {
   },
 
   // Agent loop
-  tickIntervalMs: testMode ? 10_000 : 120_000,
+  tickIntervalMs: testMode ? 10_000 : 600_000,  // 10s test vs 10min production
   flagshipIntervalMs: testMode ? 30_000 : 2 * 3600_000,     // 30s vs 2h (minimum cooldown between posts)
   quickhitCooldownMs: testMode ? 15_000 : 3600_000,          // 15s vs 1h
 

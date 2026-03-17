@@ -55,7 +55,7 @@ export class TwitterScanner {
       const allTweets = await this.fetchTweets()
       if (allTweets.length === 0) {
         this.events.monologue(`Twitter: no tweets passed pre-filter.`)
-        this.signalCache.set(cacheKey, [], config.scan.newsTtlMs)
+        this.signalCache.set(cacheKey, [], config.twitter.searchCacheTtlMs)
         return []
       }
 
@@ -66,7 +66,7 @@ export class TwitterScanner {
         this.events.monologue(
           `Twitter: ${allTweets.length} tweets scanned, none passed relevance filter.`
         )
-        this.signalCache.set(cacheKey, [], config.scan.newsTtlMs)
+        this.signalCache.set(cacheKey, [], config.twitter.searchCacheTtlMs)
         return []
       }
 
@@ -82,7 +82,7 @@ export class TwitterScanner {
         return true
       })
 
-      this.signalCache.set(cacheKey, newSignals, config.scan.newsTtlMs)
+      this.signalCache.set(cacheKey, newSignals, config.twitter.searchCacheTtlMs)
 
       if (newSignals.length > 0) {
         this.events.monologue(
@@ -129,7 +129,13 @@ export class TwitterScanner {
           results.push({ tweet, query })
         }
       } catch (err) {
-        this.events.monologue(`Twitter search query "${query}" failed: ${(err as Error).message}`)
+        const msg = (err as Error).message
+        const isRateLimit = msg.includes('429') || msg.toLowerCase().includes('rate limit')
+        if (isRateLimit) {
+          this.events.monologue(`Twitter search rate limited. Stopping further queries this cycle.`)
+          break
+        }
+        this.events.monologue(`Twitter search query "${query}" failed: ${msg}`)
       }
     }
 
@@ -264,7 +270,7 @@ If a tweet is about AI, Bitcoin, crypto, or tech and has genuine news value or c
         score: tweet.likeCount + tweet.retweetCount * 2,
       },
       ingestedAt: Date.now(),
-      expiresAt: Date.now() + config.scan.newsTtlMs,
+      expiresAt: Date.now() + config.twitter.searchCacheTtlMs,
       twitter: {
         tweetId: tweet.id,
         username: tweet.author.userName,

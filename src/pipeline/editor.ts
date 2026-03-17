@@ -46,6 +46,9 @@ Your job:
    - Papers and documents are blank or show abstract wavy lines only
    - NOTE: Abstract wavy lines (squiggles that don't form letters) are ACCEPTABLE on whiteboards and screens.
      Only reject if you can read actual words, letters, or numbers.
+   - EXCEPTION: The Bitcoin ₿ symbol is NOT text — it is our brand mark. 1-2 subtle ₿ symbols
+     on props (coffee mugs, badges, etchings, pins, stickers) are EXPECTED and should NOT trigger rejection.
+     Only reject ₿ if it appears garbled, excessively repeated (3+), or dominates the composition.
 
    ROBOT ANATOMY CHECK (instant reject if any fail):
    - Every FEATURED (foreground) robot has EXACTLY TWO arms and EXACTLY TWO legs — count them.

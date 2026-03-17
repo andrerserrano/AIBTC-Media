@@ -73,10 +73,12 @@ CHARACTER DESIGN — HUMANS (when present):
   bewildered construction worker with hard hat and safety vest
 
 BITCOIN/CRYPTO SYMBOL USAGE:
-- Do NOT draw any Bitcoin ₿ symbols, logos, or cryptocurrency marks anywhere in the image.
-- No ₿ on coffee mugs, no crypto logos on badges, no blockchain symbols on screens.
-- The Bitcoin context comes from the CAPTION below the image, not from symbols in the art.
-- Lightning bolt symbols are also prohibited — no electrical or crypto iconography.
+- The ₿ symbol is our BRAND MARK — use it as a subtle, tasteful accent that reinforces identity.
+- GOOD placements: etched/engraved into a prop (coffee mug, bridge pillar, badge, laptop sticker),
+  as a small pin on a jacket, as part of the scene's narrative (e.g. on a framed picture if relevant).
+- Keep ₿ usage to 1-2 instances per image — it should feel like a natural part of the world, not stamped everywhere.
+- ₿ symbols do NOT count as "text" for the no-text rule. They are brand iconography.
+- NO other crypto logos, blockchain diagrams, or Lightning bolt symbols.
 
 TEXT IN THE IMAGE:
 - ABSOLUTELY NO TEXT of any kind in the image. Zero words, zero letters, zero numbers.

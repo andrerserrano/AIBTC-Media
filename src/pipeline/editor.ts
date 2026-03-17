@@ -158,7 +158,7 @@ export class Editor {
     const { object } = await withTimeout(generateObject({
       model: anthropic('claude-sonnet-4-6'),
       schema: editorSchema,
-      system: EDITOR_SYSTEM,
+      system: { role: 'system' as const, content: EDITOR_SYSTEM, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral', ttl: '1h' } } } },
       messages: [{ role: 'user', content }],
     }), LLM_TIMEOUT_MS, 'Editorial review')
 

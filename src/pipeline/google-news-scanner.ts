@@ -244,8 +244,8 @@ NOT RELEVANT — exclude:
 
 If an article is about AI, Bitcoin, crypto, or tech and has genuine news value, include it.`
 
-  /** Max articles per LLM batch. Smaller = more reliable schema validation. */
-  private static readonly BATCH_SIZE = 15
+  /** Max articles per LLM batch. Larger batches reduce API calls while Haiku handles them well. */
+  private static readonly BATCH_SIZE = 30
 
   /**
    * Filter articles for Bitcoin × AI relevance using LLM.
@@ -273,7 +273,7 @@ If an article is about AI, Bitcoin, crypto, or tech and has genuine news value, 
 
     try {
       const { object } = await withTimeout(generateObject({
-        model: anthropic(config.textModel),
+        model: anthropic(config.relevanceModel),
         schema: relevanceSchema,
         system: GoogleNewsScanner.RELEVANCE_SYSTEM,
         prompt: `Which of these Google News articles are relevant to the Bitcoin × AI intersection?\n\n${articleList}`,

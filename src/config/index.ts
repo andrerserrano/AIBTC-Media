@@ -6,6 +6,7 @@ export const config = {
 
   // AI
   textModel: 'claude-sonnet-4-20250514' as string,
+  relevanceModel: (process.env.RELEVANCE_MODEL ?? 'claude-haiku-4-5-20251001') as string,
   imageModel: 'gemini-2.5-flash-image' as string,
 
   // Twitter
@@ -22,24 +23,16 @@ export const config = {
     searchEnabled: process.env.TWITTER_SEARCH_ENABLED !== 'false',
     searchQueries: (process.env.TWITTER_SEARCH_QUERIES
       ?? [
-        // Tier 1: Core Bitcoin × AI intersection
-        'Bitcoin AI -is:retweet lang:en',
-        'Bitcoin AI agents -is:retweet lang:en',
-        'BTC AI -is:retweet lang:en',
-        'AI agents crypto autonomous -is:retweet lang:en',
-        'smart contracts AI -is:retweet lang:en',
-        'agent economy Bitcoin -is:retweet lang:en',
+        // Tier 1: Core Bitcoin × AI intersection (consolidated — OR operators reduce query count)
+        '(Bitcoin OR BTC) (AI OR agents OR "smart contracts") -is:retweet lang:en',
+        '"agent economy" OR "autonomous finance" OR "machine-to-machine" -is:retweet lang:en',
         // Tier 2: Broader AI + crypto
-        '(Bitcoin OR BTC) AI -is:retweet lang:en',
-        '(OpenAI OR Anthropic OR "open source AI") -is:retweet lang:en',
-        'AI blockchain decentralized -is:retweet lang:en',
-        'autonomous AI crypto -is:retweet lang:en',
+        '(OpenAI OR Anthropic OR "open source AI") (agents OR crypto OR Bitcoin) -is:retweet lang:en',
+        'AI (blockchain OR decentralized OR autonomous) crypto -is:retweet lang:en',
         // Tier 3: Pure AI stories (scorer handles Bitcoin angle downstream)
-        '"AI agents" -is:retweet lang:en',
+        '"AI agents" OR "agentic AI" -is:retweet lang:en',
         'AI regulation policy -is:retweet lang:en',
         '(Claude OR GPT OR Gemini) agents -is:retweet lang:en',
-        '"agent economy" OR "agentic AI" -is:retweet lang:en',
-        'AI "open source" decentralized -is:retweet lang:en',
       ].join(',')
     ).split(',').map(q => q.trim()).filter(Boolean),
     searchMinLikes: Number(process.env.TWITTER_SEARCH_MIN_LIKES ?? 10),

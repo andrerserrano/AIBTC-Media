@@ -180,8 +180,8 @@ NOT RELEVANT — exclude:
 
 If a tweet is about AI, Bitcoin, crypto, or tech and has genuine news value or cultural significance, include it. If it's noise — even on-topic noise — exclude it.`
 
-  /** Max tweets per LLM call — keeps structured output reliable. */
-  private static readonly BATCH_SIZE = 20
+  /** Max tweets per LLM call — larger batches reduce API calls while Haiku handles them well. */
+  private static readonly BATCH_SIZE = 40
 
   /**
    * Use LLM to identify which tweets are at the Bitcoin × AI intersection.
@@ -215,7 +215,7 @@ If a tweet is about AI, Bitcoin, crypto, or tech and has genuine news value or c
 
     try {
       const { object } = await withTimeout(generateObject({
-        model: anthropic(config.textModel),
+        model: anthropic(config.relevanceModel),
         schema: relevanceSchema,
         system: TwitterScanner.RELEVANCE_SYSTEM,
         prompt: `Which of these tweets are worth covering? If a tweet is about AI, Bitcoin, crypto, or tech and has genuine news value or cultural significance, include it.\n\n${tweetList}`,

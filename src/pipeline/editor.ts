@@ -52,7 +52,8 @@ Your job:
      Three arms = reject. (Background crowd robots may be simplified/partially visible — only
      count limbs on clearly visible foreground characters.)
    - Robot heads are dark/black screens with two SMALL orange rectangle-eyes — no mouths,
-     eyebrows, noses, or smiles. The screen-face shows ONLY the dark background + orange eyes.
+     noses, or smiles. Subtle eyebrow lines or round glasses are acceptable as character
+     accessories, but the orange rectangle-eyes must remain the dominant face feature.
    - Eyes should be SMALL vertical rectangles (~15% of screen width), NOT large bars, goggles,
      or rectangular blocks that fill the screen.
 

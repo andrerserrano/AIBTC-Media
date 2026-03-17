@@ -424,7 +424,7 @@ export class Generator {
       `- NO dark or grey backgrounds — the canvas is PURE WHITE (#FFFFFF)`,
       `- NO environmental fills that cover more than 30% of the frame — ground planes are thin strips with white above`,
       `- NO text, letters, numbers, or symbols of any kind — not even ₿ or Bitcoin logos on props`,
-      `- Robot screen-faces show ONLY a dark background + two SMALL orange rectangle-eyes — NO mouths, eyebrows, noses, glasses, or any other facial features`,
+      `- Robot screen-faces have a dark background + two SMALL orange rectangle-eyes as the primary feature — NO mouths or noses. Subtle eyebrow lines or round glasses are OK as accessories but must not dominate the face.`,
       `- NO brand logos on any device — laptop backs are plain flat rectangles with zero markings`,
     ].join('\n')
   }

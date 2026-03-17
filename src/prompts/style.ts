@@ -37,8 +37,11 @@ ROBOT CHARACTER DESIGN — THE SIGNATURE LOOK:
 - Two SMALL vertical orange rectangle-eyes on the dark screen — mandatory on every robot.
   These are the brand signature. They glow as if lit from within. Eyes are SMALL — roughly
   15% of the screen width each, NOT large bars or goggles.
-- NO mouth, nose, or eyebrows on the screen-face. The face is ONLY the dark screen + two small orange eyes.
-  Emotion comes from body language, NOT facial features.
+- NO mouth or nose on the screen-face. The core face is the dark screen + two small orange eyes.
+- OPTIONAL: subtle eyebrow-like lines above the eyes or round glasses frames are allowed
+  as character-distinguishing accessories — but keep them minimal and don't let them
+  dominate the screen-face. The orange rectangle-eyes must remain the primary focal point.
+- Emotion comes primarily from body language, with eyebrows as a secondary accent.
 - Small antenna or nub on top of the screen-head
 - Circular ear-speakers mounted on either side of the head — like headphone cups.
   These complete the distinctive silhouette.
@@ -53,7 +56,7 @@ ROBOT CHARACTER DESIGN — THE SIGNATURE LOOK:
   on robot bodies. Robots should NOT visually represent "broken code" or "bugs" through
   physical damage. Emotion and narrative come from BODY LANGUAGE and CONTEXT, not from
   drawing damage onto the robots themselves.
-- Emotion is conveyed ENTIRELY through BODY LANGUAGE (no face changes):
+- Emotion is conveyed primarily through BODY LANGUAGE, with optional subtle eyebrow accents:
   - Slumped shoulders = tired/defeated
   - Raised arms = triumph/excitement
   - Tilted head = curiosity/confusion

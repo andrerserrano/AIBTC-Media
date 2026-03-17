@@ -41,17 +41,12 @@ Your job:
 
 4. IMAGE REVIEW — You can SEE the generated cartoon. Check EVERY item:
    TEXT CHECK (instant reject if any fail):
-   - ZERO text, words, letters, or numbers anywhere in the image
-   - No speech bubbles, signs with writing, labels, banners, or readable screen text
-   - Whiteboards/boards show ONLY abstract shapes, wavy lines, or simple geometric diagrams — no letters or words
-   - Papers and documents are blank or show abstract wavy lines only
-   - NOTE: Abstract wavy lines (squiggles that don't form letters) are ACCEPTABLE on whiteboards and screens.
-     Only reject if you can read actual words, letters, or numbers.
-   - EXCEPTION: The Bitcoin ₿ symbol is NOT text — it is our brand mark. 1-2 subtle ₿ symbols
-     on props (coffee mugs, badges, etchings, pins, stickers) are EXPECTED and should NOT trigger rejection.
-     The ₿ must be DIEGETIC — part of a physical object in the scene (etched, printed, engraved).
-     REJECT if: ₿ is a giant floating/flaming logo, ₿ dominates the composition as the focal point,
-     ₿ appears as a non-diegetic overlay, or there are 3+ instances. The ₿ is set dressing, not the subject.
+   - No large blocks of readable text, paragraphs, or sentences anywhere in the image
+   - No speech bubbles with readable dialogue
+   - Small contextual text that serves the joke IS acceptable (e.g. "Q3 REVIEW" on a whiteboard,
+     "PROPOSAL #47" on a screen) — only reject text that is garbled, nonsensical, or excessive
+   - Abstract wavy lines, squiggles, and simple symbols (₿, ✓, arrows) are always fine
+   - Bitcoin ₿ symbols on props (mugs, badges, stickers) are part of the brand — never reject these
 
    ROBOT ANATOMY CHECK (instant reject if any fail):
    - Every FEATURED (foreground) robot has EXACTLY TWO arms and EXACTLY TWO legs — count them.

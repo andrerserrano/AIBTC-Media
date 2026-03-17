@@ -73,16 +73,14 @@ CHARACTER DESIGN — HUMANS (when present):
   bewildered construction worker with hard hat and safety vest
 
 BITCOIN/CRYPTO SYMBOL USAGE:
-- The ₿ symbol is our BRAND MARK — use it as a subtle, tasteful accent that reinforces identity.
-- The ₿ must be DIEGETIC — it exists as a physical object IN the scene, not as a floating logo or overlay.
-- GOOD placements: etched/engraved into a prop (coffee mug, bridge pillar, badge, laptop sticker),
-  as a small pin on a jacket, printed on a mug, embossed on a wall plaque.
-- BAD placements: giant ₿ floating in the air, ₿ overlaid on a screen as a logo, ₿ as the focal point
-  of the composition, flaming/glowing ₿ that dominates the scene. The ₿ should NEVER be the subject —
-  it's set dressing.
-- Keep ₿ usage to 1-2 small instances per image — it should feel like a natural detail in the world.
-- ₿ symbols do NOT count as "text" for the no-text rule. They are brand iconography.
-- NO other crypto logos, blockchain diagrams, or Lightning bolt symbols.
+- Bitcoin ₿ symbols must be TINY and INCIDENTAL — a small icon on a coffee mug, a tiny
+  logo on a laptop sticker, a badge on a robot's chest, a subtle mark on a document.
+- NEVER as a standalone floating symbol, large background element, or prominent focal point.
+  The ₿ should be something you notice on second or third look, not first.
+- Render in the same greyscale as surroundings — never highlighted, glowing, or colored
+- They should contextualize the scene ("this is Bitcoin infrastructure") not dominate it
+- NEVER render Bitcoin symbols on fire, exploding, or in distress
+- Lightning bolt symbols get the same treatment: small, architectural, environmental
 
 TEXT IN THE IMAGE:
 - Default: NO text in the image. No speech bubbles, labels, or readable signs.

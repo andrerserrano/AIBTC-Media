@@ -472,8 +472,10 @@ export class AgentLoop {
         && review.qualityScore >= 5
       if (isImageIssue) {
         this.events.monologue(`Quick-hit image issues. Retrying with feedback: "${review.reason.slice(0, 120)}"`)
+        let retried = false
+        let latestFeedback = review.reason
         for (let retry = 1; retry <= config.maxImageRetries; retry++) {
-          const retryResult = await this.generator.retry(concept, review.reason, retry)
+          const retryResult = await this.generator.retry(concept, latestFeedback, retry)
           if (retryResult.variants.length === 0) continue
 
           variants = retryResult.variants
@@ -483,15 +485,16 @@ export class AgentLoop {
           const retryReview = await this.editor.review(concept, caption, variants[0], allPosts, allCartoons)
           if (retryReview.approved) {
             caption = retryReview.caption
+            retried = true
             this.events.monologue(`Quick-hit retry ${retry} approved (quality ${retryReview.qualityScore}/10).`)
-            // Fall through to compose + post
             break
           }
-          if (retry === config.maxImageRetries) {
-            await this.blacklistTopic(topic.summary)
-            this.events.monologue(`Quick-hit retries exhausted. Topic blacklisted. Moving on.`)
-            return
-          }
+          latestFeedback = retryReview.reason
+        }
+        if (!retried) {
+          await this.blacklistTopic(topic.summary)
+          this.events.monologue(`Quick-hit retries exhausted. Topic blacklisted. Moving on.`)
+          return
         }
       } else {
         await this.blacklistTopic(topic.summary)

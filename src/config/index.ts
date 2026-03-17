@@ -6,6 +6,7 @@ export const config = {
 
   // AI
   textModel: 'claude-sonnet-4-20250514' as string,
+  relevanceModel: (process.env.RELEVANCE_MODEL ?? 'claude-haiku-4-5-20251001') as string,
   imageModel: 'gemini-2.5-flash-image' as string,
 
   // Twitter

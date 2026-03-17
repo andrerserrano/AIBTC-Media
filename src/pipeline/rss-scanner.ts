@@ -208,8 +208,8 @@ export class RSSScanner {
     return items.slice(0, this.feedConfig.maxArticles)
   }
 
-  /** Max articles per LLM batch. Keeps schema validation reliable. */
-  private static readonly BATCH_SIZE = 15
+  /** Max articles per LLM batch. Larger batches reduce API calls while Haiku handles them well. */
+  private static readonly BATCH_SIZE = 30
 
   /** System prompt for the relevance filter — shared across all batches. */
   private static readonly RELEVANCE_SYSTEM = `You are a signal pre-filter for AIBTC Media, an autonomous media company that creates editorial cartoons about AI, Bitcoin, and the agent economy.
@@ -271,7 +271,7 @@ If an article is about AI, Bitcoin, crypto, or tech and has genuine news value, 
 
     try {
       const { object } = await withTimeout(generateObject({
-        model: anthropic(config.textModel),
+        model: anthropic(config.relevanceModel),
         schema: relevanceSchema,
         system: RSSScanner.RELEVANCE_SYSTEM,
         prompt: `Which of these ${this.feedConfig.name} articles are worth covering?\n\n${articleList}`,

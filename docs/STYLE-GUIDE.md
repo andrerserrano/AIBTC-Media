@@ -22,10 +22,11 @@ newspaper cartoon, with visible dot texture on grey areas (robot bodies, suits, 
 - **The Orange Rule:** Count the orange elements. If there are more than 4 instances,
   it's too many. The ideal is 2-3: robot eyes + one accent prop.
 
-**Background:** The overall canvas is always white or cream — NEVER grey, blue, or any
-other colored fill behind the scene. Within that white canvas, environments and architecture
-(rooms, bridges, furniture) are rendered in greyscale. The key distinction: a white page
-with a greyscale bridge drawn on it is correct. A grey-tinted page is wrong.
+**Background:** The overall canvas is always PURE WHITE (#FFFFFF) — NEVER cream, off-white,
+beige, ivory, grey, blue, or any other colored/tinted fill. This is a newspaper comic strip
+on bright white paper. Within that white canvas, environments and architecture (rooms, bridges,
+furniture) are rendered in greyscale. The key distinction: a pure white page with greyscale
+line art drawn on it is correct. Any warm or tinted background is wrong.
 
 ## Robot Character Design — The Signature Look
 
@@ -189,8 +190,8 @@ The best cartoons have a gap between what you SEE and what the caption SAYS.
 The image sets up the situation; the caption reframes it through a deadpan reaction.
 
 ### The Background Test
-Is the overall page/canvas white or cream? Good. Is it grey or tinted? Bad.
-Environments drawn ON the white canvas are fine — a grey fill BEHIND everything is not.
+Is the overall page/canvas pure white (#FFFFFF)? Good. Is it cream, beige, ivory, grey, or tinted? Bad.
+Environments drawn ON the white canvas in greyscale are fine — any tinted fill BEHIND everything is not.
 
 ## What This Is NOT
 

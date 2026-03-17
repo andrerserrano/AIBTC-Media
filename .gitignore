@@ -53,5 +53,10 @@ package-lock.json
 # Alternate Twitter provider
 src/twitter/twitterapi-io.ts
 
+# Test & eval output images (keep locally, don't track in git)
+batch-test-results/
+eval-results-ab/
+
 # Claude
 .claude/
+r2-test.mjs

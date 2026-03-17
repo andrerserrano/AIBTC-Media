@@ -512,6 +512,34 @@ ${items.join('\n')}
   })
   */
 
+  // Admin: view current shortlisted topics and their scores
+  app.get('/api/admin/shortlist', async (request, reply) => {
+    const adminKey = process.env.ADMIN_KEY
+    const auth = request.headers.authorization
+    if (!adminKey || auth !== `Bearer ${adminKey}`) {
+      reply.status(401)
+      return { error: 'Unauthorized' }
+    }
+    const shortlist = agent.getShortlist()
+    if (!shortlist) return { topics: [], signals: [], ranAt: null, message: 'No shortlist available yet — pipeline may be mid-cycle or not yet run.' }
+    return {
+      ranAt: new Date(shortlist.ranAt).toISOString(),
+      topicCount: shortlist.topics.length,
+      signalCount: shortlist.signals.length,
+      topics: shortlist.topics.map(t => ({
+        summary: t.summary,
+        scores: t.scores,
+        signalCount: t.signals?.length ?? 0,
+      })),
+      signals: shortlist.signals.map(s => ({
+        id: s.id,
+        source: s.source,
+        content: s.content.slice(0, 120),
+        url: s.url,
+      })),
+    }
+  })
+
   // Admin: manually trigger a flagship posting cycle
   app.post('/api/admin/trigger', async (request, reply) => {
     const adminKey = process.env.ADMIN_KEY

@@ -115,6 +115,15 @@ export class AgentLoop {
   }
 
   /** Manually trigger a flagship posting cycle (called from admin API) */
+  getShortlist(): { topics: Topic[]; signals: Signal[]; ranAt: number } | null {
+    if (!this.shortlist) return null
+    return {
+      topics: this.shortlist.topics,
+      signals: this.shortlist.signals,
+      ranAt: this.shortlist.ranAt,
+    }
+  }
+
   async triggerFlagship(): Promise<{ success: boolean; reason: string }> {
     this.events.monologue('Manual trigger received — clearing caches and starting fresh flagship cycle...')
     try {

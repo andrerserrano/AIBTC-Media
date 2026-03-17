@@ -70,14 +70,10 @@ CHARACTER DESIGN — HUMANS (when present):
   bewildered construction worker with hard hat and safety vest
 
 BITCOIN/CRYPTO SYMBOL USAGE:
-- Bitcoin ₿ symbols must be TINY and INCIDENTAL — a small icon on a coffee mug, a tiny
-  logo on a laptop sticker, a badge on a robot's chest, a subtle mark on a document.
-- NEVER as a standalone floating symbol, large background element, or prominent focal point.
-  The ₿ should be something you notice on second or third look, not first.
-- Render in the same greyscale as surroundings — never highlighted, glowing, or colored
-- They should contextualize the scene ("this is Bitcoin infrastructure") not dominate it
-- NEVER render Bitcoin symbols on fire, exploding, or in distress
-- Lightning bolt symbols get the same treatment: small, architectural, environmental
+- Do NOT draw any Bitcoin ₿ symbols, logos, or cryptocurrency marks anywhere in the image.
+- No ₿ on coffee mugs, no crypto logos on badges, no blockchain symbols on screens.
+- The Bitcoin context comes from the CAPTION below the image, not from symbols in the art.
+- Lightning bolt symbols are also prohibited — no electrical or crypto iconography.
 
 TEXT IN THE IMAGE:
 - ABSOLUTELY NO TEXT of any kind in the image. Zero words, zero letters, zero numbers.

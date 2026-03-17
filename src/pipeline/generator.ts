@@ -222,9 +222,53 @@ export class Generator {
     )
     const modified = {
       ...concept,
-      composition: `${concept.composition}\n\nIMPORTANT ADJUSTMENT: ${feedback}`,
+      composition: `${concept.composition}\n\nIMPORTANT ADJUSTMENT (attempt ${attempt}): ${feedback}`,
     }
-    return this.generate(modified, 1)
+
+    // Bypass cache on retries — the whole point is to generate a FRESH image
+    this.events.transition('generating')
+    const prompt = this.buildPrompt(modified)
+
+    this.events.monologue(
+      `Generating 1 image variant (retry, no cache). Prompt: "${prompt.slice(0, 120)}..."`,
+    )
+    this.events.emit({
+      type: 'generate',
+      prompt: prompt.slice(0, 200),
+      variantCount: 1,
+      ts: Date.now(),
+    })
+
+    const variants: string[] = []
+
+    try {
+      const refImages = await this.findReferenceImages(modified)
+      const messages = await this.buildMessages(prompt, refImages)
+      const { files } = await withTimeout(generateText({
+        model: google(config.imageModel),
+        messages,
+      }), LLM_TIMEOUT_MS, `Cartoon retry ${attempt} image generation`)
+
+      if (files && files.length > 0) {
+        const file = files[0]
+        const filename = `${modified.id}-retry${attempt}.png`
+        const filepath = join(this.imageDir, filename)
+        const raw = Buffer.from(file.base64, 'base64')
+        const signed = await this.applySignature(raw)
+        await writeFile(filepath, signed)
+        uploadToR2(filepath, 'images').catch(() => {})
+        variants.push(filepath)
+        this.events.monologue(`Retry ${attempt} variant generated.`)
+      } else {
+        this.events.monologue(`Retry ${attempt}: no image returned.`)
+      }
+    } catch (err) {
+      this.events.monologue(
+        `Retry ${attempt} failed: ${(err as Error).message}. Moving on.`,
+      )
+    }
+
+    return { variants, prompt }
   }
 
   // --- Shared utilities ---
@@ -373,6 +417,12 @@ export class Generator {
       `- Robot bodies: EXACTLY 2 arms, EXACTLY 2 legs. Count them.`,
       `- Laptop backs are PLAIN FLAT RECTANGLES — no logos or symbols. Not Apple, not any brand.`,
       `- NO watermarks, signatures, or branding text anywhere.`,
+      ``,
+      `ABSOLUTE PROHIBITIONS (violating any of these makes the image unusable):`,
+      `- NO halftone dots, stipple, crosshatch, or screentone on ANY surface — use flat solid fills only`,
+      `- NO dark or grey backgrounds — the canvas is PURE WHITE (#FFFFFF)`,
+      `- NO environmental fills that cover more than 30% of the frame — ground planes are thin strips with white above`,
+      `- NO readable text longer than 3 words on any prop, screen, or surface`,
     ].join('\n')
   }
 
@@ -384,11 +434,11 @@ export class Generator {
       return 'HIGH CONTRAST — deep blacks, bright whites, minimal mid-grey. Bold, punchy energy. Monochrome + orange only.'
     }
     if (/money|business|corporate|ceo|profit|market|stock/.test(text)) {
-      return 'HEAVY — moderate greys, clean shadows, light halftone accents. Weighty but clean. Monochrome + orange only.'
+      return 'HEAVY — moderate greys, clean shadows, flat solid shadow fills. Weighty but clean. Monochrome + orange only.'
     }
     if (/tech|ai|robot|algorithm|data|digital|screen|phone|computer/.test(text)) {
       return 'CLEAN — light greys, generous white space, precise lines. Clinical, modern. Monochrome + orange only.'
     }
-    return 'WARM — soft mid-greys, gentle halftone shading, balanced contrast. Wry, human. Monochrome + orange only.'
+    return 'WARM — soft mid-greys, soft flat grey fills, balanced contrast. Wry, human. Monochrome + orange only.'
   }
 }

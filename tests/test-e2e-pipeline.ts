@@ -4,7 +4,7 @@
  * Tests: Scan → Score → Ideate → Generate → Caption → Compose → Inscribe
  * Outputs: Final cartoon image + provenance data for homepage card #4
  *
- * Usage: bun run tests/test-e2e-pipeline.ts
+ * Usage: bun run test-e2e-pipeline.ts
  * (No need for `export $(grep ...)`  — .env is loaded below)
  */
 
@@ -18,12 +18,7 @@ for (const line of readFileSync('.env', 'utf8').split('\n')) {
   process.env[trimmed.slice(0, eqIdx).trim()] = trimmed.slice(eqIdx + 1).trim();
 }
 
-import { config } from '../src/config/index.js';
-import { join } from 'path';
-import { mkdirSync } from 'fs'
-
-// Ensure data directory exists
-mkdirSync(config.dataDir, { recursive: true });
+import { config } from './src/config/index.js';
 
 // Step 1: Scan AIBTC News + Bitcoin Magazine
 console.log('\n═══════════════════════════════════════');
@@ -239,11 +234,11 @@ async function generateImage(concept: any) {
   console.log('═══════════════════════════════════════\n');
 
   // Strip any text descriptions from the concept visual to prevent Gemini rendering text
-  const { stripTextFromVisual } = await import('../src/prompts/style.js');
+  const { stripTextFromVisual } = await import('./src/prompts/style.js');
   const cleanVisual = stripTextFromVisual(concept.visual);
 
   // Import the shared style template — single source of truth for all image generation
-  const { STYLE_TEMPLATE } = await import('../src/prompts/style.js');
+  const { STYLE_TEMPLATE } = await import('./src/prompts/style.js');
 
   const stylePrompt = `${STYLE_TEMPLATE}
 
@@ -274,9 +269,9 @@ Square 1:1 aspect ratio. Leave ~12% blank space at bottom edge for caption overl
     for (const candidate of candidates) {
       for (const part of candidate.content?.parts || []) {
         if (part.inlineData?.mimeType?.startsWith('image/')) {
-          imagePath = join(config.dataDir, 'cartoon-test.png');
-          const { mkdirSync: mkdirS, writeFileSync } = await import('fs');
-          mkdirS(config.dataDir, { recursive: true });
+          imagePath = '.data/cartoon-test.png';
+          const { mkdirSync, writeFileSync } = await import('fs');
+          mkdirSync('.data', { recursive: true });
           writeFileSync(imagePath, Buffer.from(part.inlineData.data, 'base64'));
           console.log(`✅ Image saved: ${imagePath} (${part.inlineData.data.length} base64 chars)`);
         }
@@ -358,7 +353,7 @@ async function composeCartoon(imagePath: string, concept: any) {
     </svg>
   `);
 
-  const composedPath = join(config.dataDir, 'cartoon-composed.png');
+  const composedPath = '.data/cartoon-composed.png';
 
   await sharp(imagePath)
     .resize(w, h - captionHeight, { fit: 'cover', position: 'top' })
@@ -393,7 +388,7 @@ async function inscribe(imagePath: string) {
 
     // Compress for inscription
     const sharp = (await import('sharp')).default;
-    const compressedPath = join(config.dataDir, 'cartoon-compressed.webp');
+    const compressedPath = '.data/cartoon-compressed.webp';
 
     await sharp(imagePath)
       .resize(200, 200, { fit: 'inside' })
@@ -422,7 +417,7 @@ async function inscribe(imagePath: string) {
     // Try to use the inscription module
     try {
       // Import the wallet provider to derive addresses
-      const { LocalWalletProvider } = await import('../src/crypto/wallet-provider.js');
+      const { LocalWalletProvider } = await import('./src/crypto/wallet-provider.js');
       const wallet = new LocalWalletProvider(process.env.ORDINALS_MNEMONIC!, process.env.ORDINALS_NETWORK as 'testnet' | 'mainnet');
 
       const addresses = wallet.getAddresses();
@@ -451,7 +446,7 @@ async function inscribe(imagePath: string) {
 
         // Attempt inscription
         console.log(`\n🔄 Attempting inscription...`);
-        const { inscribeImage } = await import('../src/ordinals/inscribe-image.js');
+        const { inscribeImage } = await import('./src/ordinals/inscribe-image.js');
         const result = await inscribeImage(compressedPath, { walletProvider: wallet, force: true });
         if (!result) {
           console.log(`⚠️  Inscription returned null (skipped or disabled)`);
@@ -505,7 +500,7 @@ async function prepareCardData(imagePath: string, concept: any, provenance: any)
   };
 
   // Save card data as JSON for later use
-  writeFileSync(join(config.dataDir, 'card-4-data.json'), JSON.stringify(cardData, null, 2));
+  writeFileSync('.data/card-4-data.json', JSON.stringify(cardData, null, 2));
   console.log(`✅ Card data saved: .data/card-4-data.json`);
   console.log(`   Title: ${cardData.title}`);
   console.log(`   Caption: ${cardData.caption}`);

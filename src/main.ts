@@ -565,10 +565,10 @@ ${items.join('\n')}
     process.on('beforeExit', () => clearInterval(backupInterval))
   }
 
-  // Periodic cleanup of local media files already safely in R2 (every 30 min)
+  // Periodic cleanup of local media + orphan images + temp dirs (every 30 min)
   const cleanupInterval = setInterval(async () => {
     try {
-      const result = await runCleanup()
+      const result = await runCleanup(stores.posts, stores.cartoons)
       if (!result.includes('Nothing')) console.log(`[cleanup] ${result}`)
     } catch (err) {
       console.error('[cleanup] Failed:', (err as Error).message)
@@ -576,7 +576,7 @@ ${items.join('\n')}
   }, 30 * 60_000)
 
   // Run cleanup once on startup to immediately free space
-  runCleanup().then(result => {
+  runCleanup(stores.posts, stores.cartoons).then(result => {
     if (!result.includes('Nothing')) console.log(`[cleanup] Startup: ${result}`)
   }).catch(() => {})
 

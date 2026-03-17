@@ -87,7 +87,23 @@ export class TwitterClient {
       tweetData.quote_tweet_id = opts.quoteTweetId
     }
 
-    const result = await this.writer.v2.tweet(tweetData)
+    let result: Awaited<ReturnType<typeof this.writer.v2.tweet>>
+    try {
+      result = await this.writer.v2.tweet(tweetData)
+    } catch (err) {
+      // If posting with a quote tweet fails (403/duplicate/protected), retry without it
+      if (opts.quoteTweetId && (err as any).code === 403) {
+        const errBody = (err as any).data ? JSON.stringify((err as any).data) : 'no body'
+        this.events.monologue(`[twitter] Quote tweet ${opts.quoteTweetId} caused 403 (${errBody}). Retrying without quote...`)
+        delete tweetData.quote_tweet_id
+        result = await this.writer.v2.tweet(tweetData)
+      } else {
+        const errBody = (err as any).data ? ` | body: ${JSON.stringify((err as any).data)}` : ''
+        const errCode = (err as any).code ? ` | code: ${(err as any).code}` : ''
+        this.events.monologue(`[twitter] POST FAILED: ${(err as Error).message}${errCode}${errBody}`)
+        throw err
+      }
+    }
     const tweetId = result.data.id
 
     this.events.emit({

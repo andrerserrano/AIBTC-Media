@@ -422,7 +422,9 @@ export class Generator {
       `- NO halftone dots, stipple, crosshatch, or screentone on ANY surface — use flat solid fills only`,
       `- NO dark or grey backgrounds — the canvas is PURE WHITE (#FFFFFF)`,
       `- NO environmental fills that cover more than 30% of the frame — ground planes are thin strips with white above`,
-      `- NO readable text longer than 3 words on any prop, screen, or surface`,
+      `- NO text, letters, numbers, or symbols of any kind — not even ₿ or Bitcoin logos on props`,
+      `- Robot screen-faces show ONLY a dark background + two SMALL orange rectangle-eyes — NO mouths, eyebrows, noses, glasses, or any other facial features`,
+      `- NO brand logos on any device — laptop backs are plain flat rectangles with zero markings`,
     ].join('\n')
   }
 

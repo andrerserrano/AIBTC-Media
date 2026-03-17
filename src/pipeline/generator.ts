@@ -221,9 +221,53 @@ export class Generator {
     )
     const modified = {
       ...concept,
-      composition: `${concept.composition}\n\nIMPORTANT ADJUSTMENT: ${feedback}`,
+      composition: `${concept.composition}\n\nIMPORTANT ADJUSTMENT (attempt ${attempt}): ${feedback}`,
     }
-    return this.generate(modified, 1)
+
+    // Bypass cache on retries — the whole point is to generate a FRESH image
+    this.events.transition('generating')
+    const prompt = this.buildPrompt(modified)
+
+    this.events.monologue(
+      `Generating 1 image variant (retry, no cache). Prompt: "${prompt.slice(0, 120)}..."`,
+    )
+    this.events.emit({
+      type: 'generate',
+      prompt: prompt.slice(0, 200),
+      variantCount: 1,
+      ts: Date.now(),
+    })
+
+    const variants: string[] = []
+
+    try {
+      const refImages = await this.findReferenceImages(modified)
+      const messages = await this.buildMessages(prompt, refImages)
+      const { files } = await generateText({
+        model: google(config.imageModel),
+        messages,
+      })
+
+      if (files && files.length > 0) {
+        const file = files[0]
+        const filename = `${modified.id}-retry${attempt}.png`
+        const filepath = join(this.imageDir, filename)
+        const raw = Buffer.from(file.base64, 'base64')
+        const signed = await this.applySignature(raw)
+        await writeFile(filepath, signed)
+        uploadToR2(filepath, 'images').catch(() => {})
+        variants.push(filepath)
+        this.events.monologue(`Retry ${attempt} variant generated.`)
+      } else {
+        this.events.monologue(`Retry ${attempt}: no image returned.`)
+      }
+    } catch (err) {
+      this.events.monologue(
+        `Retry ${attempt} failed: ${(err as Error).message}. Moving on.`,
+      )
+    }
+
+    return { variants, prompt }
   }
 
   // --- Shared utilities ---
@@ -369,13 +413,17 @@ export class Generator {
       `- ZERO TEXT IN THE IMAGE. No words, letters, numbers, labels, speech bubbles, or writing of any kind.`,
       `  Whiteboards show only abstract shapes or wavy lines. Papers are blank. Screens show abstract graphics only.`,
       `- Single panel, PURE WHITE canvas (#FFFFFF, NEVER cream/grey/tinted background), thick border`,
-      `- Halftone dot-pattern shading for all grey areas — newspaper editorial look`,
-      `- Robot faces: dark/black screen + two SMALL orange rectangle-eyes ONLY. No mouths, noses, or eyebrows.`,
-      `- Robot bodies: EXACTLY 2 arms, EXACTLY 2 legs. Count them. No extra limbs.`,
-      `- Laptop backs are PLAIN FLAT RECTANGLES — absolutely no logos, circles, or symbols. Not Apple, not any brand.`,
-      `- Every prop must serve the joke — if it doesn't make the gag funnier, remove it`,
-      `- ONLY use greyscale + Bitcoin orange (#E8740C). No blues, teals, greens, or other hues.`,
-      `- ABSOLUTELY NO watermarks, signatures, or branding text anywhere. The image must be completely clean.`,
+      `- Robot bodies are WHITE with bold black outlines. Shading uses FLAT SOLID grey fills ONLY.`,
+      `- ONLY greyscale + Bitcoin orange (#E8740C). No blues, teals, greens, or other hues.`,
+      `- Robot bodies: EXACTLY 2 arms, EXACTLY 2 legs. Count them.`,
+      `- Laptop backs are PLAIN FLAT RECTANGLES — no logos or symbols. Not Apple, not any brand.`,
+      `- NO watermarks, signatures, or branding text anywhere.`,
+      ``,
+      `ABSOLUTE PROHIBITIONS (violating any of these makes the image unusable):`,
+      `- NO halftone dots, stipple, crosshatch, or screentone on ANY surface — use flat solid fills only`,
+      `- NO dark or grey backgrounds — the canvas is PURE WHITE (#FFFFFF)`,
+      `- NO environmental fills that cover more than 30% of the frame — ground planes are thin strips with white above`,
+      `- NO readable text longer than 3 words on any prop, screen, or surface`,
     ].join('\n')
   }
 

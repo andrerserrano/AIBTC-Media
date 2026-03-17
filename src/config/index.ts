@@ -54,7 +54,7 @@ export const config = {
   ],
 
   // Agent loop
-  tickIntervalMs: testMode ? 10_000 : 120_000,
+  tickIntervalMs: testMode ? 10_000 : 600_000,  // 10s test vs 10min production (posts every 4-6h, no need for 2min ticks)
   flagshipIntervalMs: testMode ? 30_000 : 6 * 3600_000,     // 30s vs 6h (minimum cooldown between posts)
   quickhitCooldownMs: testMode ? 15_000 : 3600_000,          // 15s vs 1h
 

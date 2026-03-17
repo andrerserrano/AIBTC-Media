@@ -49,7 +49,9 @@ Your job:
      Only reject if you can read actual words, letters, or numbers.
    - EXCEPTION: The Bitcoin ₿ symbol is NOT text — it is our brand mark. 1-2 subtle ₿ symbols
      on props (coffee mugs, badges, etchings, pins, stickers) are EXPECTED and should NOT trigger rejection.
-     Only reject ₿ if it appears garbled, excessively repeated (3+), or dominates the composition.
+     The ₿ must be DIEGETIC — part of a physical object in the scene (etched, printed, engraved).
+     REJECT if: ₿ is a giant floating/flaming logo, ₿ dominates the composition as the focal point,
+     ₿ appears as a non-diegetic overlay, or there are 3+ instances. The ₿ is set dressing, not the subject.
 
    ROBOT ANATOMY CHECK (instant reject if any fail):
    - Every FEATURED (foreground) robot has EXACTLY TWO arms and EXACTLY TWO legs — count them.

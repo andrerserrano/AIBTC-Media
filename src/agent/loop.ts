@@ -143,7 +143,9 @@ export class AgentLoop {
       return { success: true, reason: 'Flagship cycle completed.' }
     } catch (err) {
       const msg = (err as Error).message
-      this.events.monologue(`Manual trigger failed: ${msg}`)
+      const errData = (err as any).data ? ` | API error body: ${JSON.stringify((err as any).data)}` : ''
+      const errCode = (err as any).code ? ` | code: ${(err as any).code}` : ''
+      this.events.monologue(`Manual trigger failed: ${msg}${errCode}${errData}`)
       return { success: false, reason: msg }
     }
   }
@@ -443,7 +445,16 @@ export class AgentLoop {
     const sourceUrls = topic.quoteCandidates?.length ? topic.quoteCandidates : undefined
     const quoteTweetId = await this.quoteTweetResolver.resolve(sourceUrls, topic.summary)
 
-    const tweetId = await this.twitter.postCartoon({ text: tweetText, imagePath: composedPath, quoteTweetId })
+    let tweetId: string
+    try {
+      tweetId = await this.twitter.postCartoon({ text: tweetText, imagePath: composedPath, quoteTweetId })
+    } catch (postErr) {
+      const postMsg = (postErr as Error).message
+      const postData = (postErr as any).data ? JSON.stringify((postErr as any).data) : 'no body'
+      const postHeaders = (postErr as any).rateLimit ? ` | rateLimit: ${JSON.stringify((postErr as any).rateLimit)}` : ''
+      this.events.monologue(`[twitter] POST FAILED: ${postMsg} | body: ${postData}${postHeaders}`)
+      throw postErr
+    }
 
     // Derive metadata for the frontend detail card
     const primarySignal = signals.find(s => topic.signals.includes(s.id))
@@ -596,7 +607,15 @@ export class AgentLoop {
     const qhSourceUrls = topic.quoteCandidates?.length ? topic.quoteCandidates : undefined
     const qhQuoteTweetId = await this.quoteTweetResolver.resolve(qhSourceUrls, topic.summary)
 
-    const tweetId = await this.twitter.postCartoon({ text: qhTweetText, imagePath: composedPath, quoteTweetId: qhQuoteTweetId })
+    let tweetId: string
+    try {
+      tweetId = await this.twitter.postCartoon({ text: qhTweetText, imagePath: composedPath, quoteTweetId: qhQuoteTweetId })
+    } catch (postErr) {
+      const postMsg = (postErr as Error).message
+      const postData = (postErr as any).data ? JSON.stringify((postErr as any).data) : 'no body'
+      this.events.monologue(`[twitter] QH POST FAILED: ${postMsg} | body: ${postData}`)
+      throw postErr
+    }
 
     // Derive metadata for the frontend detail card
     const qhSignal = signals.find(s => topic.signals.includes(s.id))

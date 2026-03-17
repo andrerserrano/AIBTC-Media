@@ -362,7 +362,7 @@ export class AgentLoop {
 
         // If rejected for image issues (not duplicate/quality), retry with editor feedback
         const isImageIssue = !review.reason.toLowerCase().includes('duplicate')
-          && review.qualityScore >= 5
+          && review.qualityScore >= 3
         if (isImageIssue) {
           this.events.monologue(`Editor found image issues. Retrying with feedback: "${review.reason.slice(0, 120)}"`)
           let retried = false

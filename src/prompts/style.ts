@@ -13,10 +13,11 @@ media outlet covering the Bitcoin agent economy.
 VISUAL IDENTITY — MONOCHROME + BITCOIN ORANGE:
 - Bold, confident black ink lines — thick outlines (2-3px), NOT sketchy or tentative
 - Strong shadows, confident hatching for depth
-- LIGHT halftone dot-pattern shading for mid-tones — used sparingly for shadows and
-  depth. Most surfaces (robot bodies, walls, table tops) are CLEAN SOLID colors
-  (white, light grey, medium grey). Halftone dots appear only in shadow areas and
-  background depth. Do NOT cover robot bodies in dense dot patterns.
+- ABSOLUTELY NO halftone dots, stipple patterns, crosshatch, or screentone anywhere
+  in the image. All shading uses FLAT SOLID FILLS of grey (light, medium, or dark).
+  Shadows are simple flat shapes — never textured. Robot bodies are CLEAN white or
+  light grey with NO surface patterns of any kind. This is a CLEAN DIGITAL cartoon,
+  NOT a printed newspaper comic.
 - LIMITED COLOR PALETTE: Black line art + greyscale wash + ONE accent color
 - Accent color: warm orange (#E8740C) — Bitcoin orange
 - Use orange ONLY on: robot eyes (always), and at most ONE other small element
@@ -115,8 +116,8 @@ COMPOSITION PRINCIPLES:
 
 RENDERING RULES:
 - This is a CARTOON with clear stylization — NOT photorealistic
-- Shading uses FLAT GREY FILLS — clean solid areas of grey, not dense dot-patterns everywhere.
-  Light halftone texture may appear in deep shadow areas only. Most surfaces are clean.
+- Shading uses FLAT GREY FILLS ONLY — clean solid areas of grey with ZERO texture.
+  NO halftone dots, NO stipple, NO crosshatch anywhere. Every grey area is a smooth solid fill.
 - Shadows are flat shapes, used sparingly for depth
 - Line weight is bold and confident — never thin or wispy
 - ABSOLUTELY NO watermarks, signatures, logos, or branding text anywhere in the image.
@@ -186,7 +187,12 @@ SCENE: ${sceneDescription}
 CRITICAL STYLE REQUIREMENTS:
 ${STYLE_TEMPLATE}
 
-Remember: PURE WHITE background (#FFFFFF, no cream/beige/ivory), clean flat shading (no dense dot patterns), monochrome + orange eyes only, no brand logos.`
+FINAL MANDATORY CHECKS BEFORE RENDERING:
+1. Background is PURE WHITE (#FFFFFF) — not grey, not cream, not any color. The majority of the canvas must be white.
+2. ALL shading is flat solid grey — ZERO halftone dots, stipple, or crosshatch anywhere in the image.
+3. Robot bodies are clean white/light grey surfaces with NO dot patterns or texture.
+4. Monochrome + orange eyes only. No other hues.
+5. If the scene has a ground plane or environment, render it as minimal line art ON the white canvas — do NOT fill the frame with dark terrain.`
 }
 
 /**

@@ -23,18 +23,16 @@ export const config = {
     searchEnabled: process.env.TWITTER_SEARCH_ENABLED !== 'false',
     searchQueries: (process.env.TWITTER_SEARCH_QUERIES
       ?? [
-        // Tier 1: Core Bitcoin × AI intersection (consolidated — OR operators reduce query count)
-        '(Bitcoin OR BTC) (AI OR agents OR "smart contracts") -is:retweet lang:en',
-        '"agent economy" OR "autonomous finance" OR "machine-to-machine" -is:retweet lang:en',
-        // Tier 2: Broader AI + crypto
-        '(OpenAI OR Anthropic OR "open source AI") (agents OR crypto OR Bitcoin) -is:retweet lang:en',
-        'AI (blockchain OR decentralized OR autonomous) crypto -is:retweet lang:en',
-        // Tier 3: Pure AI stories (scorer handles Bitcoin angle downstream)
-        '"AI agents" OR "agentic AI" -is:retweet lang:en',
-        'AI regulation policy -is:retweet lang:en',
-        '(Claude OR GPT OR Gemini) agents -is:retweet lang:en',
+        // Core intersection — consolidated with OR operators to reduce API calls
+        '"Bitcoin AI" OR "BTC AI" OR "Bitcoin agents" -is:retweet lang:en',
+        '"agent economy" (Bitcoin OR crypto OR blockchain) -is:retweet lang:en',
+        '(Stacks OR Lightning) AI agents -is:retweet lang:en',
+        // Broader net — let LLM relevance filter handle precision
+        '(OpenAI OR Anthropic OR "Claude" OR "GPT") Bitcoin -is:retweet lang:en',
+        '"AI agents" (crypto OR blockchain OR decentralized) -is:retweet lang:en',
       ].join(',')
     ).split(',').map(q => q.trim()).filter(Boolean),
+    searchCacheTtlMs: Number(process.env.TWITTER_SEARCH_CACHE_TTL ?? 30 * 60_000), // 30 min
     searchMinLikes: Number(process.env.TWITTER_SEARCH_MIN_LIKES ?? 10),
     searchMinFollowers: Number(process.env.TWITTER_SEARCH_MIN_FOLLOWERS ?? 50),
     searchMaxResults: Number(process.env.TWITTER_SEARCH_MAX_RESULTS ?? 60),
@@ -89,17 +87,17 @@ export const config = {
   },
 
   // Agent loop
-  tickIntervalMs: testMode ? 10_000 : 120_000,
+  tickIntervalMs: testMode ? 10_000 : 600_000,  // 10s test vs 10min production
   flagshipIntervalMs: testMode ? 30_000 : 2 * 3600_000,     // 30s vs 2h (minimum cooldown between posts)
   quickhitCooldownMs: testMode ? 15_000 : 3600_000,          // 15s vs 1h
 
   // Scheduled posting: target specific hours of the day (24h format)
   schedule: {
     enabled: !testMode,
-    postingHours: (process.env.POSTING_HOURS ?? '8,14,20').split(',').map(Number),  // 8am, 2pm, 8pm ET
+    postingHours: (process.env.POSTING_HOURS ?? '8,12,16,20').split(',').map(Number),  // 8am, 12pm, 4pm, 8pm ET
     timezone: process.env.POSTING_TIMEZONE ?? 'America/New_York',
     windowMinutes: 30,   // Fire within ±30 min of target hour
-    minCooldownMs: testMode ? 30_000 : 4 * 3600_000,  // Minimum 4h between posts (supports 3/day schedule)
+    minCooldownMs: testMode ? 30_000 : 3 * 3600_000,  // Minimum 3h between posts (supports 4/day schedule)
   },
 
   // Adaptive posting: starts fast, slows exponentially per post

@@ -27,7 +27,7 @@ Rules:
 - DO NOT explain the joke. The image does that.
 - DO NOT use "Person Says:" attribution unless the WHO is genuinely the story.
 - Hook curiosity — make people NEED to see the image.
-- Match the tone to the topic: deadpan for absurd stories, punchy for breaking news, wry for irony.
+- DEFAULT to wry or ironic. Reserve deadpan for absurd premises, punchy for breaking news. Straight reporting only when the raw fact is already funnier than any spin.
 - NO HASHTAGS. NO EMOJIS.
 - NEVER mention specific token prices or financial speculation.
 
@@ -39,13 +39,17 @@ Good examples:
   Tweet text: "Satoshi Was AI From the Future" ← bold claim, you know exactly the story
 
   Caption: "The cafeteria conversation got a lot more interesting after the layoffs."
-  Tweet text: "Block Lays Off Nearly Half Its Staff, Citing AI Automation" ← serious news, straight headline
+  Tweet text: "Block's Automation Strategy: Lay Off the Humans" ← ironic reframe, not a wire report
 
   Caption: "Well, the 'Open' was more of a suggestion anyway."
-  Tweet text: "OpenAI Quietly Drops the 'Open' Part" ← you know the story AND it sets up the caption's punchline
+  Tweet text: "OpenAI Quietly Drops the 'Open' Part" ← wry angle, sets up the caption's punchline
+
+  Caption: "Eye scans were just the warm-up."
+  Tweet text: "Worldcoin's New Turing Test: Coinbase KYC" ← absurd premise reframed as punchline setup
 
 Bad examples:
   "Turns out that name might need a small adjustment" ← too vague, reader has no idea what this is about
+  "Block Lays Off Nearly Half Its Staff, Citing AI Automation" ← wire service, no editorial angle
   "Binance Founder CZ: Satoshi Was AI From the Future" ← attribution prefix kills the punch
   "Check out this cartoon about AI agents and Bitcoin!" ← meta, boring
   "The greatest mystery in crypto: still patching the human mask" ← that's the caption, not the tweet

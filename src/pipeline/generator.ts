@@ -144,7 +144,7 @@ export class Generator {
       '',
       `SCENE: ${stripTextFromVisual(panel.visual)}`,
       '',
-      `COMPOSITION: ${panel.composition}`,
+      `COMPOSITION: ${stripTextFromVisual(panel.composition)}`,
     ].join('\n'))
   }
 

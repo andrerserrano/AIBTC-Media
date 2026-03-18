@@ -144,7 +144,7 @@ export class Generator {
       '',
       `SCENE: ${stripTextFromVisual(panel.visual)}`,
       '',
-      `COMPOSITION: ${panel.composition}`,
+      `COMPOSITION: ${stripTextFromVisual(panel.composition)}`,
     ].join('\n'))
   }
 
@@ -399,7 +399,7 @@ export class Generator {
       stripTextFromVisual(concept.visual),
       '',
       `COMPOSITION & CAMERA:`,
-      concept.composition,
+      stripTextFromVisual(concept.composition),
       '',
       `WHY THIS IS FUNNY (context for rendering decisions):`,
       concept.reasoning,
@@ -434,7 +434,7 @@ export class Generator {
       return 'HIGH CONTRAST — deep blacks, bright whites, minimal mid-grey. Bold, punchy energy. Monochrome + orange only.'
     }
     if (/money|business|corporate|ceo|profit|market|stock/.test(text)) {
-      return 'HEAVY — moderate greys, clean shadows, flat solid shadow fills. Weighty but clean. Monochrome + orange only.'
+      return 'HEAVY — moderate greys for SHADOWS AND FILLS ONLY. Canvas background is still PURE WHITE. Clean flat shadow fills, bold outlines. Weighty but clean. Monochrome + orange only.'
     }
     if (/tech|ai|robot|algorithm|data|digital|screen|phone|computer/.test(text)) {
       return 'CLEAN — light greys, generous white space, precise lines. Clinical, modern. Monochrome + orange only.'

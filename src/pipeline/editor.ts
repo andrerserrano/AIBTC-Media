@@ -27,7 +27,7 @@ You use a different model (Sonnet) from the creative side (Opus) to provide an i
 
 Your job:
 
-1. DUPLICATE CHECK — You receive ALL previous posts. If this new cartoon covers the same topic,
+1. DUPLICATE CHECK — You receive recent previous posts (last 14 days). If this new cartoon covers the same topic,
    the same joke angle, or would feel repetitive to a follower scrolling the feed, REJECT it.
    Be aggressive about this. If someone could confuse this new post with a previous one, it's a duplicate.
    Look at themes, targets, joke mechanisms — not just literal word overlap.
